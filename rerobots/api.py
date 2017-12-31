@@ -18,7 +18,6 @@ class APIClient(object):
         `verify` determines whether the TLS certificates of the server
         are checked.  Except possibly during testing, this should not
         be False.
-
         """
         self.api_token = api_token
         if base_uri is None:
