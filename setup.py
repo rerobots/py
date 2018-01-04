@@ -21,6 +21,8 @@ with open('README.rst') as fp:
 setup(name='rerobots',
       version='0.0.1.dev0',
       author='Scott C. Livingston',
+      author_email='q@rerobots.net',
+      url='https://github.com/rerobots/py',
       description='client library for the rerobots API',
       long_description=long_description,
       classifiers=['License :: OSI Approved :: Apache Software License',
