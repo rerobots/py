@@ -19,7 +19,7 @@ with open('README.rst') as fp:
 
 
 setup(name='rerobots',
-      version='0.0.0.dev0',
+      version='0.0.0',
       author='Scott C. Livingston',
       description='client library for the rerobots API',
       long_description=long_description,
