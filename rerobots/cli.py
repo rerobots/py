@@ -49,7 +49,7 @@ def main(argv=None):
 
     if args.jwt is not None:
         with open(args.jwt) as fp:
-            jwt = fp.read()
+            jwt = fp.read().strip()
         apic = rerobots_api.APIClient(api_token=jwt)
     else:
         apic = rerobots_api.APIClient()
