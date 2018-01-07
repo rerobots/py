@@ -1,7 +1,20 @@
 Summary
 -------
 
-Python client library for the rerobots API
+command-line interface and Python client library for the rerobots API
+
+
+Getting started
+---------------
+
+To install the current release, try ::
+
+   pip install rerobots
+
+Besides installing the ``rerobots`` Python package, this will add the command
+``rerobots`` to your shell. To get a brief help message, try ::
+
+  rerobots help
 
 
 Participating
