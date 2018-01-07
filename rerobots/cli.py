@@ -18,6 +18,7 @@ import json
 import sys
 
 from . import api as rerobots_api
+from .__init__ import __version__
 
 
 def main(argv=None):
@@ -28,6 +29,9 @@ def main(argv=None):
     argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
+    argparser.add_argument('-V','--version', dest='print_version',
+                           action='store_true', default=False,
+                           help='print version number and exit')
     subparsers = argparser.add_subparsers(dest='command')
 
     info_parser = subparsers.add_parser('info', help='print summary about instance.')
@@ -50,9 +54,14 @@ def main(argv=None):
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.')
     terminate_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
 
+    subparsers.add_parser('version', help='print version number and exit.')
     subparsers.add_parser('help', help='print this help message and exit')
 
     args = argparser.parse_args(argv)
+    if args.print_version or args.command == 'version':
+        print(__version__)
+        return 0
+
     if args.command is None or args.command == 'help':
         argparser.print_help()
         return 0
