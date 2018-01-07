@@ -1,5 +1,15 @@
 #!/bin/env python
-"""
+"""Command-line interface (CLI) to this API client library
+
+The main design goal of this CLI is to be sufficiently expressive that
+a user can install the Python client library and perform all of her
+work using only the `rerobots` terminal program, i.e., without writing
+any Python code.
+
+Of course, parts of this package besides the CLI are intended to be
+used by your Python code.
+
+
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
