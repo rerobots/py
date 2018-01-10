@@ -4,6 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
+import json
 import time
 
 import requests
@@ -94,14 +95,23 @@ class APIClient(object):
         if not res.ok:
             raise OSError(res.text)
 
-    def request_instance(self, deployment_id, max_tries=1, headers=None):
+    def request_instance(self, deployment_id, sshkey=None, max_tries=1, headers=None):
+        """Request new workspace instance
+
+        If given, sshkey is the public key of the key pair with which
+        the user can sign-in to the instance. Otherwise (default), a
+        key pair is automatically generated.
+        """
         headers = self.add_client_headers(headers)
         max_tries = 5
         counter = 0
         payload = None
         while counter < max_tries:
             counter += 1
-            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
+            if sshkey is None:
+                res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
+            else:
+                res = requests.post(self.base_uri + '/new/' + deployment_id, data='{"sshkey": "'+sshkey+'"}', headers=headers, verify=self.verify_certs)
             if res.ok:
                 payload = res.json()
                 break
@@ -117,4 +127,7 @@ class APIClient(object):
         res = requests.post(self.base_uri + '/firewall/' + payload['id'], headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise OSError(res.text)
-        return payload['id'], payload['sshkey']
+        if 'sshkey' in payload:
+            return payload['id'], payload['sshkey']
+        else:
+            return payload['id']
