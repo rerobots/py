@@ -103,7 +103,6 @@ class APIClient(object):
         key pair is automatically generated.
         """
         headers = self.add_client_headers(headers)
-        max_tries = 5
         counter = 0
         payload = None
         while counter < max_tries:
