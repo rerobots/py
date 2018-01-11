@@ -4,7 +4,6 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
-import json
 import time
 
 import requests
@@ -123,10 +122,33 @@ class APIClient(object):
                 raise OSError(res.text)
         if payload is None:
             return None, None
-        res = requests.post(self.base_uri + '/firewall/' + payload['id'], headers=headers, verify=self.verify_certs)
-        if not res.ok:
-            raise OSError(res.text)
         if 'sshkey' in payload:
             return payload['id'], payload['sshkey']
         else:
             return payload['id']
+
+    def get_firewall_rules(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise OSError(res.text)
+        return res.json()['blob']
+
+    def add_firewall_rule(self, instance_id, action, source_address=None, headers=None):
+        headers = self.add_client_headers(headers)
+        if action not in ['ACCEPT', 'DROP', 'REJECT']:
+            raise OSError('unrecognized firewall action')
+        if source_address is None:
+            payload = '{"action": "' + action + '"}'
+        else:
+            payload = '{"src": "' + source_address + '", "action": "' + action + '"}'
+        print(payload)
+        res = requests.post(self.base_uri + '/firewall/' + instance_id, data=payload,  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise OSError(res.text)
+
+    def flush_firewall_rules(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.delete(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise OSError(res.text)
