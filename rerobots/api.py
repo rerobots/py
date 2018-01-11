@@ -142,7 +142,6 @@ class APIClient(object):
             payload = '{"action": "' + action + '"}'
         else:
             payload = '{"src": "' + source_address + '", "action": "' + action + '"}'
-        print(payload)
         res = requests.post(self.base_uri + '/firewall/' + instance_id, data=payload,  headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise OSError(res.text)
