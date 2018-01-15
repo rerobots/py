@@ -149,7 +149,7 @@ class APIClient(object):
         res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise OSError(res.text)
-        return res.json()['blob']
+        return res.json()['rules']
 
     def add_firewall_rule(self, instance_id, action, source_address=None, headers=None):
         headers = self.add_client_headers(headers)
