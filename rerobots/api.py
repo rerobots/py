@@ -70,14 +70,31 @@ class APIClient(object):
             raise OSError(res.text)
         return payload
 
-    def get_instances(self, headers=None):
+    def get_instances(self, include_terminated=False, page=None, max_per_page=None, headers=None):
+        """get list of your instances
+
+        The parameters `page` and `max_per_page` can be used for
+        pagination, which restricts the maximum number of items in the
+        list of instances returned in any one response.
+        Cf. documentation of the HTTP API.
+        """
         headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/instances', headers=headers, verify=self.verify_certs)
+        params = dict()
+        if include_terminated:
+            params['include_terminated'] = ''
+        if max_per_page is not None:
+            params['max_per_page'] = max_per_page
+            if page is not None:
+                params['page'] = page
+        res = requests.get(self.base_uri + '/instances', params=params, headers=headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise OSError(res.text)
-        return payload['workspace_instances']
+        if max_per_page is None:
+            return payload['workspace_instances']
+        else:
+            return payload['workspace_instances'], payload['page_count']
 
     def get_instance_info(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
