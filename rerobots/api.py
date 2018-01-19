@@ -52,14 +52,29 @@ class APIClient(object):
         if self.api_token is not None:
             headers['Authorization'] = 'Bearer ' + self.api_token
 
-    def get_deployments(self, headers=None):
+    def get_deployments(self, page=None, max_per_page=None, headers=None):
+        """get list of workspace deployments
+
+        The parameters `page` and `max_per_page` can be used for
+        pagination, which restricts the maximum number of items in the
+        list of instances returned in any one response.
+        Cf. documentation of the HTTP API.
+        """
         headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/deployments', headers=headers, verify=self.verify_certs)
+        params = dict()
+        if max_per_page is not None:
+            params['max_per_page'] = max_per_page
+            if page is not None:
+                params['page'] = page
+        res = requests.get(self.base_uri + '/deployments', params=params, headers=headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise OSError(res.text)
-        return payload['workspace_deployments']
+        if max_per_page is None:
+            return payload['workspace_deployments']
+        else:
+            return payload['workspace_deployments'], payload['page_count']
 
     def get_deployment_info(self, deployment_id, headers=None):
         headers = self.add_client_headers(headers)
