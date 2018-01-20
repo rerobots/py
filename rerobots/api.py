@@ -153,7 +153,11 @@ class APIClient(object):
             else:
                 raise OSError(res.text)
         if payload is None:
-            return None, None
+            # Match length of expected return tuple
+            if sshkey is None:
+                return None, None
+            else:
+                return None
         if 'sshkey' in payload:
             return payload['id'], payload['sshkey']
         else:
