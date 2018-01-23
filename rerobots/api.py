@@ -52,8 +52,12 @@ class APIClient(object):
         if self.api_token is not None:
             headers['Authorization'] = 'Bearer ' + self.api_token
 
-    def get_deployments(self, page=None, max_per_page=None, headers=None):
+    def get_deployments(self, q=None, maxlen=None, types=None, page=None, max_per_page=None, headers=None):
         """get list of workspace deployments
+
+        `types`, if given, should be a list of workspace types (str).
+        The significance of parameters is described in the HTTP-based
+        API documentation.
 
         The parameters `page` and `max_per_page` can be used for
         pagination, which restricts the maximum number of items in the
@@ -66,6 +70,12 @@ class APIClient(object):
             params['max_per_page'] = max_per_page
             if page is not None:
                 params['page'] = page
+        if q is not None:
+            params['q'] = q
+        if maxlen is not None:
+            params['maxlen'] = maxlen
+        if types is not None:
+            params['types'] = ','.join(types)
         res = requests.get(self.base_uri + '/deployments', params=params, headers=headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
