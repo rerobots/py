@@ -17,6 +17,19 @@ Besides installing the ``rerobots`` Python package, this will add the command
   rerobots help
 
 
+Testing and development
+-----------------------
+
+All tests are in the directory ``tests/``. If you have the ``rerobots`` package
+installed, then you can run all tests::
+
+  cd tests
+  python -m nose -v
+
+Recent results on `Travis CI <https://travis-ci.org/>`_ are available at
+https://travis-ci.org/rerobots/py
+
+
 Participating
 -------------
 
