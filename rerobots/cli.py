@@ -13,6 +13,8 @@ used by your Python code.
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
+from __future__ import absolute_import
+from __future__ import print_function
 import argparse
 import json
 import sys
