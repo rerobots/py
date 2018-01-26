@@ -57,7 +57,7 @@ def main(argv=None):
     subparsers.add_parser('help', help='print this help message and exit')
 
     args = argparser.parse_args(argv)
-    if args.print_version or args.command == 'version':
+    if args.command == 'version':
         print(__version__)
         return 0
 
