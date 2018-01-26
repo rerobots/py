@@ -4,7 +4,10 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2018 rerobots, Inc.
 """
-from io import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:  # if Python 3
+    from io import StringIO
 import sys
 
 import rerobots
