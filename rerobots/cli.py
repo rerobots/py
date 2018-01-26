@@ -31,9 +31,6 @@ def main(argv=None):
     argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
-    argparser.add_argument('-V','--version', dest='print_version',
-                           action='store_true', default=False,
-                           help='print version number and exit')
     subparsers = argparser.add_subparsers(dest='command')
 
     info_parser = subparsers.add_parser('info', help='print summary about instance.')

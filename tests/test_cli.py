@@ -14,7 +14,7 @@ from rerobots import cli
 def test_version():
     original_stdout = sys.stdout
     sys.stdout = StringIO()
-    cli.main(['-V'])
+    cli.main(['version'])
     res = sys.stdout.getvalue().strip()
     sys.stdout = original_stdout
     assert rerobots.__version__ == res
