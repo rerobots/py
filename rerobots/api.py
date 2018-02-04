@@ -4,6 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
+import json
 import time
 
 import requests
@@ -136,7 +137,7 @@ class APIClient(object):
         if not res.ok:
             raise OSError(res.text)
 
-    def request_instance(self, deployment_id, sshkey=None, max_tries=1, headers=None):
+    def request_instance(self, deployment_id, sshkey=None, vpn=False, max_tries=1, headers=None):
         """Request new workspace instance
 
         If given, sshkey is the public key of the key pair with which
@@ -146,12 +147,17 @@ class APIClient(object):
         headers = self.add_client_headers(headers)
         counter = 0
         payload = None
+        body = dict()
+        if sshkey is not None:
+            body['sshkey'] = sshkey
+        if vpn:
+            body['vpn'] = vpn
         while counter < max_tries:
             counter += 1
-            if sshkey is None:
+            if len(body) == 0:
                 res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
             else:
-                res = requests.post(self.base_uri + '/new/' + deployment_id, data='{"sshkey": "'+sshkey+'"}', headers=headers, verify=self.verify_certs)
+                res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=headers, verify=self.verify_certs)
             if res.ok:
                 payload = res.json()
                 break
@@ -197,3 +203,10 @@ class APIClient(object):
         res = requests.delete(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise OSError(res.text)
+
+    def get_vpn_newclient(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.post(self.base_uri + '/vpn/' + instance_id,  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise OSError(res.text)
+        return res.json()
