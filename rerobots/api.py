@@ -10,6 +10,27 @@ import time
 import requests
 
 
+class Error(Exception):
+    """Error not otherwise specified
+
+    Where feasible, some diagnostics from the server will be included
+    in the exception message.
+    """
+    pass
+
+class WrongAuthToken(Error):
+    """An action requires, but was not given, some valid API token.
+
+    There are several potential solutions, but in most cases it should
+    suffice to sign-in to the rerobots Web UI and visit
+
+    https://rerobots.net/tokens
+
+    where you can manage your API tokens.  Use add_token_header() of
+    APIClient to automatically send an API token with each request.
+    """
+
+
 class APIClient(object):
     def __init__(self, api_token=None, base_uri=None, verify=True):
         """Instantiate API client
@@ -116,7 +137,15 @@ class APIClient(object):
         if res.ok:
             payload = res.json()
         else:
-            raise OSError(res.text)
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'error_message' in payload:
+                if payload['error_message'] == 'wrong authorization token':
+                    raise WrongAuthToken
+                else:
+                    raise Error(payload['error_message'])
         if max_per_page is None:
             return payload['workspace_instances']
         else:
