@@ -22,6 +22,14 @@ def test_version():
     sys.stdout = original_stdout
     assert rerobots.__version__ == res
 
+def test_help():
+    original_stdout = sys.stdout
+    sys.stdout = StringIO()
+    cli.main(['help'])
+    res = sys.stdout.getvalue().strip()
+    sys.stdout = original_stdout
+    assert 'rerobots API command-line client' in res
+
 
 if __name__ == '__main__':
     test_version()
