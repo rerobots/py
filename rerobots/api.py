@@ -102,7 +102,7 @@ class APIClient(object):
         if res.ok:
             payload = res.json()
         else:
-            raise OSError(res.text)
+            raise Error(res.text)
         if max_per_page is None:
             return payload['workspace_deployments']
         else:
@@ -114,7 +114,7 @@ class APIClient(object):
         if res.ok:
             payload = res.json()
         else:
-            raise OSError(res.text)
+            raise Error(res.text)
         return payload
 
     def get_instances(self, include_terminated=False, page=None, max_per_page=None, headers=None):
@@ -146,6 +146,8 @@ class APIClient(object):
                     raise WrongAuthToken
                 else:
                     raise Error(payload['error_message'])
+            else:
+                raise Error(payload)
         if max_per_page is None:
             return payload['workspace_instances']
         else:
@@ -157,14 +159,14 @@ class APIClient(object):
         if res.ok:
             payload = res.json()
         else:
-            raise OSError(res.text)
+            raise Error(res.text)
         return payload
 
     def terminate_instance(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
         res = requests.post(self.base_uri + '/terminate/' + instance_id, headers=headers, verify=self.verify_certs)
         if not res.ok:
-            raise OSError(res.text)
+            raise Error(res.text)
 
     def request_instance(self, deployment_id, sshkey=None, vpn=False, max_tries=1, headers=None):
         """Request new workspace instance
@@ -196,7 +198,7 @@ class APIClient(object):
                 time.sleep(1)
                 continue
             else:
-                raise OSError(res.text)
+                raise Error(res.text)
         if payload is None:
             # Match length of expected return tuple
             if sshkey is None:
@@ -212,30 +214,30 @@ class APIClient(object):
         headers = self.add_client_headers(headers)
         res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
         if not res.ok:
-            raise OSError(res.text)
+            raise Error(res.text)
         return res.json()['rules']
 
     def add_firewall_rule(self, instance_id, action, source_address=None, headers=None):
         headers = self.add_client_headers(headers)
         if action not in ['ACCEPT', 'DROP', 'REJECT']:
-            raise OSError('unrecognized firewall action')
+            raise Error('unrecognized firewall action')
         if source_address is None:
             payload = '{"action": "' + action + '"}'
         else:
             payload = '{"src": "' + source_address + '", "action": "' + action + '"}'
         res = requests.post(self.base_uri + '/firewall/' + instance_id, data=payload,  headers=headers, verify=self.verify_certs)
         if not res.ok:
-            raise OSError(res.text)
+            raise Error(res.text)
 
     def flush_firewall_rules(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
         res = requests.delete(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
         if not res.ok:
-            raise OSError(res.text)
+            raise Error(res.text)
 
     def get_vpn_newclient(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
         res = requests.post(self.base_uri + '/vpn/' + instance_id,  headers=headers, verify=self.verify_certs)
         if not res.ok:
-            raise OSError(res.text)
+            raise Error(res.text)
         return res.json()
