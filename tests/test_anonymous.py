@@ -37,3 +37,9 @@ def test_instances_list():
     apic = APIClient()
     with assert_raises(WrongAuthToken):
         apic.get_instances()
+
+
+def test_instances_list_badtoken():
+    apic = APIClient(api_token='deadbeef')
+    with assert_raises(WrongAuthToken):
+        apic.get_instances()
