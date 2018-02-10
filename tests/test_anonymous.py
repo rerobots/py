@@ -18,6 +18,7 @@ def test_deployments_list():
     # imply that rerobots has no active workspace deployments, which
     # should be rare or never.
 
+
 def test_deployment_details():
     apic = APIClient()
     workspace_deployments, page_count = apic.get_deployments(page=1, max_per_page=1)
