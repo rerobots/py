@@ -29,6 +29,7 @@ class WrongAuthToken(Error):
     where you can manage your API tokens.  Use add_token_header() of
     APIClient to automatically send an API token with each request.
     """
+    pass
 
 
 class APIClient(object):
