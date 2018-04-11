@@ -20,9 +20,9 @@ with open('README.rst') as fp:
 
 # Version of this package
 MAJOR=0
-MINOR=2
-PATCH=1
-devel=True
+MINOR=3
+PATCH=0
+devel=False
 
 version = '{}.{}.{}'.format(MAJOR, MINOR, PATCH)
 if devel:
