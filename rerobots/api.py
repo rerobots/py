@@ -4,6 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
+import hashlib
 import json
 import time
 
@@ -242,3 +243,24 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
         return res.json()
+
+    def revoke_token(self, token=None, sha256=None, headers=None):
+        if token is None and sha256 is None:
+            raise ValueError('token or sha256 must be non-None')
+        if token is not None:
+            if isinstance(token, str):
+                token = bytes(token, encoding='utf-8')
+            token_hash = hashlib.sha256(token).hexdigest()
+            if sha256 is not None and sha256 != token_hash:
+                raise ValueError('both token or sha256 given, '
+                                 'but SHA256(token) != sha256')
+            sha256 = token_hash
+        headers = self.add_client_headers(headers)
+        res = requests.post(self.base_uri + '/revoke/' + sha256, headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def purge(self, headers=None):
+        res = requests.post(self.base_uri + '/purge', headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
