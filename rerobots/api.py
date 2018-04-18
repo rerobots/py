@@ -213,7 +213,6 @@ class APIClient(object):
                 return None, None, None
             else:
                 return None, None
-        print(payload)
         if 'sshkey' in payload:
             return payload['success'], payload['id'], payload['sshkey']
         else:
