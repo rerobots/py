@@ -219,6 +219,21 @@ class APIClient(object):
         else:
             return payload['success'], payload['id']
 
+    def get_reservations(self, headers=None):
+        """get list of your reservations
+        """
+        headers = self.add_client_headers(headers)
+        res = requests.get(self.base_uri + '/reservations', headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+        return res.json()['reservations']
+
+    def cancel_reservation(self, reservation_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.delete(self.base_uri + '/reservation/' + reservation_id, headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
     def get_firewall_rules(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
         res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
