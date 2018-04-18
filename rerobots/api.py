@@ -170,12 +170,15 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
 
-    def request_instance(self, deployment_id, sshkey=None, vpn=False, max_tries=1, headers=None):
+    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, max_tries=1, headers=None):
         """Request new workspace instance
 
         If given, sshkey is the public key of the key pair with which
         the user can sign-in to the instance. Otherwise (default), a
         key pair is automatically generated.
+
+        If reserve=True, then create a reservation if the workspace
+        deployment is not available at the time of this request.
         """
         headers = self.add_client_headers(headers)
         counter = 0
@@ -185,6 +188,9 @@ class APIClient(object):
             body['sshkey'] = sshkey
         if vpn:
             body['vpn'] = vpn
+        body['reserve'] = reserve
+        if event_url is not None:
+            body['eurl'] = event_url
         while counter < max_tries:
             counter += 1
             if len(body) == 0:
@@ -204,13 +210,14 @@ class APIClient(object):
         if payload is None:
             # Match length of expected return tuple
             if sshkey is None:
-                return None, None
+                return None, None, None
             else:
-                return None
+                return None, None
+        print(payload)
         if 'sshkey' in payload:
-            return payload['id'], payload['sshkey']
+            return payload['success'], payload['id'], payload['sshkey']
         else:
-            return payload['id']
+            return payload['success'], payload['id']
 
     def get_firewall_rules(self, instance_id, headers=None):
         headers = self.add_client_headers(headers)
