@@ -273,6 +273,7 @@ class APIClient(object):
             raise Error(res.text)
 
     def purge(self, headers=None):
+        headers = self.add_client_headers(headers)
         res = requests.post(self.base_uri + '/purge', headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
