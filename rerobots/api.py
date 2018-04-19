@@ -207,16 +207,7 @@ class APIClient(object):
                 continue
             else:
                 raise Error(res.text)
-        if payload is None:
-            # Match length of expected return tuple
-            if sshkey is None:
-                return None, None, None
-            else:
-                return None, None
-        if 'sshkey' in payload:
-            return payload['success'], payload['id'], payload['sshkey']
-        else:
-            return payload['success'], payload['id']
+        return payload
 
     def get_reservations(self, headers=None):
         """get list of your reservations
