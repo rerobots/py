@@ -202,7 +202,7 @@ class APIClient(object):
                 break
             elif res.status_code == 503: # => busy, try again later
                 if counter >= max_tries:
-                    break
+                    raise Error(res.text)
                 time.sleep(1)
                 continue
             else:
