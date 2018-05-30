@@ -203,7 +203,7 @@ class APIClient(object):
             elif res.status_code == 503: # => busy, try again later
                 if counter >= max_tries:
                     raise Error(res.text)
-                time.sleep(1)
+                time.sleep(10)
                 continue
             else:
                 raise Error(res.text)
