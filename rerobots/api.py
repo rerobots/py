@@ -197,7 +197,6 @@ class APIClient(object):
             res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
-            break
         else:
             raise Error(res.text)
         return payload

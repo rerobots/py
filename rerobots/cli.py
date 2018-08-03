@@ -17,6 +17,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import argparse
 import json
+import random
 import sys
 
 from . import api as rerobots_api
