@@ -170,7 +170,7 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
 
-    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, max_tries=1, headers=None):
+    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, headers=None):
         """Request new workspace instance
 
         If given, sshkey is the public key of the key pair with which
@@ -191,22 +191,15 @@ class APIClient(object):
         body['reserve'] = reserve
         if event_url is not None:
             body['eurl'] = event_url
-        while counter < max_tries:
-            counter += 1
-            if len(body) == 0:
-                res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
-            else:
-                res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=headers, verify=self.verify_certs)
-            if res.ok:
-                payload = res.json()
-                break
-            elif res.status_code == 503: # => busy, try again later
-                if counter >= max_tries:
-                    raise Error(res.text)
-                time.sleep(10)
-                continue
-            else:
-                raise Error(res.text)
+        if len(body) == 0:
+            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
+        else:
+            res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=headers, verify=self.verify_certs)
+        if res.ok:
+            payload = res.json()
+            break
+        else:
+            raise Error(res.text)
         return payload
 
     def get_reservations(self, headers=None):
