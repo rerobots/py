@@ -13,3 +13,4 @@ https://help.rerobots.net/
    :maxdepth: 2
 
    cli
+   apiclient
