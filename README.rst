@@ -3,6 +3,8 @@ Summary
 
 command-line interface and Python client library for the rerobots API
 
+For more documentation, go to https://rerobots-py.readthedocs.io/
+
 
 Getting started
 ---------------
