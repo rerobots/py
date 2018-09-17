@@ -119,6 +119,27 @@ class APIClient(object):
             raise Error(res.text)
         return payload
 
+    def get_access_rules(self, headers=None):
+        """get list of access control rules of workspace deployments
+        """
+        headers = self.add_client_headers(headers)
+        res = requests.get(self.base_uri + '/rules', headers=headers, verify=self.verify_certs)
+        if res.ok:
+            payload = res.json()
+        else:
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'error_message' in payload:
+                if payload['error_message'] == 'wrong authorization token':
+                    raise WrongAuthToken
+                else:
+                    raise Error(payload['error_message'])
+            else:
+                raise Error(payload)
+        return payload['rules']
+
     def get_instances(self, include_terminated=False, page=None, max_per_page=None, headers=None):
         """get list of your instances
 
