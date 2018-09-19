@@ -140,19 +140,21 @@ class APIClient(object):
                 raise Error(payload)
         return payload['rules']
 
-    def add_access_rule(self, deployment_id, capability, headers=None):
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, action='add', headers=headers)
+    def add_access_rule(self, deployment_id, capability, to_user=None, headers=None):
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add', headers=headers)
 
-    def del_access_rule(self, deployment_id, capability, headers=None):
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, action='del', headers=headers)
+    def del_access_rule(self, deployment_id, capability, to_user=None, headers=None):
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del', headers=headers)
 
-    def _modify_access_rule(self, deployment_id, capability, action, headers=None):
+    def _modify_access_rule(self, deployment_id, capability, action, to_user=None, headers=None):
         headers = self.add_client_headers(headers)
         body = {
             'do': action,
             'wd': deployment_id,
             'cap': capability,
         }
+        if to_user is not None:
+            body['user'] = to_user
         res = requests.post(self.base_uri + '/rule', data=json.dumps(body),
                             headers=headers, verify=self.verify_certs)
         if not res.ok:
