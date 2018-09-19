@@ -6,6 +6,7 @@ python:
   - "3.6"
 
 install:
+  - pip install -r devel-requirements.txt
   - pip install .
 
 script: make check
