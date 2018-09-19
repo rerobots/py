@@ -119,11 +119,17 @@ class APIClient(object):
             raise Error(res.text)
         return payload
 
-    def get_access_rules(self, headers=None):
+    def get_access_rules(self, to_user=None, deployment_id=None, headers=None):
         """get list of access control rules of workspace deployments
         """
         headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/rules', headers=headers, verify=self.verify_certs)
+        params = dict()
+        if to_user is not None:
+            params['to_user'] = to_user
+        if deployment_id is not None:
+            params['wdeployment'] = deployment_id
+        res = requests.get(self.base_uri + '/rules', params=params,
+                           headers=headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
