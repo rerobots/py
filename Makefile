@@ -8,5 +8,9 @@
 .PHONY: check
 check:
 	pylint -j 4 -E `find rerobots -name \*.py`
-	pylint -j 4 -E `find tests -name \*.py`
 	cd tests && nosetests -v
+
+
+.PHONY: checktests
+checktests:
+	pylint -j 4 -E `find tests -name \*.py`
