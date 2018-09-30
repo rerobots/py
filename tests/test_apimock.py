@@ -18,3 +18,13 @@ def test_deployments_list():
     apic = APIClient()
     res = apic.get_deployments()
     assert len(res) > 0
+
+
+@responses.activate
+def test_request_instance():
+    responses.add(responses.POST, 'https://api.rerobots.net/new/{}'.format('a6b88b4f-2402-41e4-8e81-b2fd852435eb'),
+                  json={'id': 'c81613e1-2d4c-4751-b3bc-08e604656c2d'},
+                  status=200)
+    apic = APIClient()
+    res = apic.request_instance('a6b88b4f-2402-41e4-8e81-b2fd852435eb')
+    assert 'id' in res
