@@ -26,13 +26,17 @@ def test_deployments_list():
 
 class BasicInstanceTestCases(unittest.TestCase):
     def setUp(self):
-        deployment_id = 'a6b88b4f-2402-41e4-8e81-b2fd852435eb'
+        wdeployment_id = 'a6b88b4f-2402-41e4-8e81-b2fd852435eb'
         instance_id = 'c81613e1-2d4c-4751-b3bc-08e604656c2d'
-        responses.add(responses.POST, 'https://api.rerobots.net/new/{}'.format(deployment_id),
+        responses.add(responses.GET, 'https://api.rerobots.net/deployments',
+                      json={'workspace_deployments': [wdeployment_id],
+                            'page_count': 1},
+                      status=200)
+        responses.add(responses.POST, 'https://api.rerobots.net/new/{}'.format(wdeployment_id),
                       json={'id': instance_id,
                             'success': True},
                       status=200)
-        responses.add(responses.POST, 'https://api.rerobots.net/new/{}'.format(deployment_id),
+        responses.add(responses.POST, 'https://api.rerobots.net/new/{}'.format(wdeployment_id),
                       json={'result_message': ('All matching workspace deployments are busy.'
                                                ' Try again later.')},
                       status=503)
@@ -43,8 +47,11 @@ class BasicInstanceTestCases(unittest.TestCase):
     @responses.activate
     def test_request_instance(self):
         apic = APIClient()
-        res = apic.request_instance('a6b88b4f-2402-41e4-8e81-b2fd852435eb', reserve=False)
+        list_of_wdeployments = apic.get_deployments()
+        assert len(list_of_wdeployments) > 0
+        wdeployment_id = list_of_wdeployments[0]
+        res = apic.request_instance(wdeployment_id, reserve=False)
         assert res['success']
         assert 'id' in res
         with assert_raises(Error):
-            apic.request_instance('a6b88b4f-2402-41e4-8e81-b2fd852435eb', reserve=False)
+            apic.request_instance(wdeployment_id, reserve=False)
