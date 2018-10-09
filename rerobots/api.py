@@ -295,6 +295,41 @@ class APIClient(object):
             raise Error(res.text)
         return res.json()
 
+    def activate_addon_vnc(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id,  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def status_addon_vnc(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.get(self.base_uri + '/addon/vnc/' + instance_id,  headers=headers, verify=self.verify_certs)
+        if not res.ok and res.status_code != 404:
+            raise Error(res.text)
+        elif res.status_code == 404:
+            payload = {'status': 'notfound'}
+        else:
+            payload = res.json()
+        return payload
+
+    def start_addon_vnc(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/start',  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def stop_addon_vnc(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/stop',  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def deactivate_addon_vnc(self, instance_id, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.delete(self.base_uri + '/addon/vnc/' + instance_id,  headers=headers, verify=self.verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
     def revoke_token(self, token=None, sha256=None, headers=None):
         if token is None and sha256 is None:
             raise ValueError('token or sha256 must be non-None')
