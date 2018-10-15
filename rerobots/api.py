@@ -4,6 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
+import base64
 import hashlib
 import json
 import time
@@ -352,6 +353,19 @@ class APIClient(object):
         res = requests.delete(self.base_uri + '/addon/cam/' + instance_id,  headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
+
+    def get_snapshot_cam(self, instance_id, camera_id=1, headers=None):
+        headers = self.add_client_headers(headers)
+        res = requests.get(self.base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id),  headers=headers, verify=self.verify_certs)
+        if not res.ok and res.status_code != 404:
+            raise Error(res.text)
+        else:
+            payload = res.json()
+        if 'coding' in payload:
+            if payload['coding'] == 'base64':
+                payload['data'] = base64.b64decode(payload['data'])
+                payload['coding'] = None
+        return payload
 
     def revoke_token(self, token=None, sha256=None, headers=None):
         if token is None and sha256 is None:
