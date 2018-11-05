@@ -373,7 +373,7 @@ class APIClient(object):
             if payload['coding'] == 'base64':
                 payload['data'] = base64.b64decode(payload['data'])
                 payload['coding'] = None
-        if (format is not None) and (payload['format'].lower() != format):
+        if payload['success'] and (format is not None) and (payload['format'].lower() != format):
             if format == 'ndarray':
                 from PIL import Image
                 import numpy as np
