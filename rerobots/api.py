@@ -5,11 +5,16 @@ SCL <scott@rerobots.net>
 Copyright (c) 2017, 2018 rerobots, Inc.
 """
 import base64
+from io import BytesIO
 import hashlib
 import json
 import time
 
 import requests
+
+# inline: PIL, numpy
+# only required for certain code paths that go beyond core routines.
+# e.g., get_snapshot_cam(format='array')
 
 
 class Error(Exception):
@@ -354,7 +359,10 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=1, headers=None):
+    def get_snapshot_cam(self, instance_id, camera_id=1, format=None, headers=None):
+        if format is not None:
+            format = format.lower()
+            assert format in ['ndarray', 'jpeg']
         headers = self.add_client_headers(headers)
         res = requests.get(self.base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id),  headers=headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
@@ -365,6 +373,17 @@ class APIClient(object):
             if payload['coding'] == 'base64':
                 payload['data'] = base64.b64decode(payload['data'])
                 payload['coding'] = None
+        if (format is not None) and (payload['format'].lower() != format):
+            if format == 'ndarray':
+                from PIL import Image
+                import numpy as np
+                x = BytesIO()
+                x.write(payload['data'])
+                x.seek(0)
+                img = Image.open(x)
+                payload['data'] = np.array(img.getdata(), dtype=np.uint8)
+                payload['data'] = payload['data'].reshape(img.size[1], img.size[0], 3)
+                payload['format'] = 'ndarray'
         return payload
 
     def revoke_token(self, token=None, sha256=None, headers=None):
