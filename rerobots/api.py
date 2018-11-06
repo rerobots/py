@@ -359,7 +359,21 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=1, format=None, headers=None):
+    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, format=None, headers=None):
+        """Get image from camera via cam add-on
+
+        If coding=None (default), then returned data are not
+        encoded. The only coding supported is base64, which can be
+        obtained with coding='base64'.
+
+        If format=None (default), then the image format is whatever
+        the rerobots API provided. Currently, this can be 'jpeg' or
+        'ndarray' (i.e., ndarray type of NumPy).
+
+        Note that some coding and format combinations are not
+        compatible. In particular, if format='ndarray', then coding
+        must be None.
+        """
         if format is not None:
             format = format.lower()
             assert format in ['ndarray', 'jpeg']
@@ -369,12 +383,13 @@ class APIClient(object):
             raise Error(res.text)
         else:
             payload = res.json()
-        if 'coding' in payload:
-            if payload['coding'] == 'base64':
+        if 'coding' in payload and payload['coding'] != coding:
+            if (coding is None) and payload['coding'] == 'base64':
                 payload['data'] = base64.b64decode(payload['data'])
                 payload['coding'] = None
         if payload['success'] and (format is not None) and (payload['format'].lower() != format):
             if format == 'ndarray':
+                assert coding is None
                 from PIL import Image
                 import numpy as np
                 x = BytesIO()
