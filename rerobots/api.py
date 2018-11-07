@@ -383,11 +383,13 @@ class APIClient(object):
             raise Error(res.text)
         else:
             payload = res.json()
+        if not payload['success']:
+            return payload
         if 'coding' in payload and payload['coding'] != coding:
             if (coding is None) and payload['coding'] == 'base64':
                 payload['data'] = base64.b64decode(payload['data'])
                 payload['coding'] = None
-        if payload['success'] and (format is not None) and (payload['format'].lower() != format):
+        if (format is not None) and (payload['format'].lower() != format):
             if format == 'ndarray':
                 assert coding is None
                 from PIL import Image
