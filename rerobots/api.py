@@ -8,6 +8,8 @@ import base64
 from io import BytesIO
 import hashlib
 import json
+import os
+import tempfile
 import time
 
 import requests
@@ -15,6 +17,9 @@ import requests
 # inline: PIL, numpy
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(format='array')
+
+# inline: paramiko
+# only required by Instance class
 
 
 class Error(Exception):
@@ -424,3 +429,156 @@ class APIClient(object):
         res = requests.post(self.base_uri + '/purge', headers=headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
+
+
+class Instance(APIClient):
+    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, base_uri=None, verify=True):
+        """
+
+        Either workspace_types or wdeployment_id must be given.
+        """
+        super().__init__(api_token=api_token, base_uri=base_uri, verify=verify)
+        if ((workspace_types is None and wdeployment_id is None)
+            or (workspace_types != None and wdeployment_id != None)):
+            raise ValueError('either workspace_types or wdeployment_id must be given, but not both')
+        if workspace_types is not None:
+            candidates = self.get_deployments(types=workspace_types)
+            if len(candidates) < 1:
+                raise ValueError('no deployments found with any type in {}'.format(workspace_types))
+            self._wdeployment_id = candidates[0]
+
+        else:
+            self._wdeployment_id = wdeployment_id
+
+        self._type = None
+
+        payload = self.request_instance(self._wdeployment_id, reserve=False)
+        self._id = payload['id']
+        self._status = 'INIT'  # Instance always begins at INIT
+        self._details = None
+        if 'sshkey' in payload:
+            self._sshkey = payload['sshkey']
+        else:
+            self._sshkey = None
+        self._conn = None
+        self._sshclient = None
+
+
+    def get_deployment_info(self, headers=None):
+        return super().get_deployment_info(self._wdeployment_id, headers=headers)
+
+
+    def get_access_rules(self, to_user=None, headers=None):
+        return super().get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
+
+    def add_access_rule(self, capability, to_user=None, headers=None):
+        super().add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+
+    def del_access_rule(self, capability, to_user=None, headers=None):
+        super().del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+
+
+    def get_firewall_rules(self, headers=None):
+        return super().get_firewall_rules(self._id, headers=headers)
+
+    def add_firewall_rule(self, action, source_address=None, headers=None):
+        super().add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
+
+    def flush_firewall_rules(self, headers=None):
+        super().flush_firewall_rules(self._id, headers=headers)
+
+
+    def get_vpn_newclient(self, headers=None):
+        return super().get_vpn_newclient(self._id, headers=headers)
+
+
+    def activate_addon_cam(self, headers=None):
+        super().activate_addon_cam(self._id, headers=headers)
+
+    def status_addon_cam(self, headers=None):
+        return super().status_addon_cam(self._id, headers=headers)
+
+    def get_snapshot_cam(self, camera_id=1, coding=None, format=None, headers=None):
+        return super().get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
+
+    def deactivate_addon_cam(self, headers=None):
+        super().deactivate_addon_cam(self._id, headers=headers)
+
+
+    def get_status(self):
+        payload = self.get_instance_info(self._id)
+        if self._wdeployment_id is None:
+            self._wdeployment_id = payload['deployment']
+        if self._details is None:
+            self._details = {
+                'type': payload['type'],
+                'region': payload['region'],
+                'starttime': payload['starttime'],
+            }
+        self._status = payload['status']
+        if 'fwd' in payload:
+            self._conn = {
+                'type': 'sshtun',
+            }
+            if 'ipv4' in payload['fwd']:
+                self._conn['ipv4'] = payload['fwd']['ipv4']
+            if 'port' in payload['fwd']:
+                self._conn['port'] = payload['fwd']['port']
+            if 'hostkeys' in payload:
+                self._conn['hostkeys'] = payload['hostkeys']
+        return self._status
+
+
+    def get_details(self):
+        status = self.get_status()
+        res = self._details.copy()
+        res['status'] = status
+        if self._conn is not None:
+            res['conn'] = self._conn
+        return res
+
+
+    def terminate(self):
+        self.stop_sshclient()
+        self.terminate_instance(self._id)
+
+
+    def stop_sshclient(self):
+        if self._sshclient is not None:
+            self._sshclient.close()
+            self._sshclient = None
+
+
+    def start_sshclient(self):
+        import paramiko
+        status = self.get_status()
+        if status != 'READY':
+            raise Exception('instance not ready')
+        host = self._conn['ipv4']
+        port = self._conn['port']
+        hostkey = self._conn['hostkeys'][0]
+
+        fd, keypath = tempfile.mkstemp()
+        fp = os.fdopen(fd, 'wt')
+        fp.write(self._sshkey)
+        fp.close()
+
+        fd, known_hosts = tempfile.mkstemp()
+        fp = os.fdopen(fd, 'wt')
+        sshhost = '[{IPADDR}]:{PORT}'.format(IPADDR=host, PORT=port)
+        fp.write(sshhost + ' ' + hostkey)
+        fp.close()
+
+        self._sshclient = paramiko.client.SSHClient()
+        self._sshclient.load_system_host_keys(known_hosts)
+        pkey = paramiko.rsakey.RSAKey.from_private_key_file(keypath)
+        self._sshclient.connect(host, port=port, username='root', pkey=pkey, timeout=5)
+
+        os.unlink(keypath)
+        os.unlink(known_hosts)
+
+
+    def exec_ssh(self, command):
+        assert self._sshclient is not None
+        stdin, stdout, stderr = self._sshclient.exec_command(command)
+        return stdout.read()
