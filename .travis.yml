@@ -8,6 +8,7 @@ python:
 
 install:
   - pip install -r devel-requirements.txt
+  - pip install -r extra-requirements.txt
   - pip install .
 
 script: make check
