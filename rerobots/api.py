@@ -437,7 +437,7 @@ class Instance(APIClient):
 
         Either workspace_types or wdeployment_id must be given.
         """
-        super().__init__(api_token=api_token, base_uri=base_uri, verify=verify)
+        super(Instance, self).__init__(api_token=api_token, base_uri=base_uri, verify=verify)
         if ((workspace_types is None and wdeployment_id is None)
             or (workspace_types != None and wdeployment_id != None)):
             raise ValueError('either workspace_types or wdeployment_id must be given, but not both')
@@ -465,44 +465,44 @@ class Instance(APIClient):
 
 
     def get_deployment_info(self, headers=None):
-        return super().get_deployment_info(self._wdeployment_id, headers=headers)
+        return super(Instance, self).get_deployment_info(self._wdeployment_id, headers=headers)
 
 
     def get_access_rules(self, to_user=None, headers=None):
-        return super().get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
+        return super(Instance, self).get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
 
     def add_access_rule(self, capability, to_user=None, headers=None):
-        super().add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        super(Instance, self).add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
 
     def del_access_rule(self, capability, to_user=None, headers=None):
-        super().del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        super(Instance, self).del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
 
 
     def get_firewall_rules(self, headers=None):
-        return super().get_firewall_rules(self._id, headers=headers)
+        return super(Instance, self).get_firewall_rules(self._id, headers=headers)
 
     def add_firewall_rule(self, action, source_address=None, headers=None):
-        super().add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
+        super(Instance, self).add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
 
     def flush_firewall_rules(self, headers=None):
-        super().flush_firewall_rules(self._id, headers=headers)
+        super(Instance, self).flush_firewall_rules(self._id, headers=headers)
 
 
     def get_vpn_newclient(self, headers=None):
-        return super().get_vpn_newclient(self._id, headers=headers)
+        return super(Instance, self).get_vpn_newclient(self._id, headers=headers)
 
 
     def activate_addon_cam(self, headers=None):
-        super().activate_addon_cam(self._id, headers=headers)
+        super(Instance, self).activate_addon_cam(self._id, headers=headers)
 
     def status_addon_cam(self, headers=None):
-        return super().status_addon_cam(self._id, headers=headers)
+        return super(Instance, self).status_addon_cam(self._id, headers=headers)
 
     def get_snapshot_cam(self, camera_id=1, coding=None, format=None, headers=None):
-        return super().get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
+        return super(Instance, self).get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
 
     def deactivate_addon_cam(self, headers=None):
-        super().deactivate_addon_cam(self._id, headers=headers)
+        super(Instance, self).deactivate_addon_cam(self._id, headers=headers)
 
 
     def get_status(self):
