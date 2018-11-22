@@ -9,6 +9,9 @@ try:
 except ImportError:  # if Python 3
     from io import StringIO
 import sys
+import unittest
+
+import responses
 
 import rerobots
 from rerobots import cli
@@ -29,6 +32,29 @@ def test_help():
     res = sys.stdout.getvalue().strip()
     sys.stdout = original_stdout
     assert 'rerobots API command-line client' in res
+
+
+class MockSearchTestCases(unittest.TestCase):
+    def setUp(self):
+        self.wdeployment_id = 'a6b88b4f-2402-41e4-8e81-b2fd852435eb'
+        self.instance_ids_stack = ['c81613e1-2d4c-4751-b3bc-08e604656c2d']
+        self.active_instances = []
+        responses.add(responses.GET, 'https://api.rerobots.net/deployments',
+                      json={'workspace_deployments': [self.wdeployment_id],
+                            'page_count': 1},
+                      status=200)
+
+    def tearDown(self):
+        pass
+
+    @responses.activate
+    def test_emptysearch(self):
+        original_stdout = sys.stdout
+        sys.stdout = StringIO()
+        cli.main(['search'])
+        res = sys.stdout.getvalue().strip()
+        sys.stdout = original_stdout
+        assert 'a6b88b4f-2402-41e4-8e81-b2fd852435eb' in res
 
 
 if __name__ == '__main__':
