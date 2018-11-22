@@ -10,7 +10,17 @@ check:
 	pylint -j 4 -E `find rerobots -name \*.py`
 	cd tests && nosetests -v
 
+.PHONY: checkcover
+checkcover:
+	pylint -j 4 -E `find rerobots -name \*.py`
+	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots
+
 
 .PHONY: checktests
 checktests:
 	pylint -j 4 -E `find tests -name \*.py`
+
+
+clean:
+	rm -rf tests/cover
+	rm -f tests/.coverage
