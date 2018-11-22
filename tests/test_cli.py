@@ -55,7 +55,3 @@ class MockSearchTestCases(unittest.TestCase):
         res = sys.stdout.getvalue().strip()
         sys.stdout = original_stdout
         assert 'a6b88b4f-2402-41e4-8e81-b2fd852435eb' in res
-
-
-if __name__ == '__main__':
-    test_version()
