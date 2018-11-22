@@ -37,7 +37,7 @@ def main(argv=None):
     info_parser = subparsers.add_parser('info', help='print summary about instance.')
     info_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
 
-    subparsers.add_parser('list', help='list all instances owned by this user.')
+    list_parser = subparsers.add_parser('list', help='list all instances owned by this user.')
 
     search_parser = subparsers.add_parser('search', help=(
         'search for matching deployments. '
@@ -55,7 +55,8 @@ def main(argv=None):
     terminate_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
 
     subparsers.add_parser('version', help='print version number and exit.')
-    subparsers.add_parser('help', help='print this help message and exit')
+    help_parser = subparsers.add_parser('help', help='print this help message and exit')
+    help_parser.add_argument('help_target_command', metavar='COMMAND', type=str, nargs='?')
 
     args = argparser.parse_args(argv)
     if args.command == 'version':
@@ -63,7 +64,22 @@ def main(argv=None):
         return 0
 
     if args.command is None or args.command == 'help':
-        argparser.print_help()
+        if args.help_target_command is not None:
+            if args.help_target_command == 'info':
+                info_parser.print_help()
+            elif args.help_target_command == 'list':
+                list_parser.print_help()
+            elif args.help_target_command == 'search':
+                search_parser.print_help()
+            elif args.help_target_command == 'launch':
+                launch_parser.print_help()
+            elif args.help_target_command == 'terminate':
+                terminate_parser.print_help()
+            else:
+                print('Error: unrecognized command {}'.format(args.help_target_command))
+                return 1
+        else:
+            argparser.print_help()
         return 0
 
     if args.jwt is not None:
