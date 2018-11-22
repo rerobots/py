@@ -431,18 +431,21 @@ class APIClient(object):
             raise Error(res.text)
 
 
-class Instance(APIClient):
-    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, base_uri=None, verify=True):
+class Instance(object):
+    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, base_uri=None, verify=True, apic=None):
         """
 
         Either workspace_types or wdeployment_id must be given.
         """
-        super(Instance, self).__init__(api_token=api_token, base_uri=base_uri, verify=verify)
+        if apic is None:
+            self.apic = APIClient(api_token=api_token, base_uri=base_uri, verify=verify)
+        else:
+            self.apic = apic
         if ((workspace_types is None and wdeployment_id is None)
             or (workspace_types != None and wdeployment_id != None)):
             raise ValueError('either workspace_types or wdeployment_id must be given, but not both')
         if workspace_types is not None:
-            candidates = self.get_deployments(types=workspace_types)
+            candidates = self.apic.get_deployments(types=workspace_types)
             if len(candidates) < 1:
                 raise ValueError('no deployments found with any type in {}'.format(workspace_types))
             self._wdeployment_id = candidates[0]
@@ -452,7 +455,7 @@ class Instance(APIClient):
 
         self._type = None
 
-        payload = self.request_instance(self._wdeployment_id, reserve=False)
+        payload = self.apic.request_instance(self._wdeployment_id, reserve=False)
         self._id = payload['id']
         self._status = 'INIT'  # Instance always begins at INIT
         self._details = None
@@ -465,48 +468,48 @@ class Instance(APIClient):
 
 
     def get_deployment_info(self, headers=None):
-        return super(Instance, self).get_deployment_info(self._wdeployment_id, headers=headers)
+        return self.apic.get_deployment_info(self._wdeployment_id, headers=headers)
 
 
     def get_access_rules(self, to_user=None, headers=None):
-        return super(Instance, self).get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
+        return self.apic.get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
 
     def add_access_rule(self, capability, to_user=None, headers=None):
-        super(Instance, self).add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        self.apic.add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
 
     def del_access_rule(self, capability, to_user=None, headers=None):
-        super(Instance, self).del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        self.apic.del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
 
 
     def get_firewall_rules(self, headers=None):
-        return super(Instance, self).get_firewall_rules(self._id, headers=headers)
+        return self.apic.get_firewall_rules(self._id, headers=headers)
 
     def add_firewall_rule(self, action, source_address=None, headers=None):
-        super(Instance, self).add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
+        self.apic.add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
 
     def flush_firewall_rules(self, headers=None):
-        super(Instance, self).flush_firewall_rules(self._id, headers=headers)
+        self.apic.flush_firewall_rules(self._id, headers=headers)
 
 
     def get_vpn_newclient(self, headers=None):
-        return super(Instance, self).get_vpn_newclient(self._id, headers=headers)
+        return self.apic.get_vpn_newclient(self._id, headers=headers)
 
 
     def activate_addon_cam(self, headers=None):
-        super(Instance, self).activate_addon_cam(self._id, headers=headers)
+        self.apic.activate_addon_cam(self._id, headers=headers)
 
     def status_addon_cam(self, headers=None):
-        return super(Instance, self).status_addon_cam(self._id, headers=headers)
+        return self.apic.status_addon_cam(self._id, headers=headers)
 
     def get_snapshot_cam(self, camera_id=1, coding=None, format=None, headers=None):
-        return super(Instance, self).get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
+        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
 
     def deactivate_addon_cam(self, headers=None):
-        super(Instance, self).deactivate_addon_cam(self._id, headers=headers)
+        self.apic.deactivate_addon_cam(self._id, headers=headers)
 
 
     def get_status(self):
-        payload = self.get_instance_info(self._id)
+        payload = self.apic.get_instance_info(self._id)
         if self._wdeployment_id is None:
             self._wdeployment_id = payload['deployment']
         if self._details is None:
@@ -540,7 +543,7 @@ class Instance(APIClient):
 
     def terminate(self):
         self.stop_sshclient()
-        self.terminate_instance(self._id)
+        self.apic.terminate_instance(self._id)
 
 
     def stop_sshclient(self):
