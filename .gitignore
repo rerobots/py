@@ -4,3 +4,5 @@
 rerobots/_version.py
 /dist/
 .tox
+.coverage
+cover/
