@@ -13,4 +13,8 @@ install:
 script: make check
 
 notifications:
-  email: false
+  email:
+    recipients:
+      - scott@rerobots.net
+    on_success: change
+    on_failure: always
