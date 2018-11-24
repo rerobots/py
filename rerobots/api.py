@@ -433,17 +433,32 @@ class APIClient(object):
 
 class Instance(object):
     def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, base_uri=None, verify=True, apic=None):
-        """
+        """client for a workspace instance
 
-        Either workspace_types or wdeployment_id must be given.
+        At least one of workspace_types or wdeployment_id must be
+        given. If both are provided (not None), consistency is
+        checked: the type of the workspace deployment of the given
+        identifier is compared with the given type. If they differ, no
+        instance is created, and ValueError is raised.
+
+        The optional parameter `apic` is an instance of APIClient. If
+        it is not given, then an APIClient object is instantiated
+        internally from the parameters `api_token` etc., corresponding
+        to parameters APIClient of the same name.
         """
+        if workspace_types is None and wdeployment_id is None:
+            raise ValueError('at least workspace_types or wdeployment_id must be given')
+
         if apic is None:
             self.apic = APIClient(api_token=api_token, base_uri=base_uri, verify=verify)
         else:
             self.apic = apic
-        if ((workspace_types is None and wdeployment_id is None)
-            or (workspace_types != None and wdeployment_id != None)):
-            raise ValueError('either workspace_types or wdeployment_id must be given, but not both')
+
+        if wdeployment_id is not None and workspace_types is not None:
+            di = self.apic.get_deployment_info(wdeployment_id)
+            if di['type'] not in workspace_types:
+                raise ValueError('workspace deployment {} does not have type in {}', wdeployment_id, workspace_types)
+
         if workspace_types is not None:
             candidates = self.apic.get_deployments(types=workspace_types)
             if len(candidates) < 1:
