@@ -23,11 +23,11 @@ Testing and development
 -----------------------
 
 All tests are in the directory ``tests/``. If you have the ``rerobots`` package
-installed, then you can run all tests::
+installed, then you can ::
 
-  cd tests
-  python -m nose -v
+  make checkcover
 
+to run static analysis and all tests, and to generate a coverage report.
 Recent results on `Travis CI <https://travis-ci.org/>`_ are available at
 https://travis-ci.org/rerobots/py
 
