@@ -596,7 +596,17 @@ class Instance(object):
         os.unlink(known_hosts)
 
 
-    def exec_ssh(self, command):
+    def exec_ssh(self, command, timeout=None, get_files=False):
+        """execute command via SSH
+
+        https://docs.paramiko.org/en/2.4/api/client.html#paramiko.client.SSHClient.exec_command
+
+        If get_files=True, then return files of stdin, stdout, and
+        stderr.
+        """
         assert self._sshclient is not None
-        stdin, stdout, stderr = self._sshclient.exec_command(command)
-        return stdout.read()
+        stdin, stdout, stderr = self._sshclient.exec_command(command, timeout=timeout)
+        if get_files:
+            return stdin, stdout, stderr
+        else:
+            return stdout.read()
