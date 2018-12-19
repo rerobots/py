@@ -10,6 +10,11 @@ check:
 	pylint -j 4 -E `find rerobots -name \*.py`
 	cd tests && nosetests -v
 
+.PHONY: checklocal
+checklocal:
+	pylint -j 4 -E `find rerobots -name \*.py`
+	cd tests && nosetests -v -I test_anonymous.py
+
 .PHONY: checkcover
 checkcover:
 	pylint -j 4 -E `find rerobots -name \*.py`
