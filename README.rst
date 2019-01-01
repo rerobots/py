@@ -31,6 +31,10 @@ to run static analysis and all tests, and to generate a coverage report.
 Recent results on `Travis CI <https://travis-ci.org/>`_ are available at
 https://travis-ci.org/rerobots/py
 
+To run tests that do not touch production servers::
+
+  make checklocal
+
 
 Participating
 -------------
