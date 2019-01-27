@@ -6,6 +6,7 @@ python:
   - "3.6"
 
 install:
+  - pip install --require-hashes -r requirements.txt
   - pip install -r devel-requirements.txt
   - pip install -r extra-requirements.txt
   - pip install .
