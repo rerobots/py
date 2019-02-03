@@ -11,4 +11,4 @@ pylint = "*"
 responses = "*"
 
 [packages]
-rerobots = {path = ".", editable = true, extras = ["extra"]}
+rerobots = {path = ".",editable = true,extras = ["extra"]}
