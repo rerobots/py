@@ -50,7 +50,7 @@ setup(name='rerobots',
                    'Programming Language :: Python :: 3.7'],
       packages=['rerobots'],
       install_requires=['requests'],
-      extra_requires={
+      extras_require={
           'extra': ['numpy', 'Pillow', 'paramiko'],
       },
       entry_points={'console_scripts': ['rerobots = rerobots.cli:main']}
