@@ -1,5 +1,0 @@
-nose
-coverage
-tox
-pylint
-responses

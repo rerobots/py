@@ -8,10 +8,8 @@ python:
   - "3.7"
 
 install:
-  - pip install --require-hashes -r requirements.txt
-  - pip install -r devel-requirements.txt
-  - pip install -r extra-requirements.txt
-  - pip install .
+  - pip install pipenv
+  - pipenv install --dev
 
 script: make check
 
