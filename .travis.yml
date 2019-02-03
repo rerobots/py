@@ -7,10 +7,11 @@ python:
   - "3.6"
   - "3.7"
 
-install:
+before_install:
   - pip install pipenv
   - pipenv run pip install pip==18.0
-  - pipenv install --skip-lock --dev .[extra]
+
+install: pipenv install --skip-lock --dev .[extra]
 
 script: make check
 
