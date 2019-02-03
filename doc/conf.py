@@ -9,7 +9,7 @@ import sys
 sys.path.append(os.path.abspath('..'))
 
 
-project = 'rerobots Python client library'
+project = 'rerobots Python client'
 copyright = '2017, 2018, rerobots, Inc.'
 author = 'rerobots, Inc.'
 
