@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath('..'))
 
 
 project = 'rerobots Python client'
-copyright = '2017, 2018, rerobots, Inc.'
+copyright = '2017-2019 rerobots, Inc.'
 author = 'rerobots, Inc.'
 
 version = ''
