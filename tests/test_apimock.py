@@ -11,10 +11,30 @@ from nose.tools import assert_raises
 import responses
 
 from rerobots.api import APIClient
-from rerobots.api import Error
+from rerobots.api import Error, WrongAuthToken
 
 
 @responses.activate
+def test_deployments_list():
+    responses.add(responses.GET, 'https://api.rerobots.net/deployments',
+                  json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
+                        'page_count': 1},
+                  status=200)
+    apic = APIClient()
+    res = apic.get_deployments()
+    assert len(res) > 0
+
+
+@responses.activate
+def test_instances_list_badtoken():
+    responses.add(responses.GET, 'https://api.rerobots.net/instances',
+                  json={"error_message": "wrong authorization token"},
+                  status=400)
+    apic = APIClient(api_token='deadbeef')
+    with assert_raises(WrongAuthToken):
+        apic.get_instances()
+
+
 def test_deployments_list():
     responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
