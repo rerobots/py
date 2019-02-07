@@ -20,6 +20,10 @@ checkcover:
 	pylint -j 4 -E `find rerobots -name \*.py`
 	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots
 
+.PHONY: checklocalcover
+checklocalcover:
+	pylint -j 4 -E `find rerobots -name \*.py`
+	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots -I test_anonymous.py
 
 .PHONY: checktests
 checktests:
