@@ -5,24 +5,24 @@
 # SCL <scott@rerobots.net>
 # Copyright (C) 2018 rerobots, Inc.
 
-.PHONY: check
-check:
+.PHONY: lint
+lint:
 	pylint -j 4 -E `find rerobots -name \*.py`
+
+.PHONY: check
+check: lint
 	cd tests && nosetests -v
 
 .PHONY: checklocal
-checklocal:
-	pylint -j 4 -E `find rerobots -name \*.py`
+checklocal: lint
 	cd tests && nosetests -v -I test_anonymous.py
 
 .PHONY: checkcover
-checkcover:
-	pylint -j 4 -E `find rerobots -name \*.py`
+checkcover: lint
 	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots
 
 .PHONY: checklocalcover
-checklocalcover:
-	pylint -j 4 -E `find rerobots -name \*.py`
+checklocalcover: lint
 	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots -I test_anonymous.py
 
 .PHONY: checktests
