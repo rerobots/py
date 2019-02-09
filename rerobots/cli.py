@@ -28,7 +28,10 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
-    argparser = argparse.ArgumentParser(description='rerobots API command-line client')
+    argparser = argparse.ArgumentParser(description='rerobots API command-line client', add_help=False)
+    argparser.add_argument('-h','--help', dest='print_help',
+                           action='store_true', default=False,
+                           help='print this help message and exit')
     argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
@@ -63,8 +66,8 @@ def main(argv=None):
         print(__version__)
         return 0
 
-    if args.command is None or args.command == 'help':
-        if args.help_target_command is not None:
+    if args.print_help or args.command is None or args.command == 'help':
+        if hasattr(args, 'help_target_command') and args.help_target_command is not None:
             if args.help_target_command == 'info':
                 info_parser.print_help()
             elif args.help_target_command == 'list':
