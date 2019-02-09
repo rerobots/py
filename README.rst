@@ -25,15 +25,18 @@ Testing and development
 All tests are in the directory ``tests/``. If you have the ``rerobots`` package
 installed, then you can ::
 
-  make checkcover
+  make check
 
-to run static analysis and all tests, and to generate a coverage report.
+to run static analysis and all tests.
 Recent results on `Travis CI <https://travis-ci.org/>`_ are available at
 https://travis-ci.org/rerobots/py
 
-To run tests that do not touch production servers::
+Several other commands are available to run subsets of tests or create coverage
+reports. For example, to run tests that do not touch production servers::
 
   make checklocal
+
+and to measure code coverage: ``make checklocalcover``
 
 
 Participating
