@@ -35,6 +35,7 @@ def main(argv=None):
     argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
+
     subparsers = argparser.add_subparsers(dest='command')
 
     info_parser = subparsers.add_parser('info', help='print summary about instance.')
@@ -60,6 +61,25 @@ def main(argv=None):
     subparsers.add_parser('version', help='print version number and exit.')
     help_parser = subparsers.add_parser('help', help='print this help message and exit')
     help_parser.add_argument('help_target_command', metavar='COMMAND', type=str, nargs='?')
+
+    # Workaround for Python 2.7 argparse, which does not accept empty COMMAND:
+    # If `--help` or `-h` present and every argument before it begins with `-`,
+    # then convert it to `help`.
+    if sys.version_info.major < 3:
+        try:
+            ind = argv.index('--help')
+        except ValueError:
+            try:
+                ind = argv.index('-h')
+            except ValueError:
+                ind = None
+        if ind is not None:
+            for k in range(ind):
+                if argv[k][0] != '-':
+                    ind = None
+                    break
+            if ind is not None:
+                argv[ind] = 'help'
 
     args = argparser.parse_args(argv)
     if args.command == 'version':
