@@ -32,6 +32,9 @@ def main(argv=None):
     argparser.add_argument('-h','--help', dest='print_help',
                            action='store_true', default=False,
                            help='print this help message and exit')
+    argparser.add_argument('-V','--version', dest='print_version',
+                           action='store_true', default=False,
+                           help='print version number and exit.')
     argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
@@ -65,6 +68,8 @@ def main(argv=None):
     # Workaround for Python 2.7 argparse, which does not accept empty COMMAND:
     # If `--help` or `-h` present and every argument before it begins with `-`,
     # then convert it to `help`.
+    # If `-V` or `--version` present and every argument before it begins with `-`,
+    # then convert it to `version.
     if sys.version_info.major < 3:
         try:
             ind = argv.index('--help')
@@ -80,9 +85,23 @@ def main(argv=None):
                     break
             if ind is not None:
                 argv[ind] = 'help'
+        try:
+            ind = argv.index('--version')
+        except ValueError:
+            try:
+                ind = argv.index('-V')
+            except ValueError:
+                ind = None
+        if ind is not None:
+            for k in range(ind):
+                if argv[k][0] != '-':
+                    ind = None
+                    break
+            if ind is not None:
+                argv[ind] = 'version'
 
     args = argparser.parse_args(argv)
-    if args.command == 'version':
+    if args.print_version or args.command == 'version':
         print(__version__)
         return 0
 
