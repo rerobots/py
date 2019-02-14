@@ -7,7 +7,7 @@ Copyright (c) 2018 rerobots, Inc.
 import json
 import unittest
 
-from nose.tools import assert_raises
+import pytest
 import responses
 
 from rerobots.api import APIClient
@@ -31,7 +31,7 @@ def test_instances_list_badtoken():
                   json={"error_message": "wrong authorization token"},
                   status=400)
     apic = APIClient(api_token='deadbeef')
-    with assert_raises(WrongAuthToken):
+    with pytest.raises(WrongAuthToken):
         apic.get_instances()
 
 
@@ -84,5 +84,5 @@ class BasicInstanceTestCases(unittest.TestCase):
         res = apic.request_instance(wdeployment_id, reserve=False)
         assert res['success']
         assert 'id' in res
-        with assert_raises(Error):
+        with pytest.raises(Error):
             apic.request_instance(wdeployment_id, reserve=False)

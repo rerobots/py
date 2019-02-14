@@ -4,7 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2018 rerobots, Inc.
 """
-from nose.tools import assert_raises
+import pytest
 
 from rerobots.api import APIClient
 from rerobots.api import WrongAuthToken
@@ -35,11 +35,11 @@ def test_deployment_details():
 
 def test_instances_list():
     apic = APIClient()
-    with assert_raises(WrongAuthToken):
+    with pytest.raises(WrongAuthToken):
         apic.get_instances()
 
 
 def test_instances_list_badtoken():
     apic = APIClient(api_token='deadbeef')
-    with assert_raises(WrongAuthToken):
+    with pytest.raises(WrongAuthToken):
         apic.get_instances()
