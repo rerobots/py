@@ -35,6 +35,7 @@ def test_instances_list_badtoken():
         apic.get_instances()
 
 
+@responses.activate
 def test_deployments_list():
     responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
