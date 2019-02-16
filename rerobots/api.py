@@ -150,7 +150,7 @@ class APIClient(object):
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
-                    raise WrongAuthToken
+                    raise WrongAuthToken('wrong authorization token')
                 else:
                     raise Error(payload['error_message'])
             else:
@@ -203,7 +203,7 @@ class APIClient(object):
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
-                    raise WrongAuthToken
+                    raise WrongAuthToken('wrong authorization token')
                 else:
                     raise Error(payload['error_message'])
             else:
