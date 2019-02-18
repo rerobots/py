@@ -44,8 +44,16 @@ class WrongAuthToken(Error):
 class APIClient(object):
     """API client object
     """
-    def __init__(self, api_token=None, base_uri=None, verify=True):
+    def __init__(self, api_token=None, headers=None, base_uri=None, verify=True):
         """Instantiate API client.
+
+        `api_token` is some auth token obtained from https://rerobots.net/tokens
+        In general this token has limited scope and might not be sufficient for
+        some actions that this API client will try to do, leading to the
+        exception WrongAuthToken.
+
+        `headers` is a dictionary of headers to add to every request made by
+        this client object. This is only of interest in special use-cases.
 
         `base_uri` is the string prefix used to create API requests.
         In general the default value works, but special cases might
@@ -56,6 +64,12 @@ class APIClient(object):
         be False.
         """
         self.api_token = api_token
+        if headers is None:
+            self.headers = dict()
+        else:
+            self.headers = headers.copy()
+        if self.api_token:
+            headers['Authorization'] = 'Bearer ' + self.api_token
         if base_uri is None:
             self.base_uri = 'https://api.rerobots.net'
         else:
@@ -65,28 +79,45 @@ class APIClient(object):
     def add_client_headers(self, headers=None):
         """Add request headers associated with this client.
 
-        This function returns a new headers `dict`. If initial values
-        are given, then they are shallow-copied.
+        This method accumulates headers. E.g.,
+
+            add_client_headers({'X-Example-1': 'ex1'})
+            add_client_headers({'X-Example-2': 'ex2'})
+
+        is equivalent to
+
+            add_client_headers({'X-Example-1': 'ex1', 'X-Example-2': 'ex2'})
+
+        Note that it is not possible to overwrite an existing API token with an
+        Authorization header. In other words, if an Authorization header is
+        included, then it will be ignored if there is already an API token
+        associated with this client object.
         """
         if headers is None:
             headers = dict()
         else:
             headers = headers.copy()
-        self.add_token_header(headers)
-        return headers
-
-    def add_token_header(self, headers):
-        """Add API token associated with this client into request headers.
-
-        If there is no API token associated with this client, then
-        this function does nothing.
-
-        This function updates the given headers `dict` in-place.
-        """
-        if self.api_token is not None:
+        self.headers.update(headers)
+        if self.api_token and 'Authorization' in self.headers:
             headers['Authorization'] = 'Bearer ' + self.api_token
 
-    def get_deployments(self, q=None, maxlen=None, types=None, page=None, max_per_page=None, headers=None):
+    def clear_client_headers(self):
+        """Clear (remove) all supplemental headers associated with this client.
+
+        This method does not affect API tokens associated with
+        this client, if any.
+        """
+        self.headers = dict()
+
+    def apply_auth_token(self, token):
+        """Associate given API (auth) token with this client.
+
+        If there is already an associated API token, it will be overwritten.
+        """
+        self.api_token = token
+        self.headers['Authorization'] = 'Bearer ' + self.api_token
+
+    def get_deployments(self, query=None, maxlen=None, types=None, page=None, max_per_page=None):
         """Get list of workspace deployments.
 
         `types`, if given, should be a list of workspace types (str).
@@ -98,19 +129,18 @@ class APIClient(object):
         list of instances returned in any one response.
         Cf. documentation of the HTTP API.
         """
-        headers = self.add_client_headers(headers)
         params = dict()
         if max_per_page is not None:
             params['max_per_page'] = max_per_page
             if page is not None:
                 params['page'] = page
-        if q is not None:
-            params['q'] = q
+        if query is not None:
+            params['q'] = query
         if maxlen is not None:
             params['maxlen'] = maxlen
         if types is not None:
             params['types'] = ','.join(types)
-        res = requests.get(self.base_uri + '/deployments', params=params, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/deployments', params=params, headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
@@ -120,28 +150,26 @@ class APIClient(object):
         else:
             return payload['workspace_deployments'], payload['page_count']
 
-    def get_deployment_info(self, deployment_id, headers=None):
+    def get_deployment_info(self, deployment_id):
         """Get details about a workspace deployment.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/deployment/' + deployment_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/deployment/' + deployment_id, headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise Error(res.text)
         return payload
 
-    def get_access_rules(self, to_user=None, deployment_id=None, headers=None):
+    def get_access_rules(self, to_user=None, deployment_id=None):
         """Get list of access control rules of workspace deployments.
         """
-        headers = self.add_client_headers(headers)
         params = dict()
         if to_user is not None:
             params['to_user'] = to_user
         if deployment_id is not None:
             params['wdeployment'] = deployment_id
         res = requests.get(self.base_uri + '/rules', params=params,
-                           headers=headers, verify=self.verify_certs)
+                           headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
@@ -158,23 +186,22 @@ class APIClient(object):
                 raise Error(payload)
         return payload['rules']
 
-    def add_access_rule(self, deployment_id, capability, to_user=None, headers=None):
+    def add_access_rule(self, deployment_id, capability, to_user=None):
         """Add access control rule for workspace deployment.
 
         This operation is idempotent, i.e., adding the same rule more
         than once has no effect.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add', headers=headers)
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add', headers=self.headers)
 
-    def del_access_rule(self, deployment_id, capability, to_user=None, headers=None):
+    def del_access_rule(self, deployment_id, capability, to_user=None):
         """Delete access control rule from workspace deployment.
 
         It is an error to try to delete a rule that does not exist.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del', headers=headers)
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del', headers=self.headers)
 
-    def _modify_access_rule(self, deployment_id, capability, action, to_user=None, headers=None):
-        headers = self.add_client_headers(headers)
+    def _modify_access_rule(self, deployment_id, capability, action, to_user=None):
         body = {
             'do': action,
             'wd': deployment_id,
@@ -183,11 +210,11 @@ class APIClient(object):
         if to_user is not None:
             body['user'] = to_user
         res = requests.post(self.base_uri + '/rule', data=json.dumps(body),
-                            headers=headers, verify=self.verify_certs)
+                            headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def get_instances(self, include_terminated=False, page=None, max_per_page=None, headers=None):
+    def get_instances(self, include_terminated=False, page=None, max_per_page=None):
         """Get list of your instances.
 
         The parameters `page` and `max_per_page` can be used for
@@ -195,7 +222,6 @@ class APIClient(object):
         list of instances returned in any one response.
         Cf. documentation of the HTTP API.
         """
-        headers = self.add_client_headers(headers)
         params = dict()
         if include_terminated:
             params['include_terminated'] = ''
@@ -203,7 +229,7 @@ class APIClient(object):
             params['max_per_page'] = max_per_page
             if page is not None:
                 params['page'] = page
-        res = requests.get(self.base_uri + '/instances', params=params, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/instances', params=params, headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
@@ -223,29 +249,27 @@ class APIClient(object):
         else:
             return payload['workspace_instances'], payload['page_count']
 
-    def get_instance_info(self, instance_id, headers=None):
+    def get_instance_info(self, instance_id):
         """Get details about a workspace instance.
 
         This operation requires sufficient permissions by the
         requesting user.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/instance/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/instance/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise Error(res.text)
         return payload
 
-    def terminate_instance(self, instance_id, headers=None):
+    def terminate_instance(self, instance_id):
         """Terminate a workspace instance.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/terminate/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/terminate/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, headers=None):
+    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None):
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
@@ -255,7 +279,6 @@ class APIClient(object):
         If reserve=True, then create a reservation if the workspace
         deployment is not available at the time of this request.
         """
-        headers = self.add_client_headers(headers)
         payload = None
         body = dict()
         if sshkey is not None:
@@ -266,99 +289,91 @@ class APIClient(object):
         if event_url is not None:
             body['eurl'] = event_url
         if body:
-            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=headers, verify=self.verify_certs)
+            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=self.headers, verify=self.verify_certs)
         else:
-            res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=headers, verify=self.verify_certs)
+            res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise Error(res.text)
         return payload
 
-    def get_reservations(self, headers=None):
+    def get_reservations(self):
         """Get list of your reservations.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/reservations', headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/reservations', headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
         return res.json()['reservations']
 
-    def cancel_reservation(self, reservation_id, headers=None):
+    def cancel_reservation(self, reservation_id):
         """Cancel a reservation.
 
         This operation cannot be undone.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.delete(self.base_uri + '/reservation/' + reservation_id, headers=headers, verify=self.verify_certs)
+        res = requests.delete(self.base_uri + '/reservation/' + reservation_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def get_firewall_rules(self, instance_id, headers=None):
+    def get_firewall_rules(self, instance_id):
         """Get list of firewall rules of an instance.
 
         These rules are also known as packet filter rules. They are
         similar to rule specifications of Linux iptables.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/firewall/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
         return res.json()['rules']
 
-    def add_firewall_rule(self, instance_id, action, source_address=None, headers=None):
+    def add_firewall_rule(self, instance_id, action, source_address=None):
         """Add a firewall rule.
 
         Related methods: get_firewall_rules(), flush_firewall_rules().
         """
-        headers = self.add_client_headers(headers)
         if action not in ['ACCEPT', 'DROP', 'REJECT']:
             raise Error('unrecognized firewall action')
         if source_address is None:
             payload = '{"action": "' + action + '"}'
         else:
             payload = '{"src": "' + source_address + '", "action": "' + action + '"}'
-        res = requests.post(self.base_uri + '/firewall/' + instance_id, data=payload, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/firewall/' + instance_id, data=payload, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def flush_firewall_rules(self, instance_id, headers=None):
+    def flush_firewall_rules(self, instance_id):
         """Remove all firewall rules.
 
         N.B., after this operation, any source address can send
         packets to the public address of your workspace instance.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.delete(self.base_uri + '/firewall/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.delete(self.base_uri + '/firewall/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def get_vpn_newclient(self, instance_id, headers=None):
+    def get_vpn_newclient(self, instance_id):
         """Create new OpenVPN client.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/vpn/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/vpn/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
         return res.json()
 
-    def activate_addon_vnc(self, instance_id, headers=None):
+    def activate_addon_vnc(self, instance_id):
         """Activate the VNC add-on, if available.
 
         The VNC add-on must be activated before it can be started.  If
         the VNC connection should be reset, try first to stop and
         start it again, without deactivating the add-on.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def status_addon_vnc(self, instance_id, headers=None):
+    def status_addon_vnc(self, instance_id):
         """Get status of the VNC add-on for this instance.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/addon/vnc/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/addon/vnc/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         elif res.status_code == 404:
@@ -367,38 +382,35 @@ class APIClient(object):
             payload = res.json()
         return payload
 
-    def start_addon_vnc(self, instance_id, headers=None):
+    def start_addon_vnc(self, instance_id):
         """Start user-visible connection of VNC add-on.
 
         Read more in the documentation of the method activate_addon_vnc().
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/start', headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/start', headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def stop_addon_vnc(self, instance_id, headers=None):
+    def stop_addon_vnc(self, instance_id):
         """Stop user-visible connection of VNC add-on.
 
         Read more in the documentation of the method activate_addon_vnc().
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/stop', headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/addon/vnc/' + instance_id + '/stop', headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def deactivate_addon_vnc(self, instance_id, headers=None):
+    def deactivate_addon_vnc(self, instance_id):
         """Deactivate VNC add-on for this instance.
 
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.delete(self.base_uri + '/addon/vnc/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.delete(self.base_uri + '/addon/vnc/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def activate_addon_mistyproxy(self, instance_id, headers=None):
+    def activate_addon_mistyproxy(self, instance_id):
         """Activate mistyproxy add-on.
 
         Note that this add-on is unique to workspaces that involve
@@ -408,16 +420,14 @@ class APIClient(object):
         When it is ready, proxy URLs can be obtained via
         status_addon_mistyproxy().
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def status_addon_mistyproxy(self, instance_id, headers=None):
+    def status_addon_mistyproxy(self, instance_id):
         """Get status of mistyproxy add-on for this instance.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         elif res.status_code == 404:
@@ -426,7 +436,7 @@ class APIClient(object):
             payload = res.json()
         return payload
 
-    def deactivate_addon_mistyproxy(self, instance_id, headers=None):
+    def deactivate_addon_mistyproxy(self, instance_id):
         """Deactivate mistyproxy add-on.
 
         Note that a cycle of deactivate-activate of the mistyproxy
@@ -435,24 +445,21 @@ class APIClient(object):
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.delete(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.delete(self.base_uri + '/addon/mistyproxy/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def activate_addon_cam(self, instance_id, headers=None):
+    def activate_addon_cam(self, instance_id):
         """Activate cam (camera) add-on.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/addon/cam/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/addon/cam/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def status_addon_cam(self, instance_id, headers=None):
+    def status_addon_cam(self, instance_id):
         """Get status of cam (camera) add-on for this instance.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/addon/cam/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/addon/cam/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         elif res.status_code == 404:
@@ -461,18 +468,17 @@ class APIClient(object):
             payload = res.json()
         return payload
 
-    def deactivate_addon_cam(self, instance_id, headers=None):
+    def deactivate_addon_cam(self, instance_id):
         """Deactivate cam (camera) add-on.
 
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.delete(self.base_uri + '/addon/cam/' + instance_id, headers=headers, verify=self.verify_certs)
+        res = requests.delete(self.base_uri + '/addon/cam/' + instance_id, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, format=None, headers=None):
+    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, format=None):
         """Get image from camera via cam add-on.
 
         If coding=None (default), then returned data are not
@@ -490,8 +496,7 @@ class APIClient(object):
         if format is not None:
             format = format.lower()
             assert format in ['ndarray', 'jpeg']
-        headers = self.add_client_headers(headers)
-        res = requests.get(self.base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=headers, verify=self.verify_certs)
+        res = requests.get(self.base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=self.headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         else:
@@ -516,7 +521,7 @@ class APIClient(object):
                 payload['format'] = 'ndarray'
         return payload
 
-    def revoke_token(self, token=None, sha256=None, headers=None):
+    def revoke_token(self, token=None, sha256=None):
         """Revoke an API token.
 
         This action cannot be undone.
@@ -531,12 +536,11 @@ class APIClient(object):
                 raise ValueError('both token or sha256 given, '
                                  'but SHA256(token) != sha256')
             sha256 = token_hash
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/revoke/' + sha256, headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/revoke/' + sha256, headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
-    def purge(self, headers=None):
+    def purge(self):
         """Purge all valid API tokens.
 
         After this call succeeds, no existing API tokens associated
@@ -544,8 +548,7 @@ class APIClient(object):
 
         This action cannot be undone.
         """
-        headers = self.add_client_headers(headers)
-        res = requests.post(self.base_uri + '/purge', headers=headers, verify=self.verify_certs)
+        res = requests.post(self.base_uri + '/purge', headers=self.headers, verify=self.verify_certs)
         if not res.ok:
             raise Error(res.text)
 
@@ -553,7 +556,7 @@ class APIClient(object):
 class Instance(object):
     """Manager for a workspace instance
     """
-    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, base_uri=None, verify=True, apic=None):
+    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, headers=None, apic=None):
         """client for a workspace instance
 
         At least one of workspace_types or wdeployment_id must be
@@ -571,7 +574,7 @@ class Instance(object):
             raise ValueError('at least workspace_types or wdeployment_id must be given')
 
         if apic is None:
-            self.apic = APIClient(api_token=api_token, base_uri=base_uri, verify=verify)
+            self.apic = APIClient(api_token=api_token, headers=headers)
         else:
             self.apic = apic
 
@@ -603,57 +606,57 @@ class Instance(object):
         self._sshclient = None
 
 
-    def get_deployment_info(self, headers=None):
+    def get_deployment_info(self):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_deployment_info(self._wdeployment_id, headers=headers)
+        return self.apic.get_deployment_info(self._wdeployment_id)
 
 
-    def get_access_rules(self, to_user=None, headers=None):
+    def get_access_rules(self, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id, headers=headers)
+        return self.apic.get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id)
 
-    def add_access_rule(self, capability, to_user=None, headers=None):
+    def add_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        self.apic.add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
 
-    def del_access_rule(self, capability, to_user=None, headers=None):
+    def del_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user, headers=headers)
+        self.apic.del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
 
 
-    def get_firewall_rules(self, headers=None):
+    def get_firewall_rules(self):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_firewall_rules(self._id, headers=headers)
+        return self.apic.get_firewall_rules(self._id)
 
-    def add_firewall_rule(self, action, source_address=None, headers=None):
+    def add_firewall_rule(self, action, source_address=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.add_firewall_rule(self._id, action=action, source_address=source_address, headers=headers)
+        self.apic.add_firewall_rule(self._id, action=action, source_address=source_address)
 
-    def flush_firewall_rules(self, headers=None):
+    def flush_firewall_rules(self):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.flush_firewall_rules(self._id, headers=headers)
+        self.apic.flush_firewall_rules(self._id)
 
 
-    def get_vpn_newclient(self, headers=None):
+    def get_vpn_newclient(self):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_vpn_newclient(self._id, headers=headers)
+        return self.apic.get_vpn_newclient(self._id)
 
 
-    def activate_addon_cam(self, headers=None):
+    def activate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.activate_addon_cam(self._id, headers=headers)
+        self.apic.activate_addon_cam(self._id)
 
-    def status_addon_cam(self, headers=None):
+    def status_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.status_addon_cam(self._id, headers=headers)
+        return self.apic.status_addon_cam(self._id)
 
-    def get_snapshot_cam(self, camera_id=1, coding=None, format=None, headers=None):
+    def get_snapshot_cam(self, camera_id=1, coding=None, format=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format, headers=headers)
+        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format)
 
-    def deactivate_addon_cam(self, headers=None):
+    def deactivate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.deactivate_addon_cam(self._id, headers=headers)
+        self.apic.deactivate_addon_cam(self._id)
 
 
     def get_status(self):
