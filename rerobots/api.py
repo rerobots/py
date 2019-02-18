@@ -69,7 +69,7 @@ class APIClient(object):
         else:
             self.headers = headers.copy()
         if self.api_token:
-            headers['Authorization'] = 'Bearer ' + self.api_token
+            self.headers['Authorization'] = 'Bearer ' + self.api_token
         if base_uri is None:
             self.base_uri = 'https://api.rerobots.net'
         else:
