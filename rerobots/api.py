@@ -15,7 +15,7 @@ import requests
 
 # inline: PIL, numpy
 # only required for certain code paths that go beyond core routines.
-# e.g., get_snapshot_cam(format='array')
+# e.g., get_snapshot_cam(dformat='array')
 
 # inline: paramiko
 # only required by Instance class
@@ -147,8 +147,7 @@ class APIClient(object):
             raise Error(res.text)
         if max_per_page is None:
             return payload['workspace_deployments']
-        else:
-            return payload['workspace_deployments'], payload['page_count']
+        return payload['workspace_deployments'], payload['page_count']
 
     def get_deployment_info(self, deployment_id):
         """Get details about a workspace deployment.
@@ -192,14 +191,14 @@ class APIClient(object):
         This operation is idempotent, i.e., adding the same rule more
         than once has no effect.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add', headers=self.headers)
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add')
 
     def del_access_rule(self, deployment_id, capability, to_user=None):
         """Delete access control rule from workspace deployment.
 
         It is an error to try to delete a rule that does not exist.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del', headers=self.headers)
+        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del')
 
     def _modify_access_rule(self, deployment_id, capability, action, to_user=None):
         body = {
@@ -246,8 +245,7 @@ class APIClient(object):
                 raise Error(payload)
         if max_per_page is None:
             return payload['workspace_instances']
-        else:
-            return payload['workspace_instances'], payload['page_count']
+        return payload['workspace_instances'], payload['page_count']
 
     def get_instance_info(self, instance_id):
         """Get details about a workspace instance.
@@ -478,24 +476,24 @@ class APIClient(object):
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, format=None):
+    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, dformat=None):
         """Get image from camera via cam add-on.
 
         If coding=None (default), then returned data are not
         encoded. The only coding supported is base64, which can be
         obtained with coding='base64'.
 
-        If format=None (default), then the image format is whatever
+        If dformat=None (default), then the image format is whatever
         the rerobots API provided. Currently, this can be 'jpeg' or
         'ndarray' (i.e., ndarray type of NumPy).
 
         Note that some coding and format combinations are not
-        compatible. In particular, if format='ndarray', then coding
+        compatible. In particular, if dformat='ndarray', then coding
         must be None.
         """
-        if format is not None:
-            format = format.lower()
-            assert format in ['ndarray', 'jpeg']
+        if dformat is not None:
+            dformat = dformat.lower()
+            assert dformat in ['ndarray', 'jpeg']
         res = requests.get(self.base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=self.headers, verify=self.verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
@@ -507,8 +505,8 @@ class APIClient(object):
             if (coding is None) and payload['coding'] == 'base64':
                 payload['data'] = base64.b64decode(payload['data'])
                 payload['coding'] = None
-        if (format is not None) and (payload['format'].lower() != format):
-            if format == 'ndarray':
+        if (dformat is not None) and (payload['format'].lower() != dformat):
+            if dformat == 'ndarray':
                 assert coding is None
                 from PIL import Image
                 import numpy as np
@@ -579,13 +577,13 @@ class Instance(object):
             self.apic = apic
 
         if wdeployment_id is not None and workspace_types is not None:
-            di = self.apic.get_deployment_info(wdeployment_id)
-            if di['type'] not in workspace_types:
-                raise ValueError('workspace deployment {} does not have type in {}', wdeployment_id, workspace_types)
+            x = self.apic.get_deployment_info(wdeployment_id)
+            if x['type'] not in workspace_types:
+                raise ValueError('workspace deployment {} does not have type in {}'.format(wdeployment_id, workspace_types))
 
         if workspace_types is not None:
             candidates = self.apic.get_deployments(types=workspace_types)
-            if len(candidates) < 1:
+            if not candidates:
                 raise ValueError('no deployments found with any type in {}'.format(workspace_types))
             self._wdeployment_id = candidates[0]
 
@@ -650,9 +648,9 @@ class Instance(object):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.status_addon_cam(self._id)
 
-    def get_snapshot_cam(self, camera_id=1, coding=None, format=None):
+    def get_snapshot_cam(self, camera_id=1, coding=None, dformat=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, format=format)
+        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, dformat=dformat)
 
     def deactivate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
@@ -760,5 +758,4 @@ class Instance(object):
         stdin, stdout, stderr = self._sshclient.exec_command(command, timeout=timeout)
         if get_files:
             return stdin, stdout, stderr
-        else:
-            return stdout.read()
+        return stdout.read()

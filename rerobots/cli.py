@@ -23,6 +23,8 @@ from . import api as rerobots_api
 from .__init__ import __version__
 
 
+# TODO: refactor main() into smaller routines
+# pylint: disable=too-many-branches,too-many-statements,too-many-return-statements,too-many-locals
 def main(argv=None):
     """Process command-line arguments.
     """
@@ -30,13 +32,13 @@ def main(argv=None):
         argv = sys.argv[1:]
 
     argparser = argparse.ArgumentParser(description='rerobots API command-line client', add_help=False)
-    argparser.add_argument('-h','--help', dest='print_help',
+    argparser.add_argument('-h', '--help', dest='print_help',
                            action='store_true', default=False,
                            help='print this help message and exit')
-    argparser.add_argument('-V','--version', dest='print_version',
+    argparser.add_argument('-V', '--version', dest='print_version',
                            action='store_true', default=False,
                            help='print version number and exit.')
-    argparser.add_argument('-t','--jwt', dest='jwt', metavar='FILE',
+    argparser.add_argument('-t', '--jwt', dest='jwt', metavar='FILE',
                            default=None,
                            help='plaintext file containing API token')
 
@@ -136,8 +138,7 @@ def main(argv=None):
         if args.QUERY is not None:
             print('nonempty queries not supported yet. Try `help`.')
             return 1
-        else:
-            print('\n'.join(apic.get_deployments()))
+        print('\n'.join(apic.get_deployments()))
 
     elif args.command == 'list':
         print('\n'.join(apic.get_instances()))
@@ -145,15 +146,15 @@ def main(argv=None):
     elif args.command == 'info':
         if args.ID is None:
             active_instances = apic.get_instances()
-            if len(active_instances) == 0:
-                print('no active instances')
-                return 1
+            if len(active_instances) == 1:
+                instance_id = active_instances[0]
             elif len(active_instances) > 1:
                 print('ambiguous command because more than one active instance')
                 print('specify which instance to terminate')
                 return 1
-            else: # len(active_instances) == 1:
-                instance_id = active_instances[0]
+            else: # len(active_instances) == 0:
+                print('no active instances')
+                return 1
         else:
             instance_id = args.ID
         print(json.dumps(apic.get_instance_info(instance_id), indent=2))
@@ -161,15 +162,15 @@ def main(argv=None):
     elif args.command == 'terminate':
         if args.ID is None:
             active_instances = apic.get_instances()
-            if len(active_instances) == 0:
-                print('no active instances')
-                return 1
+            if len(active_instances) == 1:
+                instance_id = active_instances[0]
             elif len(active_instances) > 1:
                 print('ambiguous command because more than one active instance')
                 print('specify which instance to terminate')
                 return 1
-            else: # len(active_instances) == 1:
-                instance_id = active_instances[0]
+            else: # len(active_instances) == 0:
+                print('no active instances')
+                return 1
         else:
             instance_id = args.ID
         apic.terminate_instance(instance_id)
@@ -177,13 +178,13 @@ def main(argv=None):
     elif args.command == 'launch':
         if args.ID is None:
             available_deployments = apic.get_deployments()
-            if len(available_deployments) == 0:
-                print('no deployments are available')
-                return 1
+            if len(available_deployments) == 1:
+                deployment_id = available_deployments[0]
             elif len(available_deployments) > 1:
                 deployment_id = available_deployments[random.randint(0, len(available_deployments)-1)]
-            else: # len(available_deployments) == 1:
-                deployment_id = available_deployments[0]
+            else: # len(available_deployments) == 0:
+                print('no deployments are available')
+                return 1
         else:
             deployment_id = args.ID
 
@@ -195,6 +196,8 @@ def main(argv=None):
     else:
         print('Unrecognized command. Try `help`.')
         return 1
+
+    return 0
 
 
 if __name__ == '__main__':
