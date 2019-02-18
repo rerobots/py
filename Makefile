@@ -7,7 +7,7 @@
 
 .PHONY: lint
 lint:
-	pylint -j 4 -E `find rerobots -name \*.py`
+	pylint rerobots
 
 .PHONY: check
 check: lint
