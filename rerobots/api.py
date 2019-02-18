@@ -289,9 +289,9 @@ class APIClient(object):
         if event_url is not None:
             body['eurl'] = event_url
         if body:
-            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=self.headers, verify=self.verify_certs)
-        else:
             res = requests.post(self.base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=self.headers, verify=self.verify_certs)
+        else:
+            res = requests.post(self.base_uri + '/new/' + deployment_id, headers=self.headers, verify=self.verify_certs)
         if res.ok:
             payload = res.json()
         else:
