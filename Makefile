@@ -11,19 +11,21 @@ lint:
 
 .PHONY: check
 check: lint
-	cd tests && nosetests -v
+	cd tests && pytest -v
 
 .PHONY: checklocal
 checklocal: lint
-	cd tests && nosetests -v -I test_anonymous.py
+	cd tests && pytest -v --ignore=test_anonymous.py
 
 .PHONY: checkcover
 checkcover: lint
-	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots
+	cd tests && coverage run --source=rerobots -m pytest -v
+	cd tests && coverage html -d cover
 
 .PHONY: checklocalcover
 checklocalcover: lint
-	cd tests && nosetests -v --with-coverage --cover-html --cover-package=rerobots -I test_anonymous.py
+	cd tests && coverage run --source=rerobots -m pytest -v --ignore=test_anonymous.py
+	cd tests && coverage html -d cover
 
 .PHONY: checktests
 checktests:
