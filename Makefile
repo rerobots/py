@@ -32,6 +32,12 @@ checktests:
 	pylint -j 4 -E `find tests -name \*.py`
 
 
+.PHONY: doc
+doc:
+	make -C doc
+
+
 clean:
 	rm -rf tests/cover
 	rm -f tests/.coverage
+	rm -rf doc/build
