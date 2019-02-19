@@ -3,7 +3,8 @@ Summary
 
 command-line interface and Python client library for the rerobots API
 
-For more documentation, go to https://rerobots-py.readthedocs.io/
+Documentation of the current release is at https://rerobots-py.readthedocs.io/
+or can be built from sources as described below.
 
 
 Getting started
@@ -36,7 +37,14 @@ reports. For example, to run tests that do not touch production servers::
 
   make checklocal
 
-and to measure code coverage: ``make checklocalcover``
+and to measure code coverage: ``make checklocalcover``. To view the coverage
+report, direct your Web browser at tests/cover/index.html
+
+To build the User's Guide::
+
+  make doc
+
+and direct your Web browser at doc/build/index.html
 
 
 Participating
