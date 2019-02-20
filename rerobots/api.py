@@ -101,6 +101,13 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if self.api_token and 'Authorization' in self.headers:
             headers['Authorization'] = 'Bearer ' + self.api_token
 
+    def get_client_headers(self):
+        """Get copy of all supplemental request headers.
+
+        E.g., added by add_client_headers()
+        """
+        return self.headers.copy()
+
     def clear_client_headers(self):
         """Clear (remove) all supplemental headers associated with this client.
 
