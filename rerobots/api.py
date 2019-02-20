@@ -41,7 +41,7 @@ class WrongAuthToken(Error):
     """
 
 
-class APIClient(object):
+class APIClient(object):  # pylint: disable=too-many-public-methods
     """API client object
     """
     def __init__(self, api_token=None, headers=None, base_uri=None, verify=True):
