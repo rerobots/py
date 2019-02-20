@@ -98,7 +98,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             headers = headers.copy()
         self.headers.update(headers)
-        if self.api_token and 'Authorization' in self.headers:
+        if self.api_token and 'Authorization' in headers:
             headers['Authorization'] = 'Bearer ' + self.api_token
 
     def get_client_headers(self):
