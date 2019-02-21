@@ -34,3 +34,10 @@ def test_clear_client_headers():
     assert len(apic.get_client_headers()) == 1
     apic.clear_client_headers()
     assert len(apic.get_client_headers()) == 0
+
+
+def test_init_vs_apply_auth_token():
+    apic1 = APIClient()
+    apic1.apply_auth_token('deadbeef')
+    apic2 = APIClient(api_token='deadbeef')
+    assert apic1.get_client_headers() == apic2.get_client_headers()
