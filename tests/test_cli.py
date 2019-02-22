@@ -11,6 +11,7 @@ except ImportError:  # if Python 3
 import sys
 import unittest
 
+import pytest
 import responses
 
 import rerobots
@@ -79,6 +80,31 @@ def test_alternative_version_spellings():
 
     assert res_version == res_dashV
     assert res_version == res_dashdashversion
+
+
+@pytest.mark.parametrize('command', [
+    'info',
+    'list',
+    'search',
+    'launch',
+    'terminate',
+])
+def test_alternative_command_help_spellings(command):
+    original_stdout = sys.stdout
+
+    # form: help COMMAND
+    sys.stdout = StringIO()
+    cli.main(['help', command])
+    res_help_command = sys.stdout.getvalue().strip()
+
+    # form: COMMAND --help
+    sys.stdout = StringIO()
+    cli.main([command, '--help'])
+    res_command_dashdashhelp = sys.stdout.getvalue().strip()
+
+    sys.stdout = original_stdout
+
+    assert res_help_command == res_command_dashdashhelp
 
 
 class MockSearchTestCases(unittest.TestCase):

@@ -45,24 +45,40 @@ def main(argv=None):
 
     subparsers = argparser.add_subparsers(dest='command')
 
-    info_parser = subparsers.add_parser('info', help='print summary about instance.')
+    info_parser = subparsers.add_parser('info', help='print summary about instance.', add_help=False)
     info_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    info_parser.add_argument('-h', '--help', dest='print_info_help',
+                             action='store_true', default=False,
+                             help='print this help message and exit')
 
-    list_parser = subparsers.add_parser('list', help='list all instances owned by this user.')
+    list_parser = subparsers.add_parser('list', help='list all instances owned by this user.', add_help=False)
+    list_parser.add_argument('-h', '--help', dest='print_list_help',
+                             action='store_true', default=False,
+                             help='print this help message and exit')
 
     search_parser = subparsers.add_parser('search', help=(
         'search for matching deployments. '
         'empty query implies show all existing workspace deployments.'
-    ))
+    ), add_help=False)
+    search_parser.add_argument('-h', '--help', dest='print_search_help',
+                               action='store_true', default=False,
+                               help='print this help message and exit')
     search_parser.add_argument('QUERY', nargs='?', default=None)
+
 
     launch_parser = subparsers.add_parser('launch', help=(
         'launch instance from specified workspace deployment or type. '
         'if none is specified, then randomly select from those available.'
-    ))
+    ), add_help=False)
+    launch_parser.add_argument('-h', '--help', dest='print_launch_help',
+                               action='store_true', default=False,
+                               help='print this help message and exit')
     launch_parser.add_argument('ID', nargs='?', default=None, help='deployment ID')
 
-    terminate_parser = subparsers.add_parser('terminate', help='terminate instance.')
+    terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
+    terminate_parser.add_argument('-h', '--help', dest='print_terminate_help',
+                                  action='store_true', default=False,
+                                  help='print this help message and exit')
     terminate_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
 
     subparsers.add_parser('version', help='print version number and exit.')
@@ -136,15 +152,24 @@ def main(argv=None):
         apic = rerobots_api.APIClient()
 
     if args.command == 'search':
+        if args.print_search_help:
+            search_parser.print_help()
+            return 0
         if args.QUERY is not None:
             print('nonempty queries not supported yet. Try `help`.')
             return 1
         print('\n'.join(apic.get_deployments()))
 
     elif args.command == 'list':
+        if args.print_list_help:
+            list_parser.print_help()
+            return 0
         print('\n'.join(apic.get_instances()))
 
     elif args.command == 'info':
+        if args.print_info_help:
+            info_parser.print_help()
+            return 0
         if args.ID is None:
             active_instances = apic.get_instances()
             if len(active_instances) == 1:
@@ -161,6 +186,9 @@ def main(argv=None):
         print(json.dumps(apic.get_instance_info(instance_id), indent=2))
 
     elif args.command == 'terminate':
+        if args.print_terminate_help:
+            terminate_parser.print_help()
+            return 0
         if args.ID is None:
             active_instances = apic.get_instances()
             if len(active_instances) == 1:
@@ -177,6 +205,9 @@ def main(argv=None):
         apic.terminate_instance(instance_id)
 
     elif args.command == 'launch':
+        if args.print_launch_help:
+            launch_parser.print_help()
+            return 0
         if args.ID is None:
             available_deployments = apic.get_deployments()
             if len(available_deployments) == 1:
