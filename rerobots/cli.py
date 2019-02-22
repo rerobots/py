@@ -41,7 +41,8 @@ def main(argv=None):
                            help='print version number and exit.')
     argparser.add_argument('-t', '--jwt', dest='jwt', metavar='FILE',
                            default=None,
-                           help='plaintext file containing API token')
+                           help=('plaintext file containing API token; with this flag, '
+                                 'the REROBOTS_API_TOKEN environment variable is ignored.'))
 
     subparsers = argparser.add_subparsers(dest='command')
 

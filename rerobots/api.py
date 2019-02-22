@@ -44,7 +44,7 @@ class WrongAuthToken(Error):
 class APIClient(object):  # pylint: disable=too-many-public-methods
     """API client object
     """
-    def __init__(self, api_token=None, headers=None, base_uri=None, verify=True):
+    def __init__(self, api_token=None, headers=None, ignore_env=False, base_uri=None, verify=True):
         """Instantiate API client.
 
         `api_token` is some auth token obtained from https://rerobots.net/tokens
@@ -55,6 +55,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         `headers` is a dictionary of headers to add to every request made by
         this client object. This is only of interest in special use-cases.
 
+        `ignore_env` determines whether configuration data should be
+        obtained from the process environment variable REROBOTS_API_TOKEN.
+        Default (ignore_env=False) behavior is to try REROBOTS_API_TOKEN
+        if `api_token` is not given.
+
         `base_uri` is the string prefix used to create API requests.
         In general the default value works, but special cases might
         motivate changing this, e.g., to use an unofficial proxy.
@@ -64,6 +69,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         be False.
         """
         self.__api_token = api_token
+        if self.__api_token is None and not ignore_env:
+            self.__api_token = os.environ.get('REROBOTS_API_TOKEN', None)
         if headers is None:
             self.__headers = dict()
         else:

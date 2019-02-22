@@ -4,6 +4,8 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2019 rerobots, Inc.
 """
+import os
+
 from rerobots.api import APIClient
 
 
@@ -39,5 +41,15 @@ def test_clear_client_headers():
 def test_init_vs_apply_auth_token():
     apic1 = APIClient()
     apic1.apply_auth_token('deadbeef')
+    apic2 = APIClient(api_token='deadbeef')
+    assert apic1.get_client_headers() == apic2.get_client_headers()
+
+
+def test_init_vs_environ_auth_tokne():
+    os.environ['REROBOTS_API_TOKEN'] = 'deadbeef'
+    apic1 = APIClient()
+    del os.environ['REROBOTS_API_TOKEN']
+    apic2 = APIClient()
+    assert apic1.get_client_headers() != apic2.get_client_headers()
     apic2 = APIClient(api_token='deadbeef')
     assert apic1.get_client_headers() == apic2.get_client_headers()
