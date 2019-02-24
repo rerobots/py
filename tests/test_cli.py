@@ -16,6 +16,7 @@ import responses
 
 import rerobots
 from rerobots import cli
+from rerobots.api import WrongAuthToken
 
 
 def test_version():
@@ -105,6 +106,19 @@ def test_alternative_command_help_spellings(command):
     sys.stdout = original_stdout
 
     assert res_help_command == res_command_dashdashhelp
+
+
+@responses.activate
+def test_instances_list_badtoken():
+    responses.add(responses.GET, 'https://api.rerobots.net/instances',
+                  json={"error_message": "wrong authorization token"},
+                  status=400)
+    original_stdout = sys.stdout
+    sys.stdout = StringIO()
+    with pytest.raises(WrongAuthToken):
+        cli.main(['list'])
+    res = sys.stdout.getvalue().strip()
+    sys.stdout = original_stdout
 
 
 class MockSearchTestCases(unittest.TestCase):
