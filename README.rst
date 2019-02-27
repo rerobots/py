@@ -19,6 +19,10 @@ Besides installing the ``rerobots`` Python package, this will add the command
 
   rerobots help
 
+Most interesting interactions with rerobots require an API token, which can be
+provided through the environment variable ``REROBOTS_API_TOKEN`` or via the
+command-line switch ``-t``.
+
 
 Testing and development
 -----------------------
