@@ -66,6 +66,11 @@ def main(argv=None):
                                help='print this help message and exit')
     search_parser.add_argument('QUERY', nargs='?', default=None)
 
+    wdinfo_parser = subparsers.add_parser('wdinfo', help='print summary about workspace deployment.', add_help=False)
+    wdinfo_parser.add_argument('ID', default=None, help='workspace deployment ID')
+    wdinfo_parser.add_argument('-h', '--help', dest='print_wdinfo_help',
+                              action='store_true', default=False,
+                              help='print this help message and exit')
 
     launch_parser = subparsers.add_parser('launch', help=(
         'launch instance from specified workspace deployment or type. '
@@ -130,6 +135,8 @@ def main(argv=None):
         if hasattr(args, 'help_target_command') and args.help_target_command is not None:
             if args.help_target_command == 'info':
                 info_parser.print_help()
+            elif args.help_target_command == 'wdinfo':
+                wdinfo_parser.print_help()
             elif args.help_target_command == 'list':
                 list_parser.print_help()
             elif args.help_target_command == 'search':
@@ -160,6 +167,12 @@ def main(argv=None):
             print('nonempty queries not supported yet. Try `help`.')
             return 1
         print('\n'.join(apic.get_deployments()))
+
+    elif args.command == 'wdinfo':
+        if args.print_wdinfo_help:
+            wdinfo_parser.print_help()
+            return 0
+        print(json.dumps(apic.get_deployment_info(args.ID), indent=2))
 
     elif args.command == 'list':
         if args.print_list_help:
