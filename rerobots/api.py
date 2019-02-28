@@ -193,10 +193,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
                     raise WrongAuthToken('wrong authorization token')
-                else:
-                    raise Error(payload['error_message'])
-            else:
-                raise Error(payload)
+                raise Error(payload['error_message'])
+            raise Error(payload)
         return payload['rules']
 
     def add_access_rule(self, deployment_id, capability, to_user=None):
@@ -253,10 +251,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
                     raise WrongAuthToken('wrong authorization token')
-                else:
-                    raise Error(payload['error_message'])
-            else:
-                raise Error(payload)
+                raise Error(payload['error_message'])
+            raise Error(payload)
         if max_per_page is None:
             return payload['workspace_instances']
         return payload['workspace_instances'], payload['page_count']
@@ -388,7 +384,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         res = requests.get(self.__base_uri + '/addon/vnc/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
-        elif res.status_code == 404:
+        if res.status_code == 404:
             payload = {'status': 'notfound'}
         else:
             payload = res.json()
@@ -442,7 +438,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         res = requests.get(self.__base_uri + '/addon/mistyproxy/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
-        elif res.status_code == 404:
+        if res.status_code == 404:
             payload = {'status': 'notfound'}
         else:
             payload = res.json()
@@ -474,7 +470,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         res = requests.get(self.__base_uri + '/addon/cam/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
-        elif res.status_code == 404:
+        if res.status_code == 404:
             payload = {'status': 'notfound'}
         else:
             payload = res.json()
@@ -511,8 +507,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         res = requests.get(self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=self.__headers, verify=self.__verify_certs)
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
-        else:
-            payload = res.json()
+        payload = res.json()
         if not payload['success']:
             return payload
         if 'coding' in payload and payload['coding'] != coding:
