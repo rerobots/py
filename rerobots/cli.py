@@ -234,10 +234,12 @@ def main(argv=None):
         else:
             deployment_id = args.ID
 
-        instance_id, key = apic.request_instance(deployment_id)
-        print('instance {}'.format(instance_id))
-        with open('key.pem', 'w') as fp:
-            fp.write(key)
+        payload = apic.request_instance(deployment_id)
+        print('instance {}'.format(payload['id']))
+        if 'sshkey' in payload:
+            print('writing secret key for ssh access to file key.pem...')
+            with open('key.pem', 'w') as fp:
+                fp.write(payload['sshkey'])
 
     else:
         print('Unrecognized command. Try `help`.')
