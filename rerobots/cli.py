@@ -69,8 +69,8 @@ def main(argv=None):
     wdinfo_parser = subparsers.add_parser('wdinfo', help='print summary about workspace deployment.', add_help=False)
     wdinfo_parser.add_argument('ID', default=None, help='workspace deployment ID')
     wdinfo_parser.add_argument('-h', '--help', dest='print_wdinfo_help',
-                              action='store_true', default=False,
-                              help='print this help message and exit')
+                               action='store_true', default=False,
+                               help='print this help message and exit')
 
     launch_parser = subparsers.add_parser('launch', help=(
         'launch instance from specified workspace deployment or type. '
