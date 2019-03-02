@@ -28,6 +28,13 @@ class Error(Exception):
     in the exception message.
     """
 
+class BusyWorkspaceDeployment(Error):
+    """Request failed because all matching workspace deployments are busy.
+
+    This implies that a reservation was not made, e.g., because the
+    user specified to not make one during their launch request.
+    """
+
 class WrongAuthToken(Error):
     """An action requires, but was not given, some valid API token.
 
@@ -303,7 +310,16 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if res.ok:
             payload = res.json()
         else:
-            raise Error(res.text)
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'result_message' in payload:
+                errmsg = payload['result_message']
+                if errmsg.startswith('All matching workspace deployments are busy'):
+                    raise BusyWorkspaceDeployment(errmsg)
+                raise Error(errmsg)
+            raise Error(payload)
         return payload
 
     def get_reservations(self):
