@@ -178,7 +178,9 @@ def main(argv=None):
         if args.print_list_help:
             list_parser.print_help()
             return 0
-        print('\n'.join(apic.get_instances()))
+        instances = apic.get_instances()
+        if instances:
+            print('\n'.join(apic.get_instances()))
 
     elif args.command == 'info':
         if args.print_info_help:
