@@ -20,7 +20,7 @@ def test_deployments_list():
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
                         'page_count': 1},
                   status=200)
-    apic = APIClient()
+    apic = APIClient(ignore_env=True)
     res = apic.get_deployments()
     assert len(res) > 0
 
@@ -30,7 +30,7 @@ def test_instances_list_badtoken():
     responses.add(responses.GET, 'https://api.rerobots.net/instances',
                   json={"error_message": "wrong authorization token"},
                   status=400)
-    apic = APIClient(api_token='deadbeef')
+    apic = APIClient(api_token='deadbeef', ignore_env=True)
     with pytest.raises(WrongAuthToken):
         apic.get_instances()
 
@@ -41,7 +41,7 @@ def test_deployments_list():
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
                         'page_count': 1},
                   status=200)
-    apic = APIClient()
+    apic = APIClient(ignore_env=True)
     res = apic.get_deployments()
     assert len(res) > 0
 
@@ -78,7 +78,7 @@ class BasicInstanceTestCases(unittest.TestCase):
 
     @responses.activate
     def test_request_instance(self):
-        apic = APIClient()
+        apic = APIClient(ignore_env=True)
         list_of_wdeployments = apic.get_deployments()
         assert len(list_of_wdeployments) > 0
         wdeployment_id = list_of_wdeployments[0]

@@ -11,7 +11,7 @@ from rerobots.api import WrongAuthToken
 
 
 def test_deployments_list():
-    apic = APIClient()
+    apic = APIClient(ignore_env=True)
     res = apic.get_deployments()
     assert len(res) > 0
     # len(res) == 0 is also correct in general. However, that would
@@ -20,7 +20,7 @@ def test_deployments_list():
 
 
 def test_deployment_details():
-    apic = APIClient()
+    apic = APIClient(ignore_env=True)
     workspace_deployments, page_count = apic.get_deployments(page=1, max_per_page=1)
 
     # This assertion is redundant with test_deployments_list(), but it
@@ -34,12 +34,12 @@ def test_deployment_details():
 
 
 def test_instances_list():
-    apic = APIClient()
+    apic = APIClient(ignore_env=True)
     with pytest.raises(WrongAuthToken):
         apic.get_instances()
 
 
 def test_instances_list_badtoken():
-    apic = APIClient(api_token='deadbeef')
+    apic = APIClient(api_token='deadbeef', ignore_env=True)
     with pytest.raises(WrongAuthToken):
         apic.get_instances()
