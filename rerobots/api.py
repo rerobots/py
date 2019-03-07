@@ -35,6 +35,10 @@ class BusyWorkspaceDeployment(Error):
     user specified to not make one during their launch request.
     """
 
+class BusyWorkspaceInstance(Error):
+    """Instance is busy, and the request cannot be queued.
+    """
+
 class WrongAuthToken(Error):
     """An action requires, but was not given, some valid API token.
 
@@ -282,7 +286,16 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         """
         res = requests.post(self.__base_uri + '/terminate/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
         if not res.ok:
-            raise Error(res.text)
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'result_message' in payload:
+                errmsg = payload['result_message']
+                if errmsg.startswith('This instance is busy.'):
+                    raise BusyWorkspaceInstance(errmsg)
+                raise Error(errmsg)
+            raise Error(payload)
 
     def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None):
         """Request new workspace instance.
