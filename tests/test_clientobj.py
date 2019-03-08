@@ -46,6 +46,7 @@ def test_init_vs_apply_auth_token():
 
 
 def test_init_vs_environ_auth_tokne():
+    _prev = os.environ.get('REROBOTS_API_TOKEN', None)
     os.environ['REROBOTS_API_TOKEN'] = 'deadbeef'
     apic1 = APIClient()
     del os.environ['REROBOTS_API_TOKEN']
@@ -53,3 +54,5 @@ def test_init_vs_environ_auth_tokne():
     assert apic1.get_client_headers() != apic2.get_client_headers()
     apic2 = APIClient(api_token='deadbeef')
     assert apic1.get_client_headers() == apic2.get_client_headers()
+    if _prev:
+        os.environ['REROBOTS_API_TOKEN'] = _prev
