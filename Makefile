@@ -11,25 +11,34 @@ lint:
 
 .PHONY: check
 check: lint
-	cd tests && pytest -v
+	cd tests && pytest -v --ignore=test_instancecover.py
 
 .PHONY: checklocal
 checklocal: lint
-	cd tests && pytest -v --ignore=test_anonymous.py
+	cd tests && pytest -v --ignore=test_anonymous.py --ignore=test_instancecover.py
 
 .PHONY: checkcover
 checkcover: lint
-	cd tests && coverage run --source=rerobots -m pytest -v
+	cd tests && coverage run --source=rerobots -m pytest -v --ignore=test_instancecover.py
 	cd tests && coverage html -d cover
 
 .PHONY: checklocalcover
 checklocalcover: lint
-	cd tests && coverage run --source=rerobots -m pytest -v --ignore=test_anonymous.py
+	cd tests && coverage run --source=rerobots -m pytest -v --ignore=test_anonymous.py --ignore=test_instancecover.py
 	cd tests && coverage html -d cover
 
 .PHONY: checktests
 checktests:
 	pylint -j 4 -E `find tests -name \*.py`
+
+.PHONY: checkall
+checkall: lint
+	cd tests && pytest -v
+
+.PHONY: checkallcover
+checkallcover: lint
+	cd tests && coverage run --source=rerobots -m pytest -v
+	cd tests && coverage html -d cover
 
 
 .PHONY: doc
