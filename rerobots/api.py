@@ -326,7 +326,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             try:
                 payload = res.json()
             except:
-                raise Error(res.text)
+                raise Error('Response {}: {}'.format(res.status_code, res.content))
             if 'result_message' in payload:
                 errmsg = payload['result_message']
                 if errmsg.startswith('All matching workspace deployments are busy'):
