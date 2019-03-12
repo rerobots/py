@@ -14,7 +14,7 @@ import time
 import pytest
 
 from rerobots.api import APIClient
-from rerobots.api import BusyWorkspaceDeployment, WrongAuthToken
+from rerobots.api import BusyWorkspaceDeployment, BusyWorkspaceInstance, WrongAuthToken
 
 
 def test_instance_start_terminate():
@@ -25,15 +25,22 @@ def test_instance_start_terminate():
     available_wdeployments = apic.get_deployments(types=candidate_wtypes, maxlen=0)
     assert len(available_wdeployments) > 0
     payload = None
-    for wdeployment_id in available_wdeployments:
-        try:
-            payload = apic.request_instance(wdeployment_id, reserve=False)
-        except BusyWorkspaceDeployment:
-            continue
+    for instantiate_attempt in range(5):
+        for wdeployment_id in available_wdeployments:
+            try:
+                payload = apic.request_instance(wdeployment_id, reserve=False)
+            except BusyWorkspaceDeployment:
+                continue
+            break
+        if payload and payload['success']:
+            break
     assert payload['success']
-    for terminate_attempt in range(5):
+    terminated = False
+    for terminate_attempt in range(7):
         try:
             apic.terminate_instance(payload['id'])
+            terminated = True
             break
-        except:
-            time.sleep(5)
+        except BusyWorkspaceInstance as e:
+            time.sleep(2)
+    assert terminated
