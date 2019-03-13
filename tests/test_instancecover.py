@@ -19,7 +19,7 @@ from rerobots.api import BusyWorkspaceDeployment, BusyWorkspaceInstance, WrongAu
 
 def test_instance_start_terminate():
     candidate_wtypes = [
-        'fixed_brunelhand',
+        'fixed_misty2fieldtrial',
     ]
     apic = APIClient()
     available_wdeployments = apic.get_deployments(types=candidate_wtypes, maxlen=0)
