@@ -4,6 +4,9 @@
 N.B., these tests require a rerobots API token, and the associated
 user account WILL BE BILLED FOR ANY COSTS FROM PERFORMING THESE TESTS.
 
+To perform these tests, assign a rerobots API token to the environment
+variable `REROBOTS_API_TOKEN`.
+
 
 SCL <scott@rerobots.net>
 Copyright (c) 2019 rerobots, Inc.
