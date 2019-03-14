@@ -515,7 +515,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=1, coding=None, dformat=None):
+    def get_snapshot_cam(self, instance_id, camera_id=0, coding=None, dformat=None):
         """Get image from camera via cam add-on.
 
         If coding=None (default), then returned data are not
@@ -686,7 +686,7 @@ class Instance(object):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.status_addon_cam(self._id)
 
-    def get_snapshot_cam(self, camera_id=1, coding=None, dformat=None):
+    def get_snapshot_cam(self, camera_id=0, coding=None, dformat=None):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, dformat=dformat)
 
