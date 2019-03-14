@@ -42,5 +42,5 @@ def test_instance_start_terminate():
             terminated = True
             break
         except BusyWorkspaceInstance as e:
-            time.sleep(2)
+            time.sleep(4)
     assert terminated
