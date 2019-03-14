@@ -589,7 +589,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
 
 
-class Instance(object):
+class Instance(object):  # pylint: disable=too-many-public-methods
     """Manager for a workspace instance
     """
     def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, headers=None, apic=None):
@@ -693,6 +693,19 @@ class Instance(object):
     def deactivate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_cam(self._id)
+
+
+    def activate_addon_mistyproxy(self):
+        """This is a wrapper for APIClient method of same name."""
+        self.apic.activate_addon_mistyproxy(self._id)
+
+    def status_addon_mistyproxy(self):
+        """This is a wrapper for APIClient method of same name."""
+        return self.apic.status_addon_mistyproxy(self._id)
+
+    def deactivate_addon_mistyproxy(self):
+        """This is a wrapper for APIClient method of same name."""
+        self.apic.deactivate_addon_mistyproxy(self._id)
 
 
     def get_status(self):
