@@ -32,7 +32,7 @@ installed, then you can ::
 
   make check
 
-to run static analysis and all tests.
+to run static analysis and tests that do not require a rerobots API token.
 Recent results on `Travis CI <https://travis-ci.org/>`_ are available at
 https://travis-ci.org/rerobots/py
 
@@ -49,6 +49,11 @@ To build the User's Guide::
   make doc
 
 and direct your Web browser at doc/build/index.html
+
+There are extra tests (not run during ``make check``) that interact with
+production servers in a way that requires an API token and that may cause
+billing against the associated user account. These tests are only of interest if
+you plan to contribute internal changes to this Python package.
 
 
 Participating
