@@ -49,4 +49,4 @@ doc:
 clean:
 	rm -rf tests/cover
 	rm -f tests/.coverage
-	rm -rf doc/build
+	make -C doc clean

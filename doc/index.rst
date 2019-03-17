@@ -9,5 +9,6 @@ is hosted at https://github.com/rerobots/py
    :numbered:
    :maxdepth: 2
 
+   intro
    cli
    apiclient
