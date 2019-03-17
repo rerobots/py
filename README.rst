@@ -6,6 +6,8 @@ Summary
 
 command-line interface and Python client library for the rerobots API
 
+Releases are available `at PyPI <https://pypi.org/project/rerobots/>`_.
+
 Documentation of the current release is at https://rerobots-py.readthedocs.io/
 or can be built from sources as described below.
 
