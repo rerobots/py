@@ -589,7 +589,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
 
 
-class Instance(object):  # pylint: disable=too-many-public-methods
+class Instance(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Manager for a workspace instance
     """
     def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, headers=None, apic=None):
@@ -640,6 +640,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods
             self.__sshkey = None
         self._conn = None
         self.__sshclient = None
+        self.__sftpclient = None
 
 
     def get_deployment_info(self):
@@ -761,6 +762,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods
         if self.__sshclient is not None:
             self.__sshclient.close()
             self.__sshclient = None
+            self.__sftpclient = None
 
 
     def start_sshclient(self):
@@ -810,3 +812,41 @@ class Instance(object):  # pylint: disable=too-many-public-methods
         if get_files:
             return stdin, stdout, stderr
         return stdout.read()
+
+
+    def put_file(self, localpath, remotepath):
+        """Put local file onto remote host.
+
+        For the general case, the underlying Paramiko SFTP object is
+        available from sftp_client().
+        """
+        assert self.__sshclient is not None
+        if self.__sftpclient is None:
+            self.__sftpclient = self.__sshclient.open_sftp()
+        return self.__sftpclient.put(localpath, remotepath)
+
+
+    def get_file(self, remotepath, localpath):
+        """Get file from remote host.
+
+        For the general case, the underlying Paramiko SFTP object is
+        available from sftp_client().
+        """
+        assert self.__sshclient is not None
+        if self.__sftpclient is None:
+            self.__sftpclient = self.__sshclient.open_sftp()
+        return self.__sftpclient.get(remotepath, localpath)
+
+
+    def sftp_client(self):
+        """Get Paramiko SFTP client.
+
+        Note that methods put_file() and get_file() are small wrappers
+        to put() and get() of this Paramiko class.
+
+        Read about it at https://docs.paramiko.org/en/2.4/api/sftp.html
+        """
+        assert self.__sshclient is not None
+        if self.__sftpclient is None:
+            self.__sftpclient = self.__sshclient.open_sftp()
+        return self.__sftpclient
