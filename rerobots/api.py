@@ -635,11 +635,11 @@ class Instance(object):  # pylint: disable=too-many-public-methods
         self._status = 'INIT'  # Instance always begins at INIT
         self._details = None
         if 'sshkey' in payload:
-            self._sshkey = payload['sshkey']
+            self.__sshkey = payload['sshkey']
         else:
-            self._sshkey = None
+            self.__sshkey = None
         self._conn = None
-        self._sshclient = None
+        self.__sshclient = None
 
 
     def get_deployment_info(self):
@@ -758,9 +758,9 @@ class Instance(object):  # pylint: disable=too-many-public-methods
     def stop_sshclient(self):
         """Stop, close SSH client connection to instance, if it exists.
         """
-        if self._sshclient is not None:
-            self._sshclient.close()
-            self._sshclient = None
+        if self.__sshclient is not None:
+            self.__sshclient.close()
+            self.__sshclient = None
 
 
     def start_sshclient(self):
@@ -779,7 +779,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods
 
         fd, keypath = tempfile.mkstemp()
         fp = os.fdopen(fd, 'wt')
-        fp.write(self._sshkey)
+        fp.write(self.__sshkey)
         fp.close()
 
         fd, known_hosts = tempfile.mkstemp()
@@ -788,10 +788,10 @@ class Instance(object):  # pylint: disable=too-many-public-methods
         fp.write(sshhost + ' ' + hostkey)
         fp.close()
 
-        self._sshclient = paramiko.client.SSHClient()
-        self._sshclient.load_system_host_keys(known_hosts)
+        self.__sshclient = paramiko.client.SSHClient()
+        self.__sshclient.load_system_host_keys(known_hosts)
         pkey = paramiko.rsakey.RSAKey.from_private_key_file(keypath)
-        self._sshclient.connect(host, port=port, username='root', pkey=pkey, timeout=5)
+        self.__sshclient.connect(host, port=port, username='root', pkey=pkey, timeout=5)
 
         os.unlink(keypath)
         os.unlink(known_hosts)
@@ -805,8 +805,8 @@ class Instance(object):  # pylint: disable=too-many-public-methods
         If get_files=True, then return files of stdin, stdout, and
         stderr.
         """
-        assert self._sshclient is not None
-        stdin, stdout, stderr = self._sshclient.exec_command(command, timeout=timeout)
+        assert self.__sshclient is not None
+        stdin, stdout, stderr = self.__sshclient.exec_command(command, timeout=timeout)
         if get_files:
             return stdin, stdout, stderr
         return stdout.read()
