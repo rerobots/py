@@ -12,3 +12,4 @@ is hosted at https://github.com/rerobots/py
    intro
    cli
    apiclient
+   instances
