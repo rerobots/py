@@ -3,6 +3,7 @@ Command-line interface
 
 
 .. highlight:: none
+
 ::
 
   usage: rerobots [-h] [-V] [-t FILE]

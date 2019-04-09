@@ -5,6 +5,7 @@ Example
 -------
 
 .. highlight:: python
+
 ::
 
   import rerobots.api
