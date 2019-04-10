@@ -1,6 +1,11 @@
 Command-line interface
 ======================
 
+The command-line interface (CLI) is self-documenting. To begin, try::
+
+  rerobots help
+
+which will result in a message similar to the following
 
 .. highlight:: none
 
@@ -31,3 +36,6 @@ Command-line interface
     -t FILE, --jwt FILE   plaintext file containing API token; with this flag,
 			  the REROBOTS_API_TOKEN environment variable is
 			  ignored.
+
+Call ``help`` to learn more about commands, e.g., ``rerobots help info`` to
+learn usage of ``rerobots info``.
