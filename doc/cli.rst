@@ -39,3 +39,7 @@ which will result in a message similar to the following
 
 Call ``help`` to learn more about commands, e.g., ``rerobots help info`` to
 learn usage of ``rerobots info``.
+
+To use an `API token <https://rerobots.net/tokens>`_, assign it to the
+environment variable ``REROBOTS_API_TOKEN``, or give it in the command-line
+switch ``-t``.
