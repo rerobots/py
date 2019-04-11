@@ -18,3 +18,9 @@ Create a new workspace instance
 -------------------------------
 
 .. autoclass:: rerobots.api.Instance
+
+
+.. automethod:: rerobots.api.Instance.start_sshclient
+.. automethod:: rerobots.api.Instance.exec_ssh
+.. automethod:: rerobots.api.Instance.get_file
+.. automethod:: rerobots.api.Instance.put_file
