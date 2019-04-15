@@ -24,3 +24,4 @@ Create a new workspace instance
 .. automethod:: rerobots.api.Instance.exec_ssh
 .. automethod:: rerobots.api.Instance.get_file
 .. automethod:: rerobots.api.Instance.put_file
+.. automethod:: rerobots.api.Instance.sftp_client
