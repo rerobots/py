@@ -8,6 +8,9 @@ import sys
 
 sys.path.append(os.path.abspath('..'))
 
+with open('../README.rst', 'rt') as fp:
+    with open('intro.rst', 'wt') as fp_out:
+        fp_out.write(fp.read())
 
 project = 'rerobots Python client'
 copyright = '2017-2019 rerobots, Inc.'
