@@ -30,6 +30,13 @@ Workspace deployments
 Instance creation and management
 --------------------------------
 
+``APIClient`` objects provide methods for working with instances. All operations
+are associated with an API token.
+
+Note that classes presented in :doc:`instances` abstract some of the methods of
+``APIClient`` and provide combined operations, e.g., copying a file to an
+instance via ssh.
+
 .. automethod:: rerobots.api.APIClient.get_instances
 .. automethod:: rerobots.api.APIClient.get_instance_info
 .. automethod:: rerobots.api.APIClient.request_instance
