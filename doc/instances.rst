@@ -1,6 +1,12 @@
 Workspace instances
 ===================
 
+Classes presented in this section have methods for working with instances.  They
+are built on the rerobots API, but some methods do not correspond directly to
+rerobots API calls. In practice, ``Instance`` will provide everything needed for
+working with a single workspace instance, without need for raw calls from
+:doc:`apiclient`.
+
 Example
 -------
 
