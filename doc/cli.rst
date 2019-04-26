@@ -1,6 +1,9 @@
 Command-line interface
 ======================
 
+Summary
+-------
+
 The command-line interface (CLI) is self-documenting. To begin, try::
 
   rerobots help
@@ -43,3 +46,9 @@ learn usage of ``rerobots info``.
 To use an `API token <https://rerobots.net/tokens>`_, assign it to the
 environment variable ``REROBOTS_API_TOKEN``, or give it through a file named in
 the command-line switch ``-t``.
+
+
+.. _ssec:cli-example:
+
+Example
+-------

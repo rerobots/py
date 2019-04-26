@@ -10,6 +10,7 @@ is hosted at https://github.com/rerobots/py
    :maxdepth: 2
 
    intro
+   tutorial
    cli
    apiclient
    instances
