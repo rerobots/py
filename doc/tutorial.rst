@@ -26,4 +26,7 @@ yielding a list like ::
    'f06c8740-02a0-48ec-bdde-69ff88b71afd']
 
 The list you receive might be different, depending on availability of workspace
-deployments.
+deployments. To instantiate from the workspace deployment
+f06c8740-02a0-48ec-bdde-69ff88b71afd, ::
+
+  rri = rerobots.api.Instance(wdeployment_id='f06c8740-02a0-48ec-bdde-69ff88b71afd', apic=apic)
