@@ -26,7 +26,22 @@ yielding a list like ::
    'f06c8740-02a0-48ec-bdde-69ff88b71afd']
 
 The list you receive might be different, depending on availability of workspace
-deployments. To instantiate from the workspace deployment
-f06c8740-02a0-48ec-bdde-69ff88b71afd, ::
+deployments. To get more information about one of them, call
+``get_deployment_info()``, for example::
+
+  apic.get_deployment_info('f06c8740-02a0-48ec-bdde-69ff88b71afd')
+
+which will return a Python ``dict`` like ::
+
+  {'icounter': 131,
+   'supported_addons': ['cam', 'mistyproxy'],
+   'region': 'us:cali',
+   'queuelen': 1,
+   'created': '2019-03-11 01:07:31.507302',
+   'id': 'f06c8740-02a0-48ec-bdde-69ff88b71afd',
+   'type': 'fixed_misty2fieldtrial',
+   'type_version': 1}
+
+To instantiate from the workspace deployment f06c8740-02a0-48ec-bdde-69ff88b71afd, ::
 
   rri = rerobots.api.Instance(wdeployment_id='f06c8740-02a0-48ec-bdde-69ff88b71afd', apic=apic)
