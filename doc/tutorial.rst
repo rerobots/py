@@ -42,6 +42,31 @@ which will return a Python ``dict`` like ::
    'type': 'fixed_misty2fieldtrial',
    'type_version': 1}
 
-To instantiate from the workspace deployment f06c8740-02a0-48ec-bdde-69ff88b71afd, ::
+To instantiate from `this workspace deployment`_, ::
 
   rri = rerobots.api.Instance(wdeployment_id='f06c8740-02a0-48ec-bdde-69ff88b71afd', apic=apic)
+
+.. _`this workspace deployment`: https://rerobots.net/workspace/f06c8740-02a0-48ec-bdde-69ff88b71afd
+
+Then, methods on ``rri`` will affect the instance just created. For example, to
+get the status of the instance, call ``rri.get_status()``, which usually begins
+with ``'INIT'`` (i.e., initializing).  The instance is ready for action when
+``rri.get_status() == 'READY'``. For more information about it, call
+``rri.get_details()`` to get a Python ``dict`` like ::
+
+  {'type': 'fixed_misty2fieldtrial',
+   'region': 'us:cali',
+   'starttime': '2019-05-06 23:24:13.489577',
+   'status': 'READY',
+   'conn': {
+     'type': 'sshtun',
+     'ipv4': '147.75.69.207',
+     'port': 2210,
+     'hostkeys': ['ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOT0UCbWfQBuGlY48FvrOQR76jxIWBPzD2XWTNSba1iqTgDIfC+pc8Mpi/0RW0zXW+HDBrx/+QYzMcsGnAAv46U= root@newc498']}}
+
+Notice that the connection type is ``sshtun`` and that the above host keys
+should be expected from hosts in the instance.
+
+Finally, to stop using the instance and delete your data from it, ::
+
+  rri.terminate()
