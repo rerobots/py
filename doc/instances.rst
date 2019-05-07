@@ -20,14 +20,8 @@ Example
   print(inst.get_status())
 
 
-Create a new workspace instance
--------------------------------
+Instance class
+--------------
 
 .. autoclass:: rerobots.api.Instance
-
-
-.. automethod:: rerobots.api.Instance.start_sshclient
-.. automethod:: rerobots.api.Instance.exec_ssh
-.. automethod:: rerobots.api.Instance.get_file
-.. automethod:: rerobots.api.Instance.put_file
-.. automethod:: rerobots.api.Instance.sftp_client
+   :members: start_sshclient, exec_ssh, get_file, put_file, sftp_client
