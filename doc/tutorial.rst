@@ -42,7 +42,12 @@ which will return a Python ``dict`` like ::
    'type': 'fixed_misty2fieldtrial',
    'type_version': 1}
 
-To instantiate from `this workspace deployment`_, ::
+Notice that the field ``supported_addons`` includes ``cam``. Later in this
+tutorial, the ``cam`` add-on is used to get images from cameras in the
+workspace.
+
+The :ref:`Instance class <ssec:instance-class>` can be used to instantiate from
+`this workspace deployment`_::
 
   rri = rerobots.api.Instance(wdeployment_id='f06c8740-02a0-48ec-bdde-69ff88b71afd', apic=apic)
 
@@ -67,6 +72,30 @@ with ``'INIT'`` (i.e., initializing).  The instance is ready for action when
 Notice that the connection type is ``sshtun`` and that the above host keys
 should be expected from hosts in the instance.
 
+Recall from earlier in this tutorial that the ``cam`` add-on is supported by the
+workspace. Activate it by calling ::
+
+  rri.activate_addon_cam()
+
+and waiting until ``rri.status_addon_cam()`` indicates that it is ready. In
+practice, activation is completed within several seconds. Then, use
+:ref:`get_snapshot_cam() <ssec:apiclient-addon-cam>` to get an image and save it
+in a `NumPy`_ `ndarray`_, and display it with `Matplotlib`_::
+
+  import matplotlib.pyplot as plt
+  import numpy as np
+
+  res = rri.get_snapshot_cam(dformat='ndarray')
+
+  plt.imshow(res['data'])
+  plt.show()
+
+
 Finally, to stop using the instance and delete your data from it, ::
 
   rri.terminate()
+
+
+.. _NumPy: https://www.numpy.org/
+.. _ndarray: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html
+.. _Matplotlib: https://matplotlib.org/

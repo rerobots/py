@@ -46,3 +46,14 @@ instance via ssh.
 .. automethod:: rerobots.api.APIClient.request_instance
 .. automethod:: rerobots.api.APIClient.get_vpn_newclient
 .. automethod:: rerobots.api.APIClient.terminate_instance
+
+
+.. _ssec:apiclient-addon-cam:
+
+add-on: cam
+-----------
+
+The ``cam`` add-on provides access to cameras in the workspace through the
+rerobots API.
+
+.. automethod:: rerobots.api.APIClient.get_snapshot_cam

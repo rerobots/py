@@ -20,6 +20,8 @@ Example
   print(inst.get_status())
 
 
+.. _ssec:instance-class:
+
 Instance class
 --------------
 
