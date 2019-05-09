@@ -57,3 +57,16 @@ The ``cam`` add-on provides access to cameras in the workspace through the
 rerobots API.
 
 .. automethod:: rerobots.api.APIClient.get_snapshot_cam
+
+
+.. _ssec:apiclient-addon-mistyproxy:
+
+add-on: mistyproxy
+------------------
+
+The ``mistyproxy`` add-on provides proxies for the HTTP REST and WebSocket APIs
+of Misty robots.
+
+.. automethod:: rerobots.api.APIClient.activate_addon_mistyproxy
+.. automethod:: rerobots.api.APIClient.status_addon_mistyproxy
+.. automethod:: rerobots.api.APIClient.deactivate_addon_mistyproxy

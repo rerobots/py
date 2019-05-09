@@ -452,7 +452,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         Note that this add-on is unique to workspaces that involve
         Misty robots, e.g.,
-        https://help.rerobots.net/workspaces/fixed_misty1devel.html
+        https://help.rerobots.net/workspaces/fixed_misty2fieldtrial.html
 
         When it is ready, proxy URLs can be obtained via
         status_addon_mistyproxy().
@@ -463,6 +463,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
     def status_addon_mistyproxy(self, instance_id):
         """Get status of mistyproxy add-on for this instance.
+
+        The response includes proxy URLs if any are defined.
         """
         res = requests.get(self.__base_uri + '/addon/mistyproxy/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
         if not res.ok and res.status_code != 404:
