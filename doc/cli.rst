@@ -53,12 +53,15 @@ the command-line switch ``-t``.
 Example
 -------
 
+Search for workspace deployments.
+
 .. highlight:: none
 
 ::
 
   $ rerobots search
   f06c8740-02a0-48ec-bdde-69ff88b71afd
+
 
 
 .. highlight:: none
@@ -110,3 +113,5 @@ Example
       "port": 2210
     }
   }
+
+``rerobots terminate 94b3aec9-3c72-41dd-bedb-52f0a2b0f078``
