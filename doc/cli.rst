@@ -53,20 +53,14 @@ the command-line switch ``-t``.
 Example
 -------
 
-Search for workspace deployments.
-
 .. highlight:: none
 
-::
+Search for workspace deployments::
 
   $ rerobots search
   f06c8740-02a0-48ec-bdde-69ff88b71afd
 
-
-
-.. highlight:: none
-
-::
+Get more information about one of them::
 
   $ rerobots wdinfo f06c8740-02a0-48ec-bdde-69ff88b71afd
   {
@@ -84,17 +78,16 @@ Search for workspace deployments.
     "type_version": 1
   }
 
-.. highlight:: none
-
-::
+Notice that ``queuelen = 0``, i.e., this workspace deployment is available, and
+requests to instantiate from it now are likely to succeed. To do so, ::
 
   $ rerobots launch f06c8740-02a0-48ec-bdde-69ff88b71afd
   instance 94b3aec9-3c72-41dd-bedb-52f0a2b0f078
   writing secret key for ssh access to file key.pem...
 
-.. highlight:: none
-
-::
+which will result in a secret key being written locally to the file ``key.pem``.
+This key should be used for ssh connections, e.g., with commands of the form
+``ssh -i key.pem``. Get information about the new instance::
 
   $ rerobots info 94b3aec9-3c72-41dd-bedb-52f0a2b0f078
   {
@@ -114,4 +107,6 @@ Search for workspace deployments.
     }
   }
 
-``rerobots terminate 94b3aec9-3c72-41dd-bedb-52f0a2b0f078``
+Finally, terminate the instance::
+
+  $ rerobots terminate 94b3aec9-3c72-41dd-bedb-52f0a2b0f078
