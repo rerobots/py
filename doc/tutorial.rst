@@ -27,9 +27,9 @@ yielding a list like ::
 
 The list you receive might be different, depending on availability of workspace
 deployments. To get more information about one of them, call
-``get_deployment_info()``, for example::
+``get_wdeployment_info()``, for example::
 
-  apic.get_deployment_info('f06c8740-02a0-48ec-bdde-69ff88b71afd')
+  apic.get_wdeployment_info('f06c8740-02a0-48ec-bdde-69ff88b71afd')
 
 which will return a Python ``dict`` like ::
 

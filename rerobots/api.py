@@ -142,7 +142,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         self.__api_token = token
         self.__headers['Authorization'] = 'Bearer ' + self.__api_token
 
-    def get_deployments(self, query=None, maxlen=None, types=None, page=None, max_per_page=None):
+    def get_wdeployments(self, query=None, maxlen=None, types=None, page=None, max_per_page=None):
         """Get list of workspace deployments.
 
         `types`, if given, should be a list of workspace types (str).
@@ -174,24 +174,24 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             return payload['workspace_deployments']
         return payload['workspace_deployments'], payload['page_count']
 
-    def get_deployment_info(self, deployment_id):
+    def get_wdeployment_info(self, wdeployment_id):
         """Get details about a workspace deployment.
         """
-        res = requests.get(self.__base_uri + '/deployment/' + deployment_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(self.__base_uri + '/deployment/' + wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
             payload = res.json()
         else:
             raise Error(res.text)
         return payload
 
-    def get_access_rules(self, to_user=None, deployment_id=None):
+    def get_access_rules(self, to_user=None, wdeployment_id=None):
         """Get list of access control rules of workspace deployments.
         """
         params = dict()
         if to_user is not None:
             params['to_user'] = to_user
-        if deployment_id is not None:
-            params['wdeployment'] = deployment_id
+        if wdeployment_id is not None:
+            params['wdeployment'] = wdeployment_id
         res = requests.get(self.__base_uri + '/rules', params=params,
                            headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
@@ -208,25 +208,25 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload['rules']
 
-    def add_access_rule(self, deployment_id, capability, to_user=None):
+    def add_access_rule(self, wdeployment_id, capability, to_user=None):
         """Add access control rule for workspace deployment.
 
         This operation is idempotent, i.e., adding the same rule more
         than once has no effect.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='add')
+        self._modify_access_rule(wdeployment_id=wdeployment_id, capability=capability, to_user=to_user, action='add')
 
-    def del_access_rule(self, deployment_id, capability, to_user=None):
+    def del_access_rule(self, wdeployment_id, capability, to_user=None):
         """Delete access control rule from workspace deployment.
 
         It is an error to try to delete a rule that does not exist.
         """
-        self._modify_access_rule(deployment_id=deployment_id, capability=capability, to_user=to_user, action='del')
+        self._modify_access_rule(wdeployment_id=wdeployment_id, capability=capability, to_user=to_user, action='del')
 
-    def _modify_access_rule(self, deployment_id, capability, action, to_user=None):
+    def _modify_access_rule(self, wdeployment_id, capability, action, to_user=None):
         body = {
             'do': action,
-            'wd': deployment_id,
+            'wd': wdeployment_id,
             'cap': capability,
         }
         if to_user is not None:
@@ -297,7 +297,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(errmsg)
             raise Error(payload)
 
-    def request_instance(self, deployment_id, sshkey=None, vpn=False, reserve=False, event_url=None):
+    def request_instance(self, wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None):
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
@@ -317,9 +317,9 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if event_url is not None:
             body['eurl'] = event_url
         if body:
-            res = requests.post(self.__base_uri + '/new/' + deployment_id, data=json.dumps(body), headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(self.__base_uri + '/new/' + wdeployment_id, data=json.dumps(body), headers=self.__headers, verify=self.__verify_certs)
         else:
-            res = requests.post(self.__base_uri + '/new/' + deployment_id, headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(self.__base_uri + '/new/' + wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
             payload = res.json()
         else:
@@ -617,7 +617,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
             self.apic = apic
 
         if wdeployment_id is not None and workspace_types is not None:
-            x = self.apic.get_deployment_info(wdeployment_id)
+            x = self.apic.get_wdeployment_info(wdeployment_id)
             if x['type'] not in workspace_types:
                 raise ValueError('workspace deployment {} does not have type in {}'.format(wdeployment_id, workspace_types))
 
@@ -645,22 +645,22 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         self.__sftpclient = None
 
 
-    def get_deployment_info(self):
+    def get_wdeployment_info(self):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_deployment_info(self._wdeployment_id)
+        return self.apic.get_wdeployment_info(self._wdeployment_id)
 
 
     def get_access_rules(self, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_access_rules(to_user=to_user, deployment_id=self._wdeployment_id)
+        return self.apic.get_access_rules(to_user=to_user, wdeployment_id=self._wdeployment_id)
 
     def add_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.add_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
+        self.apic.add_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
 
     def del_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.del_access_rule(deployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
+        self.apic.del_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
 
 
     def get_firewall_rules(self):

@@ -10,25 +10,25 @@ from rerobots.api import APIClient
 from rerobots.api import WrongAuthToken
 
 
-def test_deployments_list():
+def test_wdeployments_list():
     apic = APIClient(ignore_env=True)
-    res = apic.get_deployments()
+    res = apic.get_wdeployments()
     assert len(res) > 0
     # len(res) == 0 is also correct in general. However, that would
     # imply that rerobots has no active workspace deployments, which
     # should be rare or never.
 
 
-def test_deployment_details():
+def test_wdeployment_details():
     apic = APIClient(ignore_env=True)
-    workspace_deployments, page_count = apic.get_deployments(page=1, max_per_page=1)
+    workspace_deployments, page_count = apic.get_wdeployments(page=1, max_per_page=1)
 
     # This assertion is redundant with test_deployments_list(), but it
     # is among preconditions for the test below.
     assert len(workspace_deployments) > 0
 
     wdeployment_id = workspace_deployments[0]
-    details = apic.get_deployment_info(wdeployment_id)
+    details = apic.get_wdeployment_info(wdeployment_id)
     assert 'id' in details
     assert 'type' in details
 

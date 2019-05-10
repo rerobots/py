@@ -17,7 +17,7 @@ Example
   apic = rerobots.api.APIClient()
 
   wdeployments = apic.get_deployments()
-  print(apic.get_deployment_info(wdeployments[0]))
+  print(apic.get_wdeployment_info(wdeployments[0]))
 
 
 Create a new client object
@@ -28,8 +28,8 @@ Create a new client object
 Workspace deployments
 ---------------------
 
-.. automethod:: rerobots.api.APIClient.get_deployments
-.. automethod:: rerobots.api.APIClient.get_deployment_info
+.. automethod:: rerobots.api.APIClient.get_wdeployments
+.. automethod:: rerobots.api.APIClient.get_wdeployment_info
 
 Instance creation and management
 --------------------------------

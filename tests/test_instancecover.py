@@ -27,7 +27,7 @@ def test_instance_start_terminate():
     candidate_wtypes = [
         'fixed_misty2fieldtrial',
     ]
-    available_wdeployments = APIClient().get_deployments(types=candidate_wtypes, maxlen=0)
+    available_wdeployments = APIClient().get_wdeployments(types=candidate_wtypes, maxlen=0)
     assert len(available_wdeployments) > 0
     inst = None
     for instantiate_attempt in range(5):

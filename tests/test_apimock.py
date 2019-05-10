@@ -15,13 +15,13 @@ from rerobots.api import Error, WrongAuthToken
 
 
 @responses.activate
-def test_deployments_list():
+def test_wdeployments_list():
     responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
                         'page_count': 1},
                   status=200)
     apic = APIClient(ignore_env=True)
-    res = apic.get_deployments()
+    res = apic.get_wdeployments()
     assert len(res) > 0
 
 
@@ -36,13 +36,13 @@ def test_instances_list_badtoken():
 
 
 @responses.activate
-def test_deployments_list():
+def test_wdeployments_list():
     responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
                         'page_count': 1},
                   status=200)
     apic = APIClient(ignore_env=True)
-    res = apic.get_deployments()
+    res = apic.get_wdeployments()
     assert len(res) > 0
 
 
@@ -79,7 +79,7 @@ class BasicInstanceTestCases(unittest.TestCase):
     @responses.activate
     def test_request_instance(self):
         apic = APIClient(ignore_env=True)
-        list_of_wdeployments = apic.get_deployments()
+        list_of_wdeployments = apic.get_wdeployments()
         assert len(list_of_wdeployments) > 0
         wdeployment_id = list_of_wdeployments[0]
         res = apic.request_instance(wdeployment_id, reserve=False)

@@ -166,13 +166,13 @@ def main(argv=None):
         if args.QUERY is not None:
             print('nonempty queries not supported yet. Try `help`.')
             return 1
-        print('\n'.join(apic.get_deployments()))
+        print('\n'.join(apic.get_wdeployments()))
 
     elif args.command == 'wdinfo':
         if args.print_wdinfo_help:
             wdinfo_parser.print_help()
             return 0
-        print(json.dumps(apic.get_deployment_info(args.ID), indent=2))
+        print(json.dumps(apic.get_wdeployment_info(args.ID), indent=2))
 
     elif args.command == 'list':
         if args.print_list_help:
@@ -225,18 +225,18 @@ def main(argv=None):
             launch_parser.print_help()
             return 0
         if args.ID is None:
-            available_deployments = apic.get_deployments()
-            if len(available_deployments) == 1:
-                deployment_id = available_deployments[0]
-            elif len(available_deployments) > 1:
-                deployment_id = available_deployments[random.randint(0, len(available_deployments)-1)]
-            else: # len(available_deployments) == 0:
+            available_wdeployments = apic.get_wdeployments()
+            if len(available_wdeployments) == 1:
+                wdeployment_id = available_wdeployments[0]
+            elif len(available_wdeployments) > 1:
+                wdeployment_id = available_wdeployments[random.randint(0, len(available_wdeployments)-1)]
+            else: # len(available_wdeployments) == 0:
                 print('no deployments are available')
                 return 1
         else:
-            deployment_id = args.ID
+            wdeployment_id = args.ID
 
-        payload = apic.request_instance(deployment_id)
+        payload = apic.request_instance(wdeployment_id)
         print('instance {}'.format(payload['id']))
         if 'sshkey' in payload:
             print('writing secret key for ssh access to file key.pem...')
