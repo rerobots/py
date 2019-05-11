@@ -1,0 +1,4 @@
+rerobots Python client library (0.8.0)
+
+  * Refactor to be consistent with `wdeployment`. Previously, some names
+    included `deployment` to abbreviate "workspace deployment".
