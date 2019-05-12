@@ -90,6 +90,7 @@ in a `NumPy`_ `ndarray`_, and display it with `Matplotlib`_::
   plt.imshow(res['data'])
   plt.show()
 
+The resulting figure should open in a separate window.
 
 Finally, to stop using the instance and delete your data from it, ::
 
