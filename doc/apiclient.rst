@@ -16,7 +16,7 @@ Example
 
   apic = rerobots.api.APIClient()
 
-  wdeployments = apic.get_deployments()
+  wdeployments = apic.get_wdeployments()
   print(apic.get_wdeployment_info(wdeployments[0]))
 
 

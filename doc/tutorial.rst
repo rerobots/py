@@ -18,7 +18,7 @@ file named ``jwt.txt``. Instantiate ``APIClient`` with this token::
 Get a list of all workspace deployments that involve "misty" (i.e., robots by
 `Misty Robotics <https://www.mistyrobotics.com/>`_)::
 
-  apic.get_deployments(query='misty')
+  apic.get_wdeployments(query='misty')
 
 yielding a list like ::
 
