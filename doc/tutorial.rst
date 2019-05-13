@@ -92,6 +92,24 @@ in a `NumPy`_ `ndarray`_, and display it with `Matplotlib`_::
 
 The resulting figure should open in a separate window.
 
+Though not as powerful as dedicated ``ssh`` command-line programs, the
+:ref:`Instance class <ssec:instance-class>` provides methods for basic
+operations over SSH. To begin, start an ssh client::
+
+  rri.start_sshclient()
+
+Then, arbitrary commands can be executed on the host in the instance via
+:meth:`exec_ssh <rerobots.api.Instance.exec_ssh>`. For example, ::
+
+  rri.exec_ssh('pwd')
+
+will return the default path from which commands are executed. Files can be
+uploaded and downloaded using :meth:`put_file <rerobots.api.Instance.put_file>`,
+and :meth:`get_file <rerobots.api.Instance.get_file>`, respectively. For
+example, to download the file ``/etc/hosts`` from the remote host::
+
+  rri.get_file('/etc/hosts', 'hosts')
+
 Finally, to stop using the instance and delete your data from it, ::
 
   rri.terminate()
