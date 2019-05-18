@@ -163,10 +163,7 @@ def main(argv=None):
         if args.print_search_help:
             search_parser.print_help()
             return 0
-        if args.QUERY is not None:
-            print('nonempty queries not supported yet. Try `help`.')
-            return 1
-        print('\n'.join(apic.get_wdeployments()))
+        print('\n'.join(apic.get_wdeployments(query=args.QUERY)))
 
     elif args.command == 'wdinfo':
         if args.print_wdinfo_help:
