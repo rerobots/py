@@ -35,17 +35,6 @@ def test_instances_list_badtoken():
         apic.get_instances()
 
 
-@responses.activate
-def test_wdeployments_list():
-    responses.add(responses.GET, 'https://api.rerobots.net/deployments',
-                  json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
-                        'page_count': 1},
-                  status=200)
-    apic = APIClient(ignore_env=True)
-    res = apic.get_wdeployments()
-    assert len(res) > 0
-
-
 class BasicInstanceTestCases(unittest.TestCase):
     def setUp(self):
         self.wdeployment_id = 'a6b88b4f-2402-41e4-8e81-b2fd852435eb'
