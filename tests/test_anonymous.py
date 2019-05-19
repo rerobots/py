@@ -12,7 +12,7 @@ from rerobots.api import WrongAuthToken
 
 def test_wdeployments_list():
     apic = APIClient(ignore_env=True)
-    res = apic.get_wdeployments()
+    res = apic.get_wdeployments(page=1, max_per_page=1)
     assert len(res) > 0
     # len(res) == 0 is also correct in general. However, that would
     # imply that rerobots has no active workspace deployments, which
