@@ -777,6 +777,8 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         status = self.get_status()
         if status != 'READY':
             raise Exception('instance not ready')
+        if 'ipv4' not in self._conn or 'port' not in self._conn or 'hostkeys' not in self._conn:
+            self.get_details()
         host = self._conn['ipv4']
         port = self._conn['port']
         hostkey = self._conn['hostkeys'][0]
