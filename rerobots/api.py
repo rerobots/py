@@ -622,7 +622,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
                 raise ValueError('workspace deployment {} does not have type in {}'.format(wdeployment_id, workspace_types))
 
         if workspace_types is not None:
-            candidates = self.apic.get_deployments(types=workspace_types)
+            candidates = self.apic.get_wdeployments(types=workspace_types)
             if not candidates:
                 raise ValueError('no deployments found with any type in {}'.format(workspace_types))
             self._wdeployment_id = candidates[0]
