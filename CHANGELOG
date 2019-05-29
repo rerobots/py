@@ -2,3 +2,9 @@ rerobots Python client library (0.8.0)
 
   * Refactor to be consistent with `wdeployment`. Previously, some names
     included `deployment` to abbreviate "workspace deployment".
+
+  * Support nonempty query string from CLI `search`.
+
+  * Write more of the Users Guide, including tutorials.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Wed, 29 May 2019 08:33:07 -0700
