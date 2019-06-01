@@ -594,7 +594,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 class Instance(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Manager for a workspace instance
     """
-    def __init__(self, workspace_types=None, wdeployment_id=None, api_token=None, headers=None, apic=None):
+    def __init__(self, workspace_types=None, wdeployment_id=None, instance_id=None, api_token=None, headers=None, apic=None):
         """client for a workspace instance
 
         At least one of workspace_types or wdeployment_id must be
@@ -603,13 +603,19 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         identifier is compared with the given type. If they differ, no
         instance is created, and ValueError is raised.
 
+        If instance_id is given, then attempt to attach this class
+        to an existing instance. In this case, neither workspace_types
+        or wdeployment_id is required. If they are provided, then
+        consistency is checked.
+
         The optional parameter `apic` is an instance of APIClient. If
         it is not given, then an APIClient object is instantiated
         internally from the parameters `api_token` etc., corresponding
         to parameters APIClient of the same name.
         """
-        if workspace_types is None and wdeployment_id is None:
-            raise ValueError('at least workspace_types or wdeployment_id must be given')
+        # pylint: disable=too-many-branches,too-many-arguments
+        if workspace_types is None and wdeployment_id is None and instance_id is None:
+            raise ValueError('at least workspace_types, wdeployment_id, or instance_id must be given')
 
         if apic is None:
             self.apic = APIClient(api_token=api_token, headers=headers)
@@ -632,14 +638,27 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
 
         self._type = None
 
-        payload = self.apic.request_instance(self._wdeployment_id, reserve=False)
-        self._id = payload['id']
-        self._status = 'INIT'  # Instance always begins at INIT
-        self._details = None
-        if 'sshkey' in payload:
-            self.__sshkey = payload['sshkey']
+        if instance_id is None:
+            payload = self.apic.request_instance(self._wdeployment_id, reserve=False)
+            self._id = payload['id']
+            self._status = 'INIT'  # Instance always begins at INIT
+            if 'sshkey' in payload:
+                self.__sshkey = payload['sshkey']
+            else:
+                self.__sshkey = None
+
         else:
+            self._id = instance_id
+            payload = self.apic.get_instance_info(self._id)
+            if self._wdeployment_id is not None:
+                assert payload['deployment'] == self._wdeployment_id
+            else:
+                self._wdeployment_id = payload['deployment']
+            self._status = payload['status']
             self.__sshkey = None
+
+        self._details = None
+
         self._conn = None
         self.__sshclient = None
         self.__sftpclient = None
