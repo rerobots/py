@@ -203,7 +203,7 @@ def main(argv=None):
                 instance_id = active_instances[0]
             elif len(active_instances) > 1:
                 print('ambiguous command because more than one active instance')
-                print('specify which instance to terminate')
+                print('specify for which instance to get information')
                 return 1
             else: # len(active_instances) == 0:
                 print('no active instances')
