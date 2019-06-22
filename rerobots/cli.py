@@ -57,6 +57,12 @@ def main(argv=None):
                              action='store_true', default=False,
                              help='print this help message and exit')
 
+    isready_parser = subparsers.add_parser('isready', help='indicate whether instance is ready with exit code.', add_help=False)
+    isready_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    isready_parser.add_argument('-h', '--help', dest='print_isready_help',
+                                action='store_true', default=False,
+                                help='print this help message and exit')
+
     addon_cam_parser = subparsers.add_parser('addon-cam', help='get image via add-on `cam`', add_help=False)
     addon_cam_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
     addon_cam_parser.add_argument('-f', dest='output_file',
@@ -151,6 +157,8 @@ def main(argv=None):
         if hasattr(args, 'help_target_command') and args.help_target_command is not None:
             if args.help_target_command == 'info':
                 info_parser.print_help()
+            elif args.help_target_command == 'isready':
+                isready_parser.print_help()
             elif args.help_target_command == 'addon-cam':
                 addon_cam_parser.print_help()
             elif args.help_target_command == 'wdinfo':
@@ -215,6 +223,28 @@ def main(argv=None):
         else:
             instance_id = args.ID
         print(json.dumps(apic.get_instance_info(instance_id), indent=2))
+
+    elif args.command == 'isready':
+        if args.print_isready_help:
+            isready_parser.print_help()
+            return 0
+        if args.ID is None:
+            active_instances = apic.get_instances()
+            if len(active_instances) == 1:
+                instance_id = active_instances[0]
+            elif len(active_instances) > 1:
+                print('ambiguous command because more than one active instance')
+                print('specify for which instance to get information')
+                return 1
+            else: # len(active_instances) == 0:
+                print('no active instances')
+                return 1
+        else:
+            instance_id = args.ID
+        payload = apic.get_instance_info(instance_id)
+        if payload['status'] == 'READY':
+            return 0
+        return 1
 
     elif args.command == 'addon-cam':
         if args.print_addon_cam_help:
