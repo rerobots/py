@@ -20,6 +20,10 @@ import json
 import random
 import sys
 import time
+try:
+    from time import monotonic as monotonic_unless_py2
+except ImportError:
+    from time import time as monotonic_unless_py2
 
 from . import api as rerobots_api
 from .__init__ import __version__
@@ -228,8 +232,8 @@ def main(argv=None):
                 return 1
         else:
             instance_id = args.ID
-        start_time = time.monotonic()
-        while time.monotonic() - start_time < 120:
+        start_time = monotonic_unless_py2()
+        while monotonic_unless_py2() - start_time < 120:
             payload = apic.status_addon_cam(instance_id)
             if payload['status'] == 'active':
                 snapshot_payload = apic.get_snapshot_cam(instance_id, camera_id=args.camera_id, dformat='jpeg')
