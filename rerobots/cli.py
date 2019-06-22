@@ -19,6 +19,7 @@ import argparse
 import json
 import random
 import sys
+import time
 
 from . import api as rerobots_api
 from .__init__ import __version__
@@ -51,6 +52,17 @@ def main(argv=None):
     info_parser.add_argument('-h', '--help', dest='print_info_help',
                              action='store_true', default=False,
                              help='print this help message and exit')
+
+    addon_cam_parser = subparsers.add_parser('addon-cam', help='get image via add-on `cam`', add_help=False)
+    addon_cam_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    addon_cam_parser.add_argument('-f', dest='output_file',
+                                  help='write image to file, instead of stdout (default)')
+    addon_cam_parser.add_argument('-c', dest='camera_id', metavar='CAMERA',
+                                  default=0,
+                                  help='camera ID; (default 0)')
+    addon_cam_parser.add_argument('-h', '--help', dest='print_addon_cam_help',
+                                  action='store_true', default=False,
+                                  help='print this help message and exit')
 
     list_parser = subparsers.add_parser('list', help='list all instances owned by this user.', add_help=False)
     list_parser.add_argument('-h', '--help', dest='print_list_help',
@@ -135,6 +147,8 @@ def main(argv=None):
         if hasattr(args, 'help_target_command') and args.help_target_command is not None:
             if args.help_target_command == 'info':
                 info_parser.print_help()
+            elif args.help_target_command == 'addon-cam':
+                addon_cam_parser.print_help()
             elif args.help_target_command == 'wdinfo':
                 wdinfo_parser.print_help()
             elif args.help_target_command == 'list':
@@ -197,6 +211,40 @@ def main(argv=None):
         else:
             instance_id = args.ID
         print(json.dumps(apic.get_instance_info(instance_id), indent=2))
+
+    elif args.command == 'addon-cam':
+        if args.print_addon_cam_help:
+            addon_cam_parser.print_help()
+            return 0
+        if args.ID is None:
+            active_instances = apic.get_instances()
+            if len(active_instances) == 1:
+                instance_id = active_instances[0]
+            elif len(active_instances) > 1:
+                print('ambiguous command because more than one active instance')
+                return 1
+            else: # len(active_instances) == 0:
+                print('no active instances')
+                return 1
+        else:
+            instance_id = args.ID
+        start_time = time.monotonic()
+        while time.monotonic() - start_time < 120:
+            payload = apic.status_addon_cam(instance_id)
+            if payload['status'] == 'active':
+                snapshot_payload = apic.get_snapshot_cam(instance_id, camera_id=args.camera_id, dformat='jpeg')
+                if snapshot_payload['success']:
+                    break
+            elif payload['status'] == 'notfound':
+                apic.activate_addon_cam(instance_id)
+            time.sleep(2)
+        if payload['status'] != 'active' or not snapshot_payload['success']:
+            raise Exception('timed out waiting for `cam` add-on to become active')
+        if args.output_file:
+            with open(args.output_file, 'wb') as fp:
+                fp.write(snapshot_payload['data'])
+        else:
+            sys.stdout.write(snapshot_payload['data'])
 
     elif args.command == 'terminate':
         if args.print_terminate_help:
