@@ -264,6 +264,10 @@ def main(argv=None):
             instance_id = args.ID
         start_time = monotonic_unless_py2()
         while monotonic_unless_py2() - start_time < 120:
+            payload = apic.get_instance_info(instance_id)
+            if payload['status'] == 'TERMINATED':
+                print('cannot start `cam` because instance is terminated')
+                return 1
             payload = apic.status_addon_cam(instance_id)
             if payload['status'] == 'active':
                 snapshot_payload = apic.get_snapshot_cam(instance_id, camera_id=args.camera_id, dformat='jpeg')
