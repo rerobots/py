@@ -33,7 +33,7 @@ def handle_cli_id(apiclient, given_instance_id=None):
     """Infer instance ID given command-line interface arguments
 
     Note that if given_instance_id is not None, then this function
-    returns it (and takes no other action). Eventually this function
+    returns it and takes no other action. Eventually this function
     might be changed to validate the given ID, e.g., check that it
     exists and that given API token is sufficient to use it.
     """
@@ -93,6 +93,18 @@ def main(argv=None):
     addon_cam_parser.add_argument('-h', '--help', dest='print_addon_cam_help',
                                   action='store_true', default=False,
                                   help='print this help message and exit')
+
+    addon_mistyproxy_parser = subparsers.add_parser('addon-mistyproxy', help='get proxy URL via add-on `mistyproxy`', add_help=False)
+    addon_mistyproxy_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    addon_mistyproxy_parser.add_argument('--http', dest='print_addon_mistyproxy_http',
+                                         action='store_true', default=False,
+                                         help='print the HTTP (non-encrypted) proxy URL instead')
+    addon_mistyproxy_parser.add_argument('--restart', dest='restart_addon_mistyproxy',
+                                         action='store_true', default=False,
+                                         help='restart the mistyproxy add-on and generate new URLs')
+    addon_mistyproxy_parser.add_argument('-h', '--help', dest='print_addon_mistyproxy_help',
+                                         action='store_true', default=False,
+                                         help='print this help message and exit')
 
     list_parser = subparsers.add_parser('list', help='list all instances owned by this user.', add_help=False)
     list_parser.add_argument('-h', '--help', dest='print_list_help',
@@ -181,6 +193,8 @@ def main(argv=None):
                 isready_parser.print_help()
             elif args.help_target_command == 'addon-cam':
                 addon_cam_parser.print_help()
+            elif args.help_target_command == 'addon-mistyproxy':
+                addon_mistyproxy_parser.print_help()
             elif args.help_target_command == 'wdinfo':
                 wdinfo_parser.print_help()
             elif args.help_target_command == 'list':
@@ -274,6 +288,43 @@ def main(argv=None):
                 fp.write(snapshot_payload['data'])
         else:
             sys.stdout.write(snapshot_payload['data'])
+
+    elif args.command == 'addon-mistyproxy':
+        if args.print_addon_mistyproxy_help:
+            addon_mistyproxy_parser.print_help()
+            return 0
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
+        payload = apic.get_instance_info(instance_id)
+        if payload['status'] == 'TERMINATED':
+            print('cannot start `mistyproxy` because instance is terminated')
+            return 1
+        if args.restart_addon_mistyproxy:
+            start_time = monotonic_unless_py2()
+            while monotonic_unless_py2() - start_time < 20:
+                payload = apic.status_addon_mistyproxy(instance_id)
+                if payload['status'] == 'active':
+                    apic.deactivate_addon_mistyproxy(instance_id)
+                elif payload['status'] == 'notfound':
+                    break
+                time.sleep(2)
+            if payload['status'] != 'notfound':
+                raise Exception('timed out waiting for `mistyproxy` add-on to stop')
+        start_time = monotonic_unless_py2()
+        while monotonic_unless_py2() - start_time < 20:
+            payload = apic.status_addon_mistyproxy(instance_id)
+            if payload['status'] == 'active':
+                break
+            elif payload['status'] == 'notfound':
+                apic.activate_addon_mistyproxy(instance_id)
+            time.sleep(2)
+        if payload['status'] != 'active':
+            raise Exception('timed out waiting for `mistyproxy` add-on to become active')
+        if args.print_addon_mistyproxy_http:
+            print(payload['url'][0])
+        else:
+            print(payload['url'][1])
 
     elif args.command == 'terminate':
         if args.print_terminate_help:
