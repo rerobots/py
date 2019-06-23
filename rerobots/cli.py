@@ -29,6 +29,26 @@ from . import api as rerobots_api
 from .__init__ import __version__
 
 
+def handle_cli_id(apiclient, given_instance_id=None):
+    """Infer instance ID given command-line interface arguments
+
+    Note that if given_instance_id is not None, then this function
+    returns it (and takes no other action). Eventually this function
+    might be changed to validate the given ID, e.g., check that it
+    exists and that given API token is sufficient to use it.
+    """
+    if given_instance_id is not None:
+        return given_instance_id
+    active_instances = apiclient.get_instances()
+    if len(active_instances) == 1:
+        return active_instances[0]
+    if len(active_instances) > 1:
+        print('ambiguous command because more than one active instance')
+    else: # len(active_instances) == 0:
+        print('no active instances')
+    return None
+
+
 # TODO: refactor main() into smaller routines
 # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements,too-many-locals
 def main(argv=None):
@@ -209,38 +229,18 @@ def main(argv=None):
         if args.print_info_help:
             info_parser.print_help()
             return 0
-        if args.ID is None:
-            active_instances = apic.get_instances()
-            if len(active_instances) == 1:
-                instance_id = active_instances[0]
-            elif len(active_instances) > 1:
-                print('ambiguous command because more than one active instance')
-                print('specify for which instance to get information')
-                return 1
-            else: # len(active_instances) == 0:
-                print('no active instances')
-                return 1
-        else:
-            instance_id = args.ID
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
         print(json.dumps(apic.get_instance_info(instance_id), indent=2))
 
     elif args.command == 'isready':
         if args.print_isready_help:
             isready_parser.print_help()
             return 0
-        if args.ID is None:
-            active_instances = apic.get_instances()
-            if len(active_instances) == 1:
-                instance_id = active_instances[0]
-            elif len(active_instances) > 1:
-                print('ambiguous command because more than one active instance')
-                print('specify for which instance to get information')
-                return 1
-            else: # len(active_instances) == 0:
-                print('no active instances')
-                return 1
-        else:
-            instance_id = args.ID
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
         payload = apic.get_instance_info(instance_id)
         if payload['status'] == 'READY':
             return 0
@@ -250,18 +250,9 @@ def main(argv=None):
         if args.print_addon_cam_help:
             addon_cam_parser.print_help()
             return 0
-        if args.ID is None:
-            active_instances = apic.get_instances()
-            if len(active_instances) == 1:
-                instance_id = active_instances[0]
-            elif len(active_instances) > 1:
-                print('ambiguous command because more than one active instance')
-                return 1
-            else: # len(active_instances) == 0:
-                print('no active instances')
-                return 1
-        else:
-            instance_id = args.ID
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
         start_time = monotonic_unless_py2()
         while monotonic_unless_py2() - start_time < 120:
             payload = apic.get_instance_info(instance_id)
@@ -288,19 +279,9 @@ def main(argv=None):
         if args.print_terminate_help:
             terminate_parser.print_help()
             return 0
-        if args.ID is None:
-            active_instances = apic.get_instances()
-            if len(active_instances) == 1:
-                instance_id = active_instances[0]
-            elif len(active_instances) > 1:
-                print('ambiguous command because more than one active instance')
-                print('specify which instance to terminate')
-                return 1
-            else: # len(active_instances) == 0:
-                print('no active instances')
-                return 1
-        else:
-            instance_id = args.ID
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
         apic.terminate_instance(instance_id)
 
     elif args.command == 'launch':
