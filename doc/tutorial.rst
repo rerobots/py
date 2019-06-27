@@ -22,8 +22,8 @@ Get a list of all workspace deployments that involve "misty" (i.e., robots by
 
 yielding a list like ::
 
-  ['f9a4e96f-a8f3-4b25-ae14-5ebdff63f8af',
-   'f06c8740-02a0-48ec-bdde-69ff88b71afd']
+  [{'id': 'f9a4e96f-a8f3-4b25-ae14-5ebdff63f8af', 'type': 'fixed_misty1devel'},
+   {'id': 'f06c8740-02a0-48ec-bdde-69ff88b71afd', 'type': 'fixed_misty2fieldtrial'}]
 
 The list you receive might be different, depending on availability of workspace
 deployments. To get more information about one of them, call

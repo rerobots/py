@@ -27,7 +27,7 @@ def test_wdeployment_details():
     # is among preconditions for the test below.
     assert len(workspace_deployments) > 0
 
-    wdeployment_id = workspace_deployments[0]
+    wdeployment_id = workspace_deployments[0]['id']
     details = apic.get_wdeployment_info(wdeployment_id)
     assert 'id' in details
     assert 'type' in details

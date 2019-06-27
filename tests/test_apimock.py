@@ -20,6 +20,17 @@ def test_wdeployments_list():
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
                         'page_count': 1},
                   status=200)
+    responses.add(responses.GET, 'https://api.rerobots.net/deployment/a6b88b4f-2402-41e4-8e81-b2fd852435eb',
+                  json={"id": "a6b88b4f-2402-41e4-8e81-b2fd852435eb",
+                        "type": "null",
+                        "type_version": 1,
+                        "supported_addons": [],
+                        "desc": "",
+                        "region": "us:cali",
+                        "icounter": 1,
+                        "created": "2019-06-25 07:21:48.223695",
+                        "queuelen": 0},
+                  status=200)
     apic = APIClient(ignore_env=True)
     res = apic.get_wdeployments()
     assert len(res) > 0
@@ -43,6 +54,17 @@ class BasicInstanceTestCases(unittest.TestCase):
         responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                       json={'workspace_deployments': [self.wdeployment_id],
                             'page_count': 1},
+                      status=200)
+        responses.add(responses.GET, 'https://api.rerobots.net/deployment/{}'.format(self.wdeployment_id),
+                      json={"id": "a6b88b4f-2402-41e4-8e81-b2fd852435eb",
+                            "type": "null",
+                            "type_version": 1,
+                            "supported_addons": [],
+                            "desc": "",
+                            "region": "us:cali",
+                            "icounter": 1,
+                            "created": "2019-06-25 07:21:48.223695",
+                            "queuelen": 0},
                       status=200)
         responses.add_callback(responses.POST,
                                'https://api.rerobots.net/new/{}'.format(self.wdeployment_id),
@@ -70,7 +92,7 @@ class BasicInstanceTestCases(unittest.TestCase):
         apic = APIClient(ignore_env=True)
         list_of_wdeployments = apic.get_wdeployments()
         assert len(list_of_wdeployments) > 0
-        wdeployment_id = list_of_wdeployments[0]
+        wdeployment_id = list_of_wdeployments[0]['id']
         res = apic.request_instance(wdeployment_id, reserve=False)
         assert res['success']
         assert 'id' in res

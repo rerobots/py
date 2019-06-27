@@ -223,7 +223,8 @@ def main(argv=None):
         if args.print_search_help:
             search_parser.print_help()
             return 0
-        print('\n'.join(apic.get_wdeployments(query=args.QUERY)))
+        for wdinfo in apic.get_wdeployments(query=args.QUERY):
+            print('{}\t{}'.format(wdinfo['id'], wdinfo['type']))
 
     elif args.command == 'wdinfo':
         if args.print_wdinfo_help:

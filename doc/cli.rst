@@ -61,8 +61,9 @@ Example
 
 Search for workspace deployments::
 
-  $ rerobots search
-  f06c8740-02a0-48ec-bdde-69ff88b71afd
+  $ rerobots search misty
+  f9a4e96f-a8f3-4b25-ae14-5ebdff63f8af    fixed_misty1devel
+  f06c8740-02a0-48ec-bdde-69ff88b71afd    fixed_misty2fieldtrial
 
 Get more information about one of them::
 

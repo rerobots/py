@@ -170,9 +170,17 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         else:
             raise Error(res.text)
+        page_count = payload.get('page_count', None)
+        wdeployments = []
+        for wdeployment in payload['workspace_deployments']:
+            payload = self.get_wdeployment_info(wdeployment)
+            wdeployments.append({
+                'id': wdeployment,
+                'type': payload['type'],
+            })
         if max_per_page is None:
-            return payload['workspace_deployments']
-        return payload['workspace_deployments'], payload['page_count']
+            return wdeployments
+        return wdeployments, page_count
 
     def get_wdeployment_info(self, wdeployment_id):
         """Get details about a workspace deployment.

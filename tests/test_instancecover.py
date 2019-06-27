@@ -31,9 +31,9 @@ def test_instance_start_terminate():
     assert len(available_wdeployments) > 0
     inst = None
     for instantiate_attempt in range(5):
-        for wdeployment_id in available_wdeployments:
+        for wdeployment in available_wdeployments:
             try:
-                inst = Instance(wdeployment_id=wdeployment_id)
+                inst = Instance(wdeployment_id=wdeployment['id'])
             except BusyWorkspaceDeployment:
                 continue
             break

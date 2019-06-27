@@ -17,7 +17,7 @@ Example
   apic = rerobots.api.APIClient()
 
   wdeployments = apic.get_wdeployments()
-  print(apic.get_wdeployment_info(wdeployments[0]))
+  print(apic.get_wdeployment_info(wdeployments[0]['id']))
 
 
 Create a new client object
