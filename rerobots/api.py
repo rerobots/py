@@ -327,12 +327,15 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 payload = res.json()
             except:
                 raise Error('Response {}: {}'.format(res.status_code, res.content))
-            if 'result_message' in payload:
-                errmsg = payload['result_message']
-                if errmsg.startswith('All matching workspace deployments are busy'):
-                    raise BusyWorkspaceDeployment(errmsg)
-                raise Error(errmsg)
-            raise Error(payload)
+            errmsg = payload.get('result_message', None)
+            if errmsg is None:
+                errmsg = payload.get('error', None)
+            if errmsg is None:
+                raise Error(payload)
+            if errmsg.startswith('All matching workspace deployments are busy'):
+                raise BusyWorkspaceDeployment(errmsg)
+            raise Error(errmsg)
+
         return payload
 
     def get_reservations(self):
