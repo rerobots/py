@@ -353,9 +353,10 @@ def main(argv=None):
             wdeployment_id = args.ID
 
         payload = apic.request_instance(wdeployment_id)
-        print('instance {}'.format(payload['id']))
+        print('{}'.format(payload['id']))
         if 'sshkey' in payload:
-            print('writing secret key for ssh access to file key.pem...')
+            # TODO: echo only if verbose: writing secret key for ssh access to file key.pem...
+            # TODO: add command-line switch to change file name, or print to stdout etc.
             with open('key.pem', 'w') as fp:
                 fp.write(payload['sshkey'])
 
