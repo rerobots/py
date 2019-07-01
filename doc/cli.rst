@@ -57,6 +57,21 @@ the command-line switch ``-t``.
 Example
 -------
 
+The following video demonstrates how to search for types of workspaces, request
+an instance, and finally terminate it. The same example is also presented below
+in text.
+
+Before beginning, `get an API token
+<https://help.rerobots.net/webui.html#making-and-revoking-api-tokens>`_ (`from
+the Web UI <https://rerobots.net/tokens>`_). In this example, we assume that it
+is saved to a file named ``jwt.txt``.
+
+.. original video is hosted at https://asciinema.org/a/PMqssHq0EMDclOvc72IOfyEvL
+
+.. raw:: html
+
+  <script id="asciicast-PMqssHq0EMDclOvc72IOfyEvL" src="https://asciinema.org/a/PMqssHq0EMDclOvc72IOfyEvL.js" async></script>
+
 .. highlight:: none
 
 Search for workspace deployments::
