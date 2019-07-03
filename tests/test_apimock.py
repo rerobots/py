@@ -10,7 +10,7 @@ import unittest
 import pytest
 import responses
 
-from rerobots.api import APIClient
+from rerobots.api import APIClient, Instance
 from rerobots.api import Error, WrongAuthToken
 
 
@@ -98,3 +98,12 @@ class BasicInstanceTestCases(unittest.TestCase):
         assert 'id' in res
         with pytest.raises(Error):
             apic.request_instance(wdeployment_id, reserve=False)
+
+    @responses.activate
+    def test_new_Instance(self):
+        apic = APIClient(ignore_env=True)
+        list_of_wdeployments = apic.get_wdeployments()
+        assert len(list_of_wdeployments) > 0
+        wdeployment_id = list_of_wdeployments[0]['id']
+        inst = Instance(workspace_types=['null'], wdeployment_id=wdeployment_id, apic=apic)
+        assert inst is not None
