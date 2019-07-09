@@ -1,3 +1,18 @@
+rerobots Python client library (0.9.0)
+
+  * New CLI commands: isready, addon-cam, addon-mistyproxy.
+
+  * Reduce output after `rerobots launch` (CLI) to be only instance identifier.
+
+  * Instance object can be created by attaching to existing one.
+
+  * Return more info from APIClient.get_wdeployments().
+
+  * For testing against multiple Python versions, update tox configuration.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Tue, 09 Jul 2019 09:18:12 -0700
+
+
 rerobots Python client library (0.8.0)
 
   * Refactor to be consistent with `wdeployment`. Previously, some names
