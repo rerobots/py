@@ -28,6 +28,10 @@ Most interesting interactions with rerobots require an API token, which can be
 provided through the environment variable ``REROBOTS_API_TOKEN`` or via the
 command-line switch ``-t``.
 
+For additional features, such as getting images from cameras as NumPy arrays, ::
+
+  pip install rerobots[extra]
+
 
 Testing and development
 -----------------------
