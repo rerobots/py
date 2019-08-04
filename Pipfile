@@ -9,6 +9,7 @@ coverage = "*"
 tox = "*"
 pylint = "*"
 responses = "*"
+rerobots = {extras = ["extra"],path = "."}
 
 [packages]
 rerobots = {path = ".",editable = true,extras = ["extra"]}
