@@ -134,6 +134,10 @@ def main(argv=None):
                                action='store_true', default=False,
                                help='print this help message and exit')
     launch_parser.add_argument('ID', nargs='?', default=None, help='deployment ID')
+    launch_default_secretkeyname = 'key.pem'
+    launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeyname',
+                               default=launch_default_secretkeyname,
+                               help='name of file in which to write secret key (default {})'.format(launch_default_secretkeyname))
 
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
     terminate_parser.add_argument('-h', '--help', dest='print_terminate_help',
@@ -356,8 +360,7 @@ def main(argv=None):
         print('{}'.format(payload['id']))
         if 'sshkey' in payload:
             # TODO: echo only if verbose: writing secret key for ssh access to file key.pem...
-            # TODO: add command-line switch to change file name, or print to stdout etc.
-            with open('key.pem', 'w') as fp:
+            with open(args.secretkeyname, 'w') as fp:
                 fp.write(payload['sshkey'])
 
     else:
