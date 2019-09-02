@@ -2,7 +2,7 @@
 
 
 SCL <scott@rerobots.net>
-Copyright (c) 2017, 2018 rerobots, Inc.
+Copyright (c) 2017-2019 rerobots, Inc.
 """
 import base64
 from io import BytesIO
