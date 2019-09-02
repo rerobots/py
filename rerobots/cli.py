@@ -17,6 +17,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 import argparse
 import json
+import os.path
 import random
 import sys
 import time
@@ -344,6 +345,10 @@ def main(argv=None):
         if args.print_launch_help:
             launch_parser.print_help()
             return 0
+        if os.path.exists(args.secretkeyname):
+            print('Error: cannot write secret key to {}; '
+                  'file already exists'.format(args.secretkeyname))
+            return 1
         if args.ID is None:
             available_wdeployments = apic.get_wdeployments()
             if len(available_wdeployments) == 1:
