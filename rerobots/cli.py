@@ -349,6 +349,7 @@ def main(argv=None):
             print('Error: cannot write secret key to {}; '
                   'file already exists'.format(args.secretkeyname))
             return 1
+        secretkey_fd = os.open(args.secretkeyname, flags=os.O_CREAT|os.O_WRONLY, mode=0o600)
         if args.ID is None:
             available_wdeployments = apic.get_wdeployments()
             if len(available_wdeployments) == 1:
@@ -365,8 +366,9 @@ def main(argv=None):
         print('{}'.format(payload['id']))
         if 'sshkey' in payload:
             # TODO: echo only if verbose: writing secret key for ssh access to file key.pem...
-            with open(args.secretkeyname, 'w') as fp:
-                fp.write(payload['sshkey'])
+            fp = os.fdopen(secretkey_fd, 'w')
+            fp.write(payload['sshkey'])
+            fp.close()
 
     else:
         print('Unrecognized command. Try `help`.')
