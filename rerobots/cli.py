@@ -137,7 +137,7 @@ def main(argv=None):
     launch_parser.add_argument('ID', nargs='?', default=None, help='deployment ID')
     launch_default_secretkeypath = 'key.pem'
     launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeypath',
-                               default=launch_default_secretkeypath,
+                               default=None,
                                help='name of file in which to write secret key (default {})'.format(launch_default_secretkeypath))
 
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
@@ -345,11 +345,15 @@ def main(argv=None):
         if args.print_launch_help:
             launch_parser.print_help()
             return 0
-        if os.path.exists(args.secretkeypath):
+        if args.secretkeypath is None:
+            secretkeypath = launch_default_secretkeypath
+        else:
+            secretkeypath = args.secretkeypath
+        if os.path.exists(secretkeypath):
             print('Error: cannot write secret key to {}; '
-                  'file already exists'.format(args.secretkeypath))
+                  'file already exists'.format(secretkeypath))
             return 1
-        secretkey_fd = os.open(args.secretkeypath, flags=os.O_CREAT|os.O_WRONLY, mode=0o600)
+        secretkey_fd = os.open(secretkeypath, flags=os.O_CREAT|os.O_WRONLY, mode=0o600)
         if args.ID is None:
             available_wdeployments = apic.get_wdeployments()
             if len(available_wdeployments) == 1:
