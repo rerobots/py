@@ -143,7 +143,7 @@ def main(argv=None):
     launch_default_secretkeypath = 'key.pem'
     launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeypath',
                                default=None,
-                               help=('name of file in which to write secret key '
+                               help=('name of file in which to write new secret key '
                                      '(default {})'.format(launch_default_secretkeypath)))
     launch_parser.add_argument('-y', dest='assume_yes',
                                action='store_true', default=False,
