@@ -150,6 +150,11 @@ def main(argv=None):
                                help=('assume "yes" for any questions required to launch instance; '
                                      'otherwise, interactive prompts will appear '
                                      'to confirm actions as needed'))
+    launch_parser.add_argument('-n', dest='assume_no',
+                               action='store_true', default=False,
+                               help=('assume "no" for any questions required to launch instance; '
+                                     'in practice, this prevents launching if doing so requires '
+                                     'destructive actions, e.g., overwriting a local file'))
     launch_parser.add_argument('--public-key', metavar='FILE', dest='publickeypath',
                                default=None,
                                help=('path of public key to use; '
@@ -361,6 +366,9 @@ def main(argv=None):
         if args.print_launch_help:
             launch_parser.print_help()
             return 0
+        if args.assume_yes and args.assume_no:
+            print('Error: both -y and -n given')
+            return 1
         if args.secretkeypath and args.publickeypath:
             print('Error: both --public-key and --secret-key given')
             return 1
@@ -377,6 +385,9 @@ def main(argv=None):
         if secretkeypath:
             if os.path.exists(secretkeypath) and not args.assume_yes:
                 print('file already exists at {}'.format(secretkeypath))
+                if args.assume_no:
+                    print('please provide a different value via --secret-key')
+                    return 1
                 ui_input = None
                 while ui_input not in ('y', 'yes'):
                     print('overwrite it with new secret key? [y/N] ', end='')
