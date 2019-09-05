@@ -150,6 +150,11 @@ def main(argv=None):
                                help=('assume "yes" for any questions required to launch instance; '
                                      'otherwise, interactive prompts will appear '
                                      'to confirm actions as needed'))
+    launch_parser.add_argument('--public-key', metavar='FILE', dest='publickeypath',
+                               default=None,
+                               help=('path of public key to use; '
+                                     'if not given, then a new key pair will be generated; '
+                                     'this switch cannot be used with --secret-key'))
 
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
     terminate_parser.add_argument('-h', '--help', dest='print_terminate_help',
@@ -356,20 +361,30 @@ def main(argv=None):
         if args.print_launch_help:
             launch_parser.print_help()
             return 0
-        if args.secretkeypath is None:
-            secretkeypath = launch_default_secretkeypath
-        else:
+        if args.secretkeypath and args.publickeypath:
+            print('Error: both --public-key and --secret-key given')
+            return 1
+        if args.publickeypath:
+            secretkeypath = None
+            with open(args.publickeypath, 'rt') as fp:
+                publickey = fp.read()
+        elif args.secretkeypath:
             secretkeypath = args.secretkeypath
-        if os.path.exists(secretkeypath) and not args.assume_yes:
-            print('file already exists at {}'.format(secretkeypath))
-            ui_input = None
-            while ui_input not in ('y', 'yes'):
-                print('overwrite it with new secret key? [y/N] ', end='')
-                ui_input = input().lower()
-                if ui_input in ('n', 'no', ''):
-                    print('please provide a different value via --secret-key')
-                    return 1
-        secretkey_fd = os.open(secretkeypath, flags=os.O_CREAT|os.O_WRONLY|os.O_TRUNC, mode=0o600)
+            publickey = None
+        else:
+            secretkeypath = launch_default_secretkeypath
+            publickey = None
+        if secretkeypath:
+            if os.path.exists(secretkeypath) and not args.assume_yes:
+                print('file already exists at {}'.format(secretkeypath))
+                ui_input = None
+                while ui_input not in ('y', 'yes'):
+                    print('overwrite it with new secret key? [y/N] ', end='')
+                    ui_input = input().lower()
+                    if ui_input in ('n', 'no', ''):
+                        print('please provide a different value via --secret-key')
+                        return 1
+            secretkey_fd = os.open(secretkeypath, flags=os.O_CREAT|os.O_WRONLY|os.O_TRUNC, mode=0o600)
         if args.ID is None:
             available_wdeployments = apic.get_wdeployments()
             if len(available_wdeployments) == 1:
@@ -382,9 +397,9 @@ def main(argv=None):
         else:
             wdeployment_id = args.ID
 
-        payload = apic.request_instance(wdeployment_id)
+        payload = apic.request_instance(wdeployment_id, sshkey=publickey)
         print('{}'.format(payload['id']))
-        if 'sshkey' in payload:
+        if secretkeypath and 'sshkey' in payload:
             # TODO: echo only if verbose: writing secret key for ssh access to file key.pem...
             fp = os.fdopen(secretkey_fd, 'w')
             fp.write(payload['sshkey'])
