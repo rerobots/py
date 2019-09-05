@@ -143,10 +143,13 @@ def main(argv=None):
     launch_default_secretkeypath = 'key.pem'
     launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeypath',
                                default=None,
-                               help='name of file in which to write secret key (default {})'.format(launch_default_secretkeypath))
+                               help=('name of file in which to write secret key '
+                                     '(default {})'.format(launch_default_secretkeypath)))
     launch_parser.add_argument('-y', dest='assume_yes',
                                action='store_true', default=False,
-                               help='assume "yes" for any questions required to launch instance; otherwise, interactive prompts will appear to confirm actions as needed')
+                               help=('assume "yes" for any questions required to launch instance; '
+                                     'otherwise, interactive prompts will appear '
+                                     'to confirm actions as needed'))
 
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
     terminate_parser.add_argument('-h', '--help', dest='print_terminate_help',
