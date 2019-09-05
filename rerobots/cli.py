@@ -29,6 +29,11 @@ except ImportError:
 from . import api as rerobots_api
 from .__init__ import __version__
 
+try:  # compatibility with Python 2.7
+    input = raw_input  # pylint: disable=redefined-builtin,invalid-name
+except NameError:
+    pass
+
 
 def handle_cli_id(apiclient, given_instance_id=None):
     """Infer instance ID given command-line interface arguments
@@ -139,6 +144,9 @@ def main(argv=None):
     launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeypath',
                                default=None,
                                help='name of file in which to write secret key (default {})'.format(launch_default_secretkeypath))
+    launch_parser.add_argument('-y', dest='assume_yes',
+                               action='store_true', default=False,
+                               help='assume "yes" for any questions required to launch instance; otherwise, interactive prompts will appear to confirm actions as needed')
 
     terminate_parser = subparsers.add_parser('terminate', help='terminate instance.', add_help=False)
     terminate_parser.add_argument('-h', '--help', dest='print_terminate_help',
@@ -349,11 +357,16 @@ def main(argv=None):
             secretkeypath = launch_default_secretkeypath
         else:
             secretkeypath = args.secretkeypath
-        if os.path.exists(secretkeypath):
-            print('Error: cannot write secret key to {}; '
-                  'file already exists'.format(secretkeypath))
-            return 1
-        secretkey_fd = os.open(secretkeypath, flags=os.O_CREAT|os.O_WRONLY, mode=0o600)
+        if os.path.exists(secretkeypath) and not args.assume_yes:
+            print('file already exists at {}'.format(secretkeypath))
+            ui_input = None
+            while ui_input not in ('y', 'yes'):
+                print('overwrite it with new secret key? [y/N] ', end='')
+                ui_input = input().lower()
+                if ui_input in ('n', 'no', ''):
+                    print('please provide a different value via --secret-key')
+                    return 1
+        secretkey_fd = os.open(secretkeypath, flags=os.O_CREAT|os.O_WRONLY|os.O_TRUNC, mode=0o600)
         if args.ID is None:
             available_wdeployments = apic.get_wdeployments()
             if len(available_wdeployments) == 1:
