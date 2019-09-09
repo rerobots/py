@@ -1,3 +1,16 @@
+rerobots Python client library (0.9.1)
+
+  * Add CLI option: launch --secret-key FILE
+
+  * Add CLI argument for user-provided public keys.
+
+  * Add CLI switches `-y` and `-n` to assume "yes" and "no" at prompts.
+
+  * Restrict read-access of new secret keys file to user.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Mon, 09 Sep 2019 16:32:06 -0700
+
+
 rerobots Python client library (0.9.0)
 
   * New CLI commands: isready, addon-cam, addon-mistyproxy.
