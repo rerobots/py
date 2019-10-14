@@ -112,6 +112,15 @@ def main(argv=None):
                                          action='store_true', default=False,
                                          help='print this help message and exit')
 
+    addon_drive_parser = subparsers.add_parser('addon-drive', help='send motion commands via add-on `drive`', add_help=False)
+    addon_drive_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    addon_drive_parser.add_argument('-r', dest='motion_command', metavar='STRING',
+                                    default=None,
+                                    help='raw command (JSON)')
+    addon_drive_parser.add_argument('-h', '--help', dest='print_addon_drive_help',
+                                    action='store_true', default=False,
+                                    help='print this help message and exit')
+
     list_parser = subparsers.add_parser('list', help='list all instances owned by this user.', add_help=False)
     list_parser.add_argument('-h', '--help', dest='print_list_help',
                              action='store_true', default=False,
@@ -221,6 +230,8 @@ def main(argv=None):
                 addon_cam_parser.print_help()
             elif args.help_target_command == 'addon-mistyproxy':
                 addon_mistyproxy_parser.print_help()
+            elif args.help_target_command == 'addon-drive':
+                addon_drive_parser.print_help()
             elif args.help_target_command == 'wdinfo':
                 wdinfo_parser.print_help()
             elif args.help_target_command == 'list':
@@ -352,6 +363,34 @@ def main(argv=None):
             print(payload['url'][0])
         else:
             print(payload['url'][1])
+
+    elif args.command == 'addon-drive':
+        if args.print_addon_drive_help:
+            addon_drive_parser.print_help()
+            return 0
+        try:
+            motion_command = json.loads(args.motion_command)
+        except:
+            print('not valid JSON')
+            return 1
+        instance_id = handle_cli_id(apic, args.ID)
+        if instance_id is None:
+            return 1
+        start_time = monotonic_unless_py2()
+        while monotonic_unless_py2() - start_time < 120:
+            payload = apic.get_instance_info(instance_id)
+            if payload['status'] == 'TERMINATED':
+                print('cannot start `drive` because instance is terminated')
+                return 1
+            payload = apic.status_addon_drive(instance_id)
+            if payload['status'] == 'active':
+                apic.send_drive_command(instance_id=instance_id, command=motion_command)
+                break
+            elif payload['status'] == 'notfound':
+                apic.activate_addon_drive(instance_id)
+            time.sleep(1)
+        if payload['status'] != 'active':
+            raise Exception('timed out waiting for `drive` add-on to become active')
 
     elif args.command == 'terminate':
         if args.print_terminate_help:

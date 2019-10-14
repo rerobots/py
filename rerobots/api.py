@@ -570,6 +570,46 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 payload['format'] = 'ndarray'
         return payload
 
+    def activate_addon_drive(self, instance_id):
+        """Activate drive add-on.
+        """
+        res = requests.post(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def status_addon_drive(self, instance_id):
+        """Get status of drive add-on for this instance.
+        """
+        res = requests.get(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        if not res.ok and res.status_code != 404:
+            raise Error(res.text)
+        if res.status_code == 404:
+            payload = {'status': 'notfound'}
+        else:
+            payload = res.json()
+        return payload
+
+    def send_drive_command(self, instance_id, command):
+        """Send motion command via drive add-on.
+        """
+        if command is None:
+            command = {'linearv': 0, 'angularv': 0}
+        res = requests.post(self.__base_uri + '/addon/drive/' + instance_id + '/tx',
+                            json=command,
+                            headers=self.__headers, verify=self.__verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
+    def deactivate_addon_drive(self, instance_id):
+        """Deactivate drive add-on.
+
+        Note that calling this is not required if the workspace
+        instance will be terminated.
+        """
+        res = requests.delete(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        if not res.ok:
+            raise Error(res.text)
+
     def revoke_token(self, token=None, sha256=None):
         """Revoke an API token.
 
@@ -726,6 +766,23 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
     def deactivate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_cam(self._id)
+
+
+    def activate_addon_drive(self):
+        """This is a wrapper for APIClient method of same name."""
+        self.apic.activate_addon_drive(self._id)
+
+    def status_addon_drive(self):
+        """This is a wrapper for APIClient method of same name."""
+        return self.apic.status_addon_drive(self._id)
+
+    def send_drive_command(self, command):
+        """This is a wrapper for APIClient method of same name."""
+        return self.apic.send_drive_command(instance_id=self._id, command=command)
+
+    def deactivate_addon_drive(self):
+        """This is a wrapper for APIClient method of same name."""
+        self.apic.deactivate_addon_drive(self._id)
 
 
     def activate_addon_mistyproxy(self):
