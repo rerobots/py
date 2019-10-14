@@ -7,7 +7,7 @@
 
 .PHONY: lint
 lint:
-	pylint --disable=fixme rerobots
+	pylint --disable=fixme,bad-option-value rerobots
 
 .PHONY: check
 check: lint
