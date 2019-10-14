@@ -543,6 +543,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         compatible. In particular, if dformat='ndarray', then coding
         must be None.
         """
+        # pylint: disable=import-outside-toplevel
         if dformat is not None:
             dformat = dformat.lower()
             assert dformat in ['ndarray', 'jpeg']
@@ -860,6 +861,7 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         This method is a prerequisite to exec_ssh(), which executes
         remote terminal commands.
         """
+        # pylint: disable=import-outside-toplevel
         import paramiko
         status = self.get_status()
         if status != 'READY':

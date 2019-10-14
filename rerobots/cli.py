@@ -354,7 +354,7 @@ def main(argv=None):
             payload = apic.status_addon_mistyproxy(instance_id)
             if payload['status'] == 'active':
                 break
-            elif payload['status'] == 'notfound':
+            if payload['status'] == 'notfound':
                 apic.activate_addon_mistyproxy(instance_id)
             time.sleep(2)
         if payload['status'] != 'active':
@@ -386,7 +386,7 @@ def main(argv=None):
             if payload['status'] == 'active':
                 apic.send_drive_command(instance_id=instance_id, command=motion_command)
                 break
-            elif payload['status'] == 'notfound':
+            if payload['status'] == 'notfound':
                 apic.activate_addon_drive(instance_id)
             time.sleep(1)
         if payload['status'] != 'active':
