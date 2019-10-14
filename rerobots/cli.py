@@ -370,7 +370,7 @@ def main(argv=None):
             return 0
         try:
             motion_command = json.loads(args.motion_command)
-        except:
+        except ValueError:
             print('not valid JSON')
             return 1
         instance_id = handle_cli_id(apic, args.ID)
