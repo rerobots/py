@@ -85,6 +85,9 @@ def main(argv=None):
 
     isready_parser = subparsers.add_parser('isready', help='indicate whether instance is ready with exit code.', add_help=False)
     isready_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
+    isready_parser.add_argument('--blocking', dest='isready_blocking',
+                                action='store_true', default=False,
+                                help='do not return until instance is non-INIT')
     isready_parser.add_argument('-h', '--help', dest='print_isready_help',
                                 action='store_true', default=False,
                                 help='print this help message and exit')
@@ -293,9 +296,13 @@ def main(argv=None):
         instance_id = handle_cli_id(apic, args.ID)
         if instance_id is None:
             return 1
-        payload = apic.get_instance_info(instance_id)
-        if payload['status'] == 'READY':
-            return 0
+        while True:
+            payload = apic.get_instance_info(instance_id)
+            if payload['status'] == 'READY':
+                return 0
+            if payload['status'] != 'INIT' or not args.isready_blocking:
+                return 1
+            time.sleep(1)
         return 1
 
     elif args.command == 'addon-cam':
