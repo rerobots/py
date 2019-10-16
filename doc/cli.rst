@@ -15,17 +15,18 @@ which will result in a message similar to the following
 ::
 
   usage: rerobots [-h] [-V] [-t FILE]
-		  {info,isready,addon-cam,addon-mistyproxy,list,search,wdinfo,launch,terminate,version,help}
+		  {info,isready,addon-cam,addon-mistyproxy,addon-drive,list,search,wdinfo,launch,terminate,version,help}
 		  ...
 
   rerobots API command-line client
 
   positional arguments:
-    {info,isready,addon-cam,addon-mistyproxy,list,search,wdinfo,launch,terminate,version,help}
+    {info,isready,addon-cam,addon-mistyproxy,addon-drive,list,search,wdinfo,launch,terminate,version,help}
       info                print summary about instance.
       isready             indicate whether instance is ready with exit code.
       addon-cam           get image via add-on `cam`
       addon-mistyproxy    get proxy URL via add-on `mistyproxy`
+      addon-drive         send motion commands via add-on `drive`
       list                list all instances owned by this user.
       search              search for matching deployments. empty query implies
 			  show all existing workspace deployments.
