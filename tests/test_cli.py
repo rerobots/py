@@ -111,7 +111,7 @@ def test_alternative_command_help_spellings(command):
 @responses.activate
 def test_instances_list_badtoken():
     responses.add(responses.GET, 'https://api.rerobots.net/instances',
-                  json={"error_message": "wrong authorization token"},
+                  json={'error_message': 'wrong authorization token'},
                   status=400)
     original_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -131,15 +131,15 @@ class MockSearchTestCases(unittest.TestCase):
                             'page_count': 1},
                       status=200)
         responses.add(responses.GET, 'https://api.rerobots.net/deployment/{}'.format(self.wdeployment_id),
-                      json={"id": "a6b88b4f-2402-41e4-8e81-b2fd852435eb",
-                            "type": "null",
-                            "type_version": 1,
-                            "supported_addons": [],
-                            "desc": "",
-                            "region": "us:cali",
-                            "icounter": 1,
-                            "created": "2019-06-25 07:21:48.223695",
-                            "queuelen": 0},
+                      json={'id': 'a6b88b4f-2402-41e4-8e81-b2fd852435eb',
+                            'type': 'null',
+                            'type_version': 1,
+                            'supported_addons': [],
+                            'desc': '',
+                            'region': 'us:cali',
+                            'icounter': 1,
+                            'created': '2019-06-25 07:21:48.223695',
+                            'queuelen': 0},
                       status=200)
 
     def tearDown(self):

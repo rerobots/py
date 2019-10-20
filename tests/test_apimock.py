@@ -21,15 +21,15 @@ def test_wdeployments_list():
                         'page_count': 1},
                   status=200)
     responses.add(responses.GET, 'https://api.rerobots.net/deployment/a6b88b4f-2402-41e4-8e81-b2fd852435eb',
-                  json={"id": "a6b88b4f-2402-41e4-8e81-b2fd852435eb",
-                        "type": "null",
-                        "type_version": 1,
-                        "supported_addons": [],
-                        "desc": "",
-                        "region": "us:cali",
-                        "icounter": 1,
-                        "created": "2019-06-25 07:21:48.223695",
-                        "queuelen": 0},
+                  json={'id': 'a6b88b4f-2402-41e4-8e81-b2fd852435eb',
+                        'type': 'null',
+                        'type_version': 1,
+                        'supported_addons': [],
+                        'desc': '',
+                        'region': 'us:cali',
+                        'icounter': 1,
+                        'created': '2019-06-25 07:21:48.223695',
+                        'queuelen': 0},
                   status=200)
     apic = APIClient(ignore_env=True)
     res = apic.get_wdeployments()
@@ -39,7 +39,7 @@ def test_wdeployments_list():
 @responses.activate
 def test_instances_list_badtoken():
     responses.add(responses.GET, 'https://api.rerobots.net/instances',
-                  json={"error_message": "wrong authorization token"},
+                  json={'error_message': 'wrong authorization token'},
                   status=400)
     apic = APIClient(api_token='deadbeef', ignore_env=True)
     with pytest.raises(WrongAuthToken):
@@ -56,15 +56,15 @@ class BasicInstanceTestCases(unittest.TestCase):
                             'page_count': 1},
                       status=200)
         responses.add(responses.GET, 'https://api.rerobots.net/deployment/{}'.format(self.wdeployment_id),
-                      json={"id": "a6b88b4f-2402-41e4-8e81-b2fd852435eb",
-                            "type": "null",
-                            "type_version": 1,
-                            "supported_addons": [],
-                            "desc": "",
-                            "region": "us:cali",
-                            "icounter": 1,
-                            "created": "2019-06-25 07:21:48.223695",
-                            "queuelen": 0},
+                      json={'id': 'a6b88b4f-2402-41e4-8e81-b2fd852435eb',
+                            'type': 'null',
+                            'type_version': 1,
+                            'supported_addons': [],
+                            'desc': '',
+                            'region': 'us:cali',
+                            'icounter': 1,
+                            'created': '2019-06-25 07:21:48.223695',
+                            'queuelen': 0},
                       status=200)
         responses.add_callback(responses.POST,
                                'https://api.rerobots.net/new/{}'.format(self.wdeployment_id),
