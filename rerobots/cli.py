@@ -329,10 +329,10 @@ def main(argv=None):
         if payload['status'] != 'active' or not snapshot_payload['success']:
             raise Exception('timed out waiting for `cam` add-on to become active')
         if args.output_file:
-            with open(args.output_file, 'wb') as fp:
-                fp.write(snapshot_payload['data'])
+            fp = open(args.output_file, 'wb')
         else:
-            sys.stdout.write(snapshot_payload['data'])
+            fp = os.fdopen(1, 'wb')
+        fp.write(snapshot_payload['data'])
 
     elif args.command == 'addon-mistyproxy':
         if args.print_addon_mistyproxy_help:
