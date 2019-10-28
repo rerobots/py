@@ -39,6 +39,10 @@ class BusyWorkspaceInstance(Error):
     """Instance is busy, and the request cannot be queued.
     """
 
+class InstanceNotFound(Error):
+    """No instance found with given identifier.
+    """
+
 class WrongAuthToken(Error):
     """An action requires, but was not given, some valid API token.
 
@@ -286,7 +290,15 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if res.ok:
             payload = res.json()
         else:
-            raise Error(res.text)
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'error_message' in payload:
+                if payload['error_message'] == 'instance not found':
+                    raise InstanceNotFound('no instance with identifier {}'.format(instance_id))
+                raise Error(payload['error_message'])
+            raise Error(payload)
         return payload
 
     def terminate_instance(self, instance_id):
