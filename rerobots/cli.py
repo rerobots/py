@@ -225,26 +225,8 @@ def main(argv=None):
 
     if args.print_help or args.command is None or args.command == 'help':
         if hasattr(args, 'help_target_command') and args.help_target_command is not None:
-            if args.help_target_command == 'info':
-                info_parser.print_help()
-            elif args.help_target_command == 'isready':
-                isready_parser.print_help()
-            elif args.help_target_command == 'addon-cam':
-                addon_cam_parser.print_help()
-            elif args.help_target_command == 'addon-mistyproxy':
-                addon_mistyproxy_parser.print_help()
-            elif args.help_target_command == 'addon-drive':
-                addon_drive_parser.print_help()
-            elif args.help_target_command == 'wdinfo':
-                wdinfo_parser.print_help()
-            elif args.help_target_command == 'list':
-                list_parser.print_help()
-            elif args.help_target_command == 'search':
-                search_parser.print_help()
-            elif args.help_target_command == 'launch':
-                launch_parser.print_help()
-            elif args.help_target_command == 'terminate':
-                terminate_parser.print_help()
+            if args.help_target_command in subparsers.choices:
+                subparsers.choices[args.help_target_command].print_help()
             else:
                 print('Error: unrecognized command {}'.format(args.help_target_command))
                 return 1
