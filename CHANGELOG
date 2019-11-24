@@ -1,3 +1,18 @@
+rerobots Python client library (0.9.2)
+
+  * Expose raw commands to `drive` add-on. There is not much input validation
+    for this add-on in this release.
+
+  * Provide --blocking switch to CLI `isready`.
+
+  * Correct writing of image file from addon-cam to stdout. Previously, only
+    writing to a file worked.
+
+  * Create new exception type: InstanceNotFound.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Sun, 24 Nov 2019 08:41:31 -0800
+
+
 rerobots Python client library (0.9.1)
 
   * Add CLI option: launch --secret-key FILE
