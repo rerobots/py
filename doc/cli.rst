@@ -67,11 +67,11 @@ Before beginning, `get an API token
 the Web UI <https://rerobots.net/tokens>`_). In this example, we assume that it
 is saved to a file named ``jwt.txt``.
 
-.. original video is hosted at https://asciinema.org/a/PMqssHq0EMDclOvc72IOfyEvL
+.. original video is hosted at https://asciinema.org/a/l0l2yh83JtAM8RjDiOHsk3Q9F
 
 .. raw:: html
 
-  <script id="asciicast-PMqssHq0EMDclOvc72IOfyEvL" src="https://asciinema.org/a/PMqssHq0EMDclOvc72IOfyEvL.js" async></script>
+  <script id="asciicast-l0l2yh83JtAM8RjDiOHsk3Q9F" src="https://asciinema.org/a/l0l2yh83JtAM8RjDiOHsk3Q9F.js" async></script>
 
 .. highlight:: none
 
