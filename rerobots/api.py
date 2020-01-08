@@ -317,7 +317,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(errmsg)
             raise Error(payload)
 
-    def request_instance(self, wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None):
+    def request_instance(self, wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, duration=None):
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
@@ -331,6 +331,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         body = dict()
         if sshkey is not None:
             body['sshkey'] = sshkey
+        if duration is not None:
+            body['expire_d'] = duration
         if vpn:
             body['vpn'] = vpn
         body['reserve'] = reserve
