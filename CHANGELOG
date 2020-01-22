@@ -1,3 +1,10 @@
+rerobots Python client library (0.9.3)
+
+  * Expose instance duration parameter.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Wed, 22 Jan 2020 10:45:48 -0800
+
+
 rerobots Python client library (0.9.2)
 
   * Expose raw commands to `drive` add-on. There is not much input validation
