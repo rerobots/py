@@ -146,6 +146,16 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         self.__api_token = token
         self.__headers['Authorization'] = 'Bearer ' + self.__api_token
 
+    def get_wtypes(self):
+        """Get list of workspace types.
+        """
+        res = requests.get(self.__base_uri + '/workspaces', headers=self.__headers, verify=self.__verify_certs)
+        if res.ok:
+            payload = res.json()
+        else:
+            raise Error(res.text)
+        return payload['workspace_types']
+
     def get_wdeployments(self, query=None, maxlen=None, types=None, page=None, max_per_page=None):
         """Get list of workspace deployments.
 
