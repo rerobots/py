@@ -1,3 +1,12 @@
+rerobots Python client library (0.9.4)
+
+  * Create method to get list of workspace types.
+
+  * Declare support of Python 3.8.
+
+ -- Scott C. Livingston <scott@rerobots.net>  Tue, 10 Mar 2020 11:29:21 -0700
+
+
 rerobots Python client library (0.9.3)
 
   * Expose instance duration parameter.
