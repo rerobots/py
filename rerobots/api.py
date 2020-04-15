@@ -572,7 +572,9 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             dformat = dformat.lower()
             assert dformat in ['ndarray', 'jpeg']
         res = requests.get(self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=self.__headers, verify=self.__verify_certs)
-        if not res.ok and res.status_code != 404:
+        if not res.ok:
+            if res.status_code == 404:
+                raise Error('instance {} not found, or cam add-on not active'.format(instance_id))
             raise Error(res.text)
         payload = res.json()
         if not payload['success']:
