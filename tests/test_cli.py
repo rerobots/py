@@ -115,8 +115,8 @@ def test_instances_list_badtoken():
                   status=400)
     original_stdout = sys.stdout
     sys.stdout = StringIO()
-    with pytest.raises(WrongAuthToken):
-        cli.main(['list'])
+    rc = cli.main(['list'])
+    assert rc == 1
     res = sys.stdout.getvalue().strip()
     sys.stdout = original_stdout
 

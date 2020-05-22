@@ -563,7 +563,11 @@ def main(argv=None):
     if getattr(args, 'print_{}_help'.format(command)):
         subparsers.choices[args.command].print_help()
         return 0
-    return globals()['cli_' + command](apic, args)
+    try:
+        return globals()['cli_' + command](apic, args)
+    except rerobots_api.Error as err:
+        print('error: {}'.format(err))
+        return 1
 
 
 if __name__ == '__main__':
