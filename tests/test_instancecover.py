@@ -25,7 +25,7 @@ from rerobots.api import BusyWorkspaceDeployment, BusyWorkspaceInstance
 def test_instance_start_terminate():
     # Instantiate from among a given feasible list
     candidate_wtypes = [
-        'fixed_misty2fieldtrial',
+        'fixed_misty2',
     ]
     available_wdeployments = APIClient().get_wdeployments(types=candidate_wtypes, maxlen=0)
     assert len(available_wdeployments) > 0
