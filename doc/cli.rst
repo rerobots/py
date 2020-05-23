@@ -78,55 +78,54 @@ is saved to a file named ``jwt.txt``.
 Search for workspace deployments::
 
   $ rerobots search misty
-  f9a4e96f-a8f3-4b25-ae14-5ebdff63f8af    fixed_misty1devel
-  f06c8740-02a0-48ec-bdde-69ff88b71afd    fixed_misty2fieldtrial
+  2c0873b5-1da1-46e6-9658-c40379774edf    fixed_misty2
 
 Get more information about one of them::
 
-  $ rerobots wdinfo f06c8740-02a0-48ec-bdde-69ff88b71afd
+  $ rerobots wdinfo 2c0873b5-1da1-46e6-9658-c40379774edf
   {
-    "icounter": 87,
+    "id": "2c0873b5-1da1-46e6-9658-c40379774edf",
+    "type": "fixed_misty2",
+    "type_version": 1,
     "supported_addons": [
       "cam",
       "mistyproxy"
     ],
-    "region": "us:cali",
-    "queuelen": 0,
     "desc": "",
-    "created": "2019-03-11 01:07:31.507302",
-    "id": "f06c8740-02a0-48ec-bdde-69ff88b71afd",
-    "type": "fixed_misty2fieldtrial",
-    "type_version": 1
+    "region": "us:cali",
+    "icounter": 641,
+    "created": "2019-11-18 22:23:57.433893",
+    "queuelen": 0
   }
 
 Notice that ``queuelen = 0``, i.e., this workspace deployment is available, and
 requests to instantiate from it now are likely to succeed. To do so, ::
 
-  $ rerobots launch f06c8740-02a0-48ec-bdde-69ff88b71afd
-  94b3aec9-3c72-41dd-bedb-52f0a2b0f078
+  $ rerobots launch 2c0873b5-1da1-46e6-9658-c40379774edf
+  f7856ad4-a9d7-43f5-8420-7073d10bceec
 
 which will result in a secret key being written locally to the file ``key.pem``.
 This key should be used for ssh connections, e.g., with commands of the form
 ``ssh -i key.pem``. Get information about the new instance::
 
-  $ rerobots info 94b3aec9-3c72-41dd-bedb-52f0a2b0f078
+  $ rerobots info f7856ad4-a9d7-43f5-8420-7073d10bceec
   {
+    "id": "f7856ad4-a9d7-43f5-8420-7073d10bceec",
+    "deployment": "2c0873b5-1da1-46e6-9658-c40379774edf",
+    "type": "fixed_misty2",
     "region": "us:cali",
-    "status": "READY",
-    "deployment": "f06c8740-02a0-48ec-bdde-69ff88b71afd",
+    "starttime": "2020-05-23 02:05:20.311535",
     "rootuser": "scott",
-    "starttime": "2019-04-29 16:23:08.939807",
-    "hostkeys": [
-      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFXNjFWPS0247QzYf84xun3I6t8bgLnaeb9uKdomD/+WUh0+7CUFbdaSIYHR+3tPQinUAe/ExyqKiGezBqTzlo0= root@newc315"
-    ],
-    "id": "94b3aec9-3c72-41dd-bedb-52f0a2b0f078",
-    "type": "fixed_misty2fieldtrial",
     "fwd": {
-      "ipv4": "147.75.69.207",
+      "ipv4": "147.75.70.51",
       "port": 2210
-    }
+    },
+    "hostkeys": [
+      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPd5tTJLAksiu3uTbGwkBKXFb00XyTPeef6tn/0AMFiRpomU5bArpJnT3SZKhN3kkdT3HvTQiN5/dexOCFWNGUE= root@newc59"
+    ],
+    "status": "READY"
   }
 
 Finally, terminate the instance::
 
-  $ rerobots terminate 94b3aec9-3c72-41dd-bedb-52f0a2b0f078
+  $ rerobots terminate f7856ad4-a9d7-43f5-8420-7073d10bceec

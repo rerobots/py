@@ -22,25 +22,26 @@ Get a list of all workspace deployments that involve "misty" (i.e., robots by
 
 yielding a list like ::
 
-  [{'id': 'f9a4e96f-a8f3-4b25-ae14-5ebdff63f8af', 'type': 'fixed_misty1devel'},
-   {'id': 'f06c8740-02a0-48ec-bdde-69ff88b71afd', 'type': 'fixed_misty2fieldtrial'}]
+  [{'id': '2c0873b5-1da1-46e6-9658-c40379774edf', 'type': 'fixed_misty2'},
+   {'id': '3a65acd4-4aef-4ffc-b7f9-d50e48fc5541', 'type': 'basic_misty2fieldtrial'}]
 
 The list you receive might be different, depending on availability of workspace
 deployments. To get more information about one of them, call
 ``get_wdeployment_info()``, for example::
 
-  apic.get_wdeployment_info('f06c8740-02a0-48ec-bdde-69ff88b71afd')
+  apic.get_wdeployment_info('3a65acd4-4aef-4ffc-b7f9-d50e48fc5541')
 
 which will return a Python ``dict`` like ::
 
-  {'icounter': 131,
-   'supported_addons': ['cam', 'mistyproxy'],
+  {'id': '3a65acd4-4aef-4ffc-b7f9-d50e48fc5541',
+   'type': 'basic_misty2fieldtrial',
+   'type_version': 1,
+   'supported_addons': ['cam', 'mistyproxy', 'drive'],
+   'desc': '',
    'region': 'us:cali',
-   'queuelen': 1,
-   'created': '2019-03-11 01:07:31.507302',
-   'id': 'f06c8740-02a0-48ec-bdde-69ff88b71afd',
-   'type': 'fixed_misty2fieldtrial',
-   'type_version': 1}
+   'icounter': 886,
+   'created': '2019-07-28 23:26:16.983048',
+   'queuelen': 0}
 
 Notice that the field ``supported_addons`` includes ``cam``. Later in this
 tutorial, the ``cam`` add-on is used to get images from cameras in the
@@ -49,9 +50,9 @@ workspace.
 The :ref:`Instance class <ssec:instance-class>` can be used to instantiate from
 `this workspace deployment`_::
 
-  rri = rerobots.api.Instance(wdeployment_id='f06c8740-02a0-48ec-bdde-69ff88b71afd', apic=apic)
+  rri = rerobots.api.Instance(wdeployment_id='3a65acd4-4aef-4ffc-b7f9-d50e48fc5541', apic=apic)
 
-.. _`this workspace deployment`: https://rerobots.net/workspace/f06c8740-02a0-48ec-bdde-69ff88b71afd
+.. _`this workspace deployment`: https://rerobots.net/workspace/3a65acd4-4aef-4ffc-b7f9-d50e48fc5541
 
 Then, methods on ``rri`` will affect the instance just created. For example, to
 get the status of the instance, call ``rri.get_status()``, which usually begins
@@ -59,15 +60,15 @@ with ``'INIT'`` (i.e., initializing).  The instance is ready for action when
 ``rri.get_status() == 'READY'``. For more information about it, call
 ``rri.get_details()`` to get a Python ``dict`` like ::
 
-  {'type': 'fixed_misty2fieldtrial',
+  {'type': 'basic_misty2fieldtrial',
    'region': 'us:cali',
-   'starttime': '2019-05-06 23:24:13.489577',
+   'starttime': '2020-05-23 02:12:16.984534',
    'status': 'READY',
    'conn': {
      'type': 'sshtun',
-     'ipv4': '147.75.69.207',
+     'ipv4': '147.75.70.51',
      'port': 2210,
-     'hostkeys': ['ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOT0UCbWfQBuGlY48FvrOQR76jxIWBPzD2XWTNSba1iqTgDIfC+pc8Mpi/0RW0zXW+HDBrx/+QYzMcsGnAAv46U= root@newc498']}}
+     'hostkeys': ['ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBOBfAaj/HSSl7oJZ+CXnzxFsXnGQZjBh1Djdm8s7V1fdgdiyJn0JrBxzt0pSdcy50JZW+9qc1Msl34YXUjn0mwU= root@newc247']}}
 
 Notice that the connection type is ``sshtun`` and that the above host keys
 should be expected from hosts in the instance.

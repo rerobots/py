@@ -16,7 +16,7 @@ Example
 
   import rerobots.api
 
-  inst = rerobots.api.Instance(['fixed_misty2fieldtrial'])
+  inst = rerobots.api.Instance(['fixed_misty2'])
   print(inst.get_status())
 
 
