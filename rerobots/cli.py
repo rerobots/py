@@ -26,6 +26,8 @@ try:
 except ImportError:
     from time import time as monotonic_unless_py2
 
+from requests.exceptions import ConnectionError
+
 from . import api as rerobots_api
 from .__init__ import __version__
 
@@ -567,6 +569,9 @@ def main(argv=None):
         return globals()['cli_' + command](apic, args)
     except rerobots_api.Error as err:
         print('error: {}'.format(err))
+        return 1
+    except ConnectionError:
+        print('api.rerobots.net server cannot be reached.  Are you connected to the Internet?')
         return 1
 
 
