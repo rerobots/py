@@ -150,6 +150,9 @@ def add_cli_search(subparsers):
     search_parser.add_argument('-h', '--help', dest='print_search_help',
                                action='store_true', default=False,
                                help='print this help message and exit')
+    search_parser.add_argument('--include-user-provided', dest='include_user_provided',
+                               action='store_true', default=False,
+                               help='include user_provided workspace deployments in search')
     search_parser.add_argument('QUERY', nargs='?', default=None)
 
 
@@ -488,7 +491,11 @@ def cli_isready(apic, args):
 def cli_search(apic, args):
     """Implement CLI command `search`.
     """
-    for wdinfo in apic.get_wdeployments(query=args.QUERY):
+    if args.include_user_provided:
+        query = apic.get_wdeployments(query=args.QUERY)
+    else:
+        query = apic.get_wdeployments(query=args.QUERY, types=['!user_provided'])
+    for wdinfo in query:
         print('{}\t{}'.format(wdinfo['id'], wdinfo['type']))
     return 0
 
