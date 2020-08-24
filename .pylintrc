@@ -91,7 +91,8 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         useless-object-inheritance,
-        line-too-long
+        line-too-long,
+        raise-missing-from
 
 enable=c-extension-no-member
 
