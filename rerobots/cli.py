@@ -178,7 +178,7 @@ def add_cli_launch(subparsers):
     launch_parser.add_argument('-h', '--help', dest='print_launch_help',
                                action='store_true', default=False,
                                help='print this help message and exit')
-    launch_parser.add_argument('ID', nargs='?', default=None, help='deployment ID')
+    launch_parser.add_argument('ID', nargs='?', default=None, help='workspace type or deployment ID')
     launch_parser.add_argument('--secret-key', metavar='FILE', dest='secretkeypath',
                                default=None,
                                help=('name of file in which to write new secret key '

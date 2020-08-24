@@ -327,7 +327,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(errmsg)
             raise Error(payload)
 
-    def request_instance(self, wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, duration=None):
+    def request_instance(self, type_or_wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, duration=None):
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
@@ -349,9 +349,9 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if event_url is not None:
             body['eurl'] = event_url
         if body:
-            res = requests.post(self.__base_uri + '/new/' + wdeployment_id, data=json.dumps(body), headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(self.__base_uri + '/new/' + type_or_wdeployment_id, data=json.dumps(body), headers=self.__headers, verify=self.__verify_certs)
         else:
-            res = requests.post(self.__base_uri + '/new/' + wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(self.__base_uri + '/new/' + type_or_wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
             payload = res.json()
         else:
