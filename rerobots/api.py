@@ -206,15 +206,17 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
         return payload
 
-    def get_access_rules(self, to_user=None, wdeployment_id=None):
+    def get_access_rules(self, wdeployment_id=None, to_user=None):
         """Get list of access control rules of workspace deployments.
         """
         params = dict()
         if to_user is not None:
             params['to_user'] = to_user
+        if wdeployment_id is None:
+            url = self.__base_uri + '/rules'
         if wdeployment_id is not None:
-            params['wdeployment'] = wdeployment_id
-        res = requests.get(self.__base_uri + '/rules', params=params,
+            url = self.__base_uri + '/deployment/{}/rules'.format(wdeployment_id)
+        res = requests.get(url, params=params,
                            headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
             payload = res.json()
