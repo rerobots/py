@@ -232,33 +232,29 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload['rules']
 
-    def add_access_rule(self, wdeployment_id, capability, to_user=None):
+    def create_access_rule(self, wdeployment_id, capability, to_user=None):
         """Add access control rule for workspace deployment.
 
-        This operation is idempotent, i.e., adding the same rule more
-        than once has no effect.
+        Return rule ID if success.
         """
-        self._modify_access_rule(wdeployment_id=wdeployment_id, capability=capability, to_user=to_user, action='add')
-
-    def del_access_rule(self, wdeployment_id, capability, to_user=None):
-        """Delete access control rule from workspace deployment.
-
-        It is an error to try to delete a rule that does not exist.
-        """
-        self._modify_access_rule(wdeployment_id=wdeployment_id, capability=capability, to_user=to_user, action='del')
-
-    def _modify_access_rule(self, wdeployment_id, capability, action, to_user=None):
         body = {
-            'do': action,
-            'wd': wdeployment_id,
             'cap': capability,
         }
         if to_user is not None:
             body['user'] = to_user
-        res = requests.post(self.__base_uri + '/rule', data=json.dumps(body),
+        res = requests.post(self.__base_uri + '/deployment/{}/rule'.format(wdeployment_id), json=body,
                             headers=self.__headers, verify=self.__verify_certs)
         if not res.ok:
-            raise Error(res.text)
+            raise Error('{} {}'.format(res.status_code, res.reason))
+        return res.json()['rule_id']
+
+    def del_access_rule(self, wdeployment_id, rule_id):
+        """Delete access control rule from workspace deployment.
+        """
+        res = requests.delete(self.__base_uri + '/deployment/{}/rule/{}'.format(wdeployment_id, rule_id),
+                              headers=self.__headers, verify=self.__verify_certs)
+        if not res.ok:
+            raise Error('{} {}'.format(res.status_code, res.reason))
 
     def get_instances(self, include_terminated=False, page=None, max_per_page=None):
         """Get list of your instances.
@@ -753,13 +749,13 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_access_rules(to_user=to_user, wdeployment_id=self._wdeployment_id)
 
-    def add_access_rule(self, capability, to_user=None):
+    def create_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.add_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
+        return self.apic.create_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
 
-    def del_access_rule(self, capability, to_user=None):
+    def del_access_rule(self, rule_id):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.del_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
+        self.apic.del_access_rule(wdeployment_id=self._wdeployment_id, rule_id=rule_id)
 
 
     def get_firewall_rules(self):
