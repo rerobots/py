@@ -503,7 +503,10 @@ def cli_search(apic, args):
 def cli_wdinfo(apic, args):
     """Implement CLI command `wdinfo`.
     """
-    print(json.dumps(apic.get_wdeployment_info(args.ID), indent=2))
+    wdinfo = apic.get_wdeployment_info(args.ID)
+    if apic.has_api_token():
+        wdinfo['cap'] = apic.get_access_rules(args.ID)
+    print(json.dumps(wdinfo, indent=2))
     return 0
 
 
