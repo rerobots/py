@@ -211,6 +211,16 @@ def add_cli_terminate(subparsers):
     terminate_parser.add_argument('ID', nargs='?', default=None, help='instance ID')
 
 
+def add_cli_list_ci_projects(subparsers):
+    """Create subparser for `list-ci-projects`.
+    """
+    desc = 'list all CI projects of this user.'
+    ci_list_proj_parser = subparsers.add_parser('list-ci-projects', description=desc, help=desc, add_help=False)
+    ci_list_proj_parser.add_argument('-h', '--help', dest='print_list_ci_projects_help',
+                                     action='store_true', default=False,
+                                     help='print this help message and exit')
+
+
 def py2_replace_help(argv):
     """
 
@@ -290,6 +300,7 @@ def create_parser(argv=None):
     add_cli_wdinfo(subparsers)
     add_cli_launch(subparsers)
     add_cli_terminate(subparsers)
+    add_cli_list_ci_projects(subparsers)
 
     subparsers.add_parser('version', help='print version number and exit.')
     help_parser = subparsers.add_parser('help', help='print this help message and exit')
@@ -540,6 +551,16 @@ def cli_terminate(apic, args):
     return 0
 
 
+def cli_list_ci_projects(apic, args):
+    """Implement CLI command `list-ci-projects`.
+    """
+    # pylint: disable=unused-argument
+    ci_projs = apic.get_ci_projects()
+    if ci_projs:
+        print('\n'.join(ci_projs))
+    return 0
+
+
 def main(argv=None):
     """Process command-line arguments.
     """
@@ -567,7 +588,7 @@ def main(argv=None):
     else:
         apic = rerobots_api.APIClient()
 
-    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch']:
+    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch', 'list-ci-projects']:
         print('Unrecognized command. Try `help`.')
         return 1
 
