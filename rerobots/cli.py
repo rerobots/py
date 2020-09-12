@@ -221,6 +221,19 @@ def add_cli_list_ci_projects(subparsers):
                                      help='print this help message and exit')
 
 
+def add_cli_create_ci_project(subparsers):
+    """Create subparser for `create-ci-project`.
+    """
+    desc = 'create a CI project for this user.'
+    ci_create_proj_parser = subparsers.add_parser('create-ci-project', description=desc, help=desc, add_help=False)
+    ci_create_proj_parser.add_argument('--repo-url', metavar='URL', dest='repo_url',
+                                       default=None,
+                                       help='URL of the Git repo for CI/CD')
+    ci_create_proj_parser.add_argument('-h', '--help', dest='print_create_ci_project_help',
+                                       action='store_true', default=False,
+                                       help='print this help message and exit')
+
+
 def py2_replace_help(argv):
     """
 
@@ -301,6 +314,7 @@ def create_parser(argv=None):
     add_cli_launch(subparsers)
     add_cli_terminate(subparsers)
     add_cli_list_ci_projects(subparsers)
+    add_cli_create_ci_project(subparsers)
 
     subparsers.add_parser('version', help='print version number and exit.')
     help_parser = subparsers.add_parser('help', help='print this help message and exit')
@@ -561,6 +575,18 @@ def cli_list_ci_projects(apic, args):
     return 0
 
 
+def cli_create_ci_project(apic, args):
+    """Implement CLI command `create-ci-project`.
+    """
+    # pylint: disable=unused-argument
+    if args.repo_url is None:
+        print('error: missing required argument: --repo-url')
+        return 1
+    proj_id = apic.create_ci_project(args.repo_url)
+    print(proj_id)
+    return 0
+
+
 def main(argv=None):
     """Process command-line arguments.
     """
@@ -588,7 +614,7 @@ def main(argv=None):
     else:
         apic = rerobots_api.APIClient()
 
-    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch', 'list-ci-projects']:
+    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch', 'list-ci-projects', 'create-ci-project']:
         print('Unrecognized command. Try `help`.')
         return 1
 

@@ -689,6 +689,26 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload
 
+    def create_ci_project(self, repo_url):
+        """Create CI project.
+
+        requires a repository URL.
+        """
+        res = requests.post(self.__base_uri + '/ci/new', json={'repo_url': repo_url}, headers=self.__headers, verify=self.__verify_certs)
+        if res.ok:
+            payload = res.json()
+        else:
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'error_message' in payload:
+                if payload['error_message'] == 'wrong authorization token':
+                    raise WrongAuthToken('wrong authorization token')
+                raise Error(payload['error_message'])
+            raise Error(payload)
+        return payload['pid']
+
 
 class Instance(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Manager for a workspace instance
