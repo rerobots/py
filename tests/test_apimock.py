@@ -10,7 +10,8 @@ import unittest
 import pytest
 import responses
 
-from rerobots.api import APIClient, Instance
+from rerobots.api import APIClient
+from rerobots import Instance
 from rerobots.api import Error, WrongAuthToken
 
 

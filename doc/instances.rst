@@ -14,9 +14,9 @@ Example
 
 ::
 
-  import rerobots.api
+  import rerobots
 
-  inst = rerobots.api.Instance(['fixed_misty2'])
+  inst = rerobots.Instance(['fixed_misty2'])
   print(inst.get_status())
 
 
@@ -25,5 +25,5 @@ Example
 Instance class
 --------------
 
-.. autoclass:: rerobots.api.Instance
+.. autoclass:: rerobots.Instance
    :members: start_sshclient, exec_ssh, get_file, put_file, sftp_client

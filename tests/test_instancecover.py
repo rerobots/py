@@ -18,7 +18,8 @@ import time
 
 import pytest
 
-from rerobots.api import APIClient, Instance
+from rerobots.api import APIClient
+from rerobots import Instance
 from rerobots.api import BusyWorkspaceDeployment, BusyWorkspaceInstance
 
 

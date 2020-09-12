@@ -50,7 +50,7 @@ workspace.
 The :ref:`Instance class <ssec:instance-class>` can be used to instantiate from
 `this workspace deployment`_::
 
-  rri = rerobots.api.Instance(wdeployment_id='3a65acd4-4aef-4ffc-b7f9-d50e48fc5541', apic=apic)
+  rri = rerobots.Instance(wdeployment_id='3a65acd4-4aef-4ffc-b7f9-d50e48fc5541', apic=apic)
 
 .. _`this workspace deployment`: https://rerobots.net/workspace/3a65acd4-4aef-4ffc-b7f9-d50e48fc5541
 
@@ -100,13 +100,13 @@ operations over SSH. To begin, start an ssh client::
   rri.start_sshclient()
 
 Then, arbitrary commands can be executed on the host in the instance via
-:meth:`exec_ssh <rerobots.api.Instance.exec_ssh>`. For example, ::
+:meth:`exec_ssh <rerobots.Instance.exec_ssh>`. For example, ::
 
   rri.exec_ssh('pwd')
 
 will return the default path from which commands are executed. Files can be
-uploaded and downloaded using :meth:`put_file <rerobots.api.Instance.put_file>`,
-and :meth:`get_file <rerobots.api.Instance.get_file>`, respectively. For
+uploaded and downloaded using :meth:`put_file <rerobots.Instance.put_file>`,
+and :meth:`get_file <rerobots.Instance.get_file>`, respectively. For
 example, to download the file ``/etc/hosts`` from the remote host::
 
   rri.get_file('/etc/hosts', 'hosts')
