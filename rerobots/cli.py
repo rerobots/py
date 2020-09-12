@@ -571,7 +571,9 @@ def cli_list_ci_projects(apic, args):
     # pylint: disable=unused-argument
     ci_projs = apic.get_ci_projects()
     if ci_projs:
-        print('\n'.join(ci_projs))
+        for pid, attr in ci_projs.items():
+            print('{}:'.format(pid))
+            print('  repo_url: {}'.format(attr['repo_url']))
     return 0
 
 
