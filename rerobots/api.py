@@ -707,3 +707,27 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(payload['error_message'])
             raise Error(payload)
         return payload['pid']
+
+    def submit_ci_job(self, pid, branch, ref):
+        """Create CI project.
+
+        requires a repository URL.
+        """
+        res = requests.post(self.__base_uri + '/ci/project/{}/job'.format(pid),
+                            json={'branch': branch, 'commit': ref},
+                            headers=self.__headers, verify=self.__verify_certs)
+        if res.ok:
+            payload = res.json()
+        else:
+            if res.status_code == 404:
+                raise Error('not found')
+            try:
+                payload = res.json()
+            except:
+                raise Error(res.text)
+            if 'error_message' in payload:
+                if payload['error_message'] == 'wrong authorization token':
+                    raise WrongAuthToken('wrong authorization token')
+                raise Error(payload['error_message'])
+            raise Error(payload)
+        return payload['jid']

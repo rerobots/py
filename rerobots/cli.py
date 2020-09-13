@@ -233,6 +233,22 @@ def add_cli_create_ci_project(subparsers):
                                        action='store_true', default=False,
                                        help='print this help message and exit')
 
+def add_cli_submit_ci_job(subparsers):
+    """Create subparser for `submit-ci-job`.
+    """
+    desc = 'create a CI project for this user.'
+    ci_submit_job_parser = subparsers.add_parser('submit-ci-job', description=desc, help=desc, add_help=False)
+    ci_submit_job_parser.add_argument('--repo-branch', metavar='BRANCH', dest='repo_branch',
+                                      default=None,
+                                      help='branch of the repo for CI/CD')
+    ci_submit_job_parser.add_argument('--repo-ref', metavar='REF', dest='repo_ref',
+                                      default=None,
+                                      help='commit hash of the Git repo for CI/CD')
+    ci_submit_job_parser.add_argument('ID', default=None, help='project ID')
+    ci_submit_job_parser.add_argument('-h', '--help', dest='print_submit_ci_job_help',
+                                      action='store_true', default=False,
+                                      help='print this help message and exit')
+
 
 def py2_replace_help(argv):
     """
@@ -315,6 +331,7 @@ def create_parser(argv=None):
     add_cli_terminate(subparsers)
     add_cli_list_ci_projects(subparsers)
     add_cli_create_ci_project(subparsers)
+    add_cli_submit_ci_job(subparsers)
 
     subparsers.add_parser('version', help='print version number and exit.')
     help_parser = subparsers.add_parser('help', help='print this help message and exit')
@@ -589,6 +606,18 @@ def cli_create_ci_project(apic, args):
     return 0
 
 
+def cli_submit_ci_job(apic, args):
+    """Implement CLI command `submit-ci-project`.
+    """
+    # pylint: disable=unused-argument
+    if args.repo_branch is None or args.repo_ref is None:
+        print('error: missing required arguments: --repo-branch or --repo-ref')
+        return 1
+    job_id = apic.submit_ci_job(args.ID, branch=args.repo_branch, ref=args.repo_ref)
+    print(job_id)
+    return 0
+
+
 def main(argv=None):
     """Process command-line arguments.
     """
@@ -616,7 +645,7 @@ def main(argv=None):
     else:
         apic = rerobots_api.APIClient()
 
-    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch', 'list-ci-projects', 'create-ci-project']:
+    if args.command not in ['search', 'wdinfo', 'list', 'info', 'isready', 'addon-cam', 'addon-mistyproxy', 'addon-drive', 'terminate', 'launch', 'list-ci-projects', 'create-ci-project', 'submit-ci-job']:
         print('Unrecognized command. Try `help`.')
         return 1
 
