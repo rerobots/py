@@ -590,6 +590,7 @@ def cli_list_ci_projects(apic, args):
     if ci_projs:
         for pid, attr in ci_projs.items():
             print('{}:'.format(pid))
+            print('  url: https://ci.rerobots.net/p/{}'.format(pid))
             print('  repo_url: {}'.format(attr['repo_url']))
     return 0
 
