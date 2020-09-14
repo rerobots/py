@@ -1,3 +1,20 @@
+rerobots Python client library (0.10.0)
+
+  * Implement new CLI commands for CI jobs.
+
+  * Include capabilities (a.k.a. rules) in `wdinfo`.
+
+  * Default to not include user_provided in `search`.
+
+  * Make error messages in CLI more concise.
+
+  * Drop official support of Python 3.4.
+
+  * Adjust parameter name to indicate wtype accepted; e.g., from the CLI you can: rerobots launch fixed_misty2
+
+ -- Scott C. Livingston <scott@rerobots.net>  Sun, 13 Sep 2020 19:51:41 -0700
+
+
 rerobots Python client library (0.9.4)
 
   * Create method to get list of workspace types.
