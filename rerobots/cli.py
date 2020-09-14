@@ -236,7 +236,7 @@ def add_cli_create_ci_project(subparsers):
 def add_cli_submit_ci_job(subparsers):
     """Create subparser for `submit-ci-job`.
     """
-    desc = 'create a CI project for this user.'
+    desc = 'submit a CI job.'
     ci_submit_job_parser = subparsers.add_parser('submit-ci-job', description=desc, help=desc, add_help=False)
     ci_submit_job_parser.add_argument('--repo-branch', metavar='BRANCH', dest='repo_branch',
                                       default=None,
