@@ -7,6 +7,9 @@ import tempfile
 
 from .api import APIClient
 
+# inline: paramiko
+# only required by Instance class
+
 
 class Instance(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Manager for a workspace instance

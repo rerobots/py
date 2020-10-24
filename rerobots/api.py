@@ -16,9 +16,6 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
-# inline: paramiko
-# only required by Instance class
-
 
 class Error(Exception):
     """Error not otherwise specified
