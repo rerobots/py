@@ -180,6 +180,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             params['maxlen'] = maxlen
         if types is not None:
             params['types'] = ','.join(types)
+        params['info'] = 't'
         res = requests.get(self.__base_uri + '/deployments', params=params, headers=self.__headers, verify=self.__verify_certs)
         if res.ok:
             payload = res.json()
@@ -188,10 +189,9 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         page_count = payload.get('page_count', None)
         wdeployments = []
         for wdeployment in payload['workspace_deployments']:
-            payload = self.get_wdeployment_info(wdeployment)
             wdeployments.append({
                 'id': wdeployment,
-                'type': payload['type'],
+                'type': payload['info'][wdeployment]['type'],
             })
         if max_per_page is None:
             return wdeployments
