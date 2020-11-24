@@ -19,7 +19,11 @@ from rerobots.api import Error, WrongAuthToken
 def test_wdeployments_list():
     responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                   json={'workspace_deployments': ['a6b88b4f-2402-41e4-8e81-b2fd852435eb'],
-                        'info': {'a6b88b4f-2402-41e4-8e81-b2fd852435eb': {'type': 'null'}},
+                        'info': {'a6b88b4f-2402-41e4-8e81-b2fd852435eb': {
+                            'type': 'null',
+                            'region': 'us:cali',
+                            'queuelen': 0,
+                        }},
                         'page_count': 1},
                   status=200)
     responses.add(responses.GET, 'https://api.rerobots.net/deployment/a6b88b4f-2402-41e4-8e81-b2fd852435eb',
@@ -55,7 +59,11 @@ class BasicInstanceTestCases(unittest.TestCase):
         self.active_instances = []
         responses.add(responses.GET, 'https://api.rerobots.net/deployments',
                       json={'workspace_deployments': [self.wdeployment_id],
-                            'info': {'a6b88b4f-2402-41e4-8e81-b2fd852435eb': {'type': 'null'}},
+                            'info': {'a6b88b4f-2402-41e4-8e81-b2fd852435eb': {
+                            'type': 'null',
+                            'region': 'us:cali',
+                            'queuelen': 0,
+                        }},
                             'page_count': 1},
                       status=200)
         responses.add(responses.GET, 'https://api.rerobots.net/deployment/{}'.format(self.wdeployment_id),

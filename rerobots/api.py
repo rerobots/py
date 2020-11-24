@@ -192,6 +192,8 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             wdeployments.append({
                 'id': wdeployment,
                 'type': payload['info'][wdeployment]['type'],
+                'region': payload['info'][wdeployment]['region'],
+                'queuelen': payload['info'][wdeployment]['queuelen'],
             })
         if max_per_page is None:
             return wdeployments
