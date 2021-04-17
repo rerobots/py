@@ -4,7 +4,7 @@ Introduction
 Summary
 -------
 
-command-line interface and Python client library for the rerobots API
+Python client library for the rerobots API
 
 Releases are available `at PyPI <https://pypi.org/project/rerobots/>`_.
 
@@ -19,14 +19,12 @@ To install the current release, try ::
 
    pip install rerobots
 
-Besides installing the ``rerobots`` Python package, this will add the command
-``rerobots`` to your shell. To get a brief help message, try ::
+Check that the package is installed::
 
-  rerobots help
+  python -c 'import rerobots'
 
 Most interesting interactions with rerobots require an API token, which can be
-provided through the environment variable ``REROBOTS_API_TOKEN`` or via the
-command-line switch ``-t``.
+provided through the environment variable ``REROBOTS_API_TOKEN``.
 
 For additional features, such as getting images from cameras as NumPy arrays, ::
 
