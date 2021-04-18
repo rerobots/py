@@ -17,7 +17,7 @@ Getting started
 
 To install the current release, try ::
 
-   pip install rerobots
+  pip install rerobots
 
 Check that the package is installed::
 
