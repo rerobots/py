@@ -6,10 +6,11 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
+  - "3.9"
 
 before_install:
   - pip install pipenv
-  - pipenv run pip install pip==18.0
+  - pipenv run pip install pip==21.0
 
 install: pipenv install --skip-lock --dev .[extra]
 
