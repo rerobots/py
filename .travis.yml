@@ -9,8 +9,10 @@ python:
   - "3.9"
 
 before_install:
+  - export PYVERSION=$(python --version 2>&1|cut -d ' ' -f 2| cut -b 1,2,3)
+  - if [ $PYVERSION = "2.7" ]; then export PIPVERSION=20.3; elif [ $PYVERSION = "3.5" ]; then export PIPVERSION=20.3; else export PIPVERSION=21.0; fi
   - pip install pipenv
-  - pipenv run pip install pip==21.0
+  - pipenv run pip install pip==$PIPVERSION
 
 install: pipenv install --skip-lock --dev .[extra]
 
