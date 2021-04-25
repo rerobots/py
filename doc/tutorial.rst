@@ -1,9 +1,6 @@
 Tutorial
 ========
 
-This tutorial demonstrates how to work with client code. For the :doc:`cli`,
-there is a different :ref:`tutorial <ssec:cli-example>`.
-
 Begin by `getting an API token
 <https://help.rerobots.net/webui.html#making-and-revoking-api-tokens>`_ (`from
 the Web UI <https://rerobots.net/tokens>`_). There are several ways to make it
