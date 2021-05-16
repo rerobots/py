@@ -507,10 +507,11 @@ def cli_addon_cam(apic, args):
     if payload['status'] != 'active' or not snapshot_payload['success']:
         raise Exception('timed out waiting for `cam` add-on to become active')
     if args.output_file:
-        fp = open(args.output_file, 'wb')
+        with open(args.output_file, 'wb') as fp:
+            fp.write(snapshot_payload['data'])
     else:
         fp = os.fdopen(1, 'wb')
-    fp.write(snapshot_payload['data'])
+        fp.write(snapshot_payload['data'])
     return 0
 
 
