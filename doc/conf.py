@@ -15,6 +15,7 @@ with open('../README.rst', 'rt') as fp:
 project = 'rerobots Python client'
 copyright = '2017-2019 rerobots, Inc.'
 author = 'rerobots, Inc.'
+html_logo = '_static/logo.svg'
 
 version = ''
 release = ''
@@ -40,3 +41,10 @@ html_sidebars = {
 html_theme_options = {
     'show_powered_by': 'false'
 }
+
+
+# Prepare to build on hosts of https://readthedocs.org/
+import os
+if os.environ.get('READTHEDOCS', 'False') == 'True':
+    import subprocess
+    subprocess.check_call('./get-deps.sh')
