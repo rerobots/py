@@ -34,6 +34,10 @@ For additional features, such as getting images from cameras as NumPy arrays, ::
 Testing and development
 -----------------------
 
+A `Git LFS <https://git-lfs.github.com/>`_ client is required to clone this
+repository. Note that ``git clone`` will succeed without ``git lfs`` available, but
+some large files will not be fetched.
+
 All tests are in the directory ``tests/``. If you have the ``rerobots`` package
 installed, then you can ::
 
