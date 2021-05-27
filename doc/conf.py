@@ -12,7 +12,7 @@ with open('../README.rst', 'rt') as fp:
     with open('intro.rst', 'wt') as fp_out:
         fp_out.write(fp.read())
 
-project = 'rerobots Python client'
+project = 'Python client'
 copyright = '2017-2019 rerobots, Inc.'
 author = 'rerobots, Inc.'
 html_logo = '_static/logo.svg'
