@@ -1,3 +1,10 @@
+rerobots Python client library (0.11.0)
+
+  * CLI re-implemented as new project; go to https://github.com/rerobots/cli
+
+ -- Scott C. Livingston <scott@rerobots.net>  Sat, 12 Jun 2021 13:55:33 -0700
+
+
 rerobots Python client library (0.10.0)
 
   * Implement new CLI commands for CI jobs.
