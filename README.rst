@@ -4,7 +4,7 @@ Introduction
 Summary
 -------
 
-Python client library for the rerobots API
+Python client library for the `rerobots API <https://help.rerobots.net/api.html>`_
 
 Releases are available `at PyPI <https://pypi.org/project/rerobots/>`_.
 
