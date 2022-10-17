@@ -488,7 +488,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         Note that this add-on is unique to workspaces that involve
         Misty robots, e.g.,
-        https://help.rerobots.net/workspaces/fixed_misty2fieldtrial.html
+        https://docs.rerobots.net/workspaces/fixed_misty2
 
         When it is ready, proxy URLs can be obtained via
         status_addon_mistyproxy().

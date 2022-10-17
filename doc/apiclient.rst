@@ -2,7 +2,7 @@ API client objects
 ==================
 
 API client objects provide direct access to the `rerobots API
-<https://help.rerobots.net/api.html>`_ with several useful features like mapping
+<https://docs.rerobots.net/api-summary>`_ with several useful features like mapping
 returned data into other types.
 
 Example

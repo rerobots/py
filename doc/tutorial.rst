@@ -2,7 +2,7 @@ Tutorial
 ========
 
 Begin by `getting an API token
-<https://help.rerobots.net/webui.html#making-and-revoking-api-tokens>`_ (`from
+<https://docs.rerobots.net/webui/making-and-revoking-api-tokens>`_ (`from
 the Web UI <https://rerobots.net/tokens>`_). There are several ways to make it
 available to the client code. In this example, we assume that it is saved to a
 file named ``jwt.txt``. Instantiate ``APIClient`` with this token::
