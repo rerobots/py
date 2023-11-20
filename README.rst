@@ -25,6 +25,7 @@ Check that the package is installed::
 
 Most interesting interactions with rerobots require an API token, which can be
 provided through the environment variable ``REROBOTS_API_TOKEN``.
+Learn how to get one at https://docs.rerobots.net/web/making-and-revoking-api-tokens
 
 For additional features, such as getting images from cameras as NumPy arrays, ::
 
