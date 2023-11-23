@@ -4,12 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
 coverage = "*"
-tox = "*"
 pylint = "*"
-responses = "*"
+pytest = "*"
 rerobots = {extras = ["extra"],path = "."}
+responses = "*"
+tox = "*"
 
 [packages]
 rerobots = {path = ".",editable = true,extras = ["extra"]}
