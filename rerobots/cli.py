@@ -13,18 +13,13 @@ used by your Python code.
 SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
-from __future__ import absolute_import
-from __future__ import print_function
 import argparse
 import json
 import os.path
 import random
 import sys
 import time
-try:
-    from time import monotonic as monotonic_unless_py2
-except ImportError:
-    from time import time as monotonic_unless_py2
+from time import monotonic
 
 import requests
 
@@ -430,8 +425,8 @@ def cli_addon_drive(apic, args):
     instance_id = handle_cli_id(apic, args.ID)
     if instance_id is None:
         return 1
-    start_time = monotonic_unless_py2()
-    while monotonic_unless_py2() - start_time < 120:
+    start_time = monotonic()
+    while monotonic() - start_time < 120:
         payload = apic.get_instance_info(instance_id)
         if payload['status'] == 'TERMINATED':
             print('cannot start `drive` because instance is terminated')
@@ -459,8 +454,8 @@ def cli_addon_mistyproxy(apic, args):
         print('cannot start `mistyproxy` because instance is terminated')
         return 1
     if args.restart_addon_mistyproxy:
-        start_time = monotonic_unless_py2()
-        while monotonic_unless_py2() - start_time < 20:
+        start_time = monotonic()
+        while monotonic() - start_time < 20:
             payload = apic.status_addon_mistyproxy(instance_id)
             if payload['status'] == 'active':
                 apic.deactivate_addon_mistyproxy(instance_id)
@@ -469,8 +464,8 @@ def cli_addon_mistyproxy(apic, args):
             time.sleep(2)
         if payload['status'] != 'notfound':
             raise Exception('timed out waiting for `mistyproxy` add-on to stop')
-    start_time = monotonic_unless_py2()
-    while monotonic_unless_py2() - start_time < 20:
+    start_time = monotonic()
+    while monotonic() - start_time < 20:
         payload = apic.status_addon_mistyproxy(instance_id)
         if payload['status'] == 'active':
             break
@@ -490,8 +485,8 @@ def cli_addon_cam(apic, args):
     instance_id = handle_cli_id(apic, args.ID)
     if instance_id is None:
         return 1
-    start_time = monotonic_unless_py2()
-    while monotonic_unless_py2() - start_time < 120:
+    start_time = monotonic()
+    while monotonic() - start_time < 120:
         payload = apic.get_instance_info(instance_id)
         if payload['status'] == 'TERMINATED':
             print('cannot start `cam` because instance is terminated')
