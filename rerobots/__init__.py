@@ -10,3 +10,7 @@ except ImportError:
 
 
 from .instances import Instance
+
+__all__ = [
+    'Instance',
+]

@@ -10,6 +10,7 @@ requires-python = ">=3.8"
 [project.optional-dependencies]
 test = [
     "coverage",
+    "pyflakes",
     "pylint",
     "pytest",
     "responses",
