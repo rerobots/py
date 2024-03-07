@@ -6,3 +6,4 @@ rerobots/_version.py
 .tox
 .coverage
 cover/
+/build/
