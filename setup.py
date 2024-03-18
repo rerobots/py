@@ -14,10 +14,6 @@
 from setuptools import setup
 
 
-with open('README.rst') as fp:
-    long_description = fp.read()
-
-
 # Version of this package
 MAJOR=0
 MINOR=11
@@ -35,14 +31,4 @@ __version__ = '{}'
 
 
 setup(name='rerobots',
-      version=version,
-      author='Scott C. Livingston',
-      author_email='q@rerobots.net',
-      url='https://github.com/rerobots/py',
-      description='client library for rerobots',
-      long_description=long_description,
-      license='Apache-2.0',
-      packages=['rerobots'],
-      extras_require={
-          'extra': ['numpy', 'Pillow', 'paramiko'],
-      })
+      version=version)

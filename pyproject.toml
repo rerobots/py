@@ -4,11 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rerobots"
+description = "client library for rerobots"
 dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
     "requests",
 ]
+authors = [{name = "rerobots, Inc.", email = "q@rerobots.net"}]
 license = {text = "Apache-2.0"}
 readme = "README.rst"
 classifiers = [
@@ -22,6 +24,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
+[project.urls]
+source = "https://github.com/rerobots/py"
+
 [project.optional-dependencies]
 test = [
     "coverage",
@@ -31,3 +36,11 @@ test = [
     "responses",
     "tox",
 ]
+extra = [
+    "numpy",
+    "Pillow",
+    "paramiko",
+]
+
+[tool.setuptools]
+packages = ["rerobots"]
