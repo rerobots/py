@@ -2,6 +2,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
+
 import os
 import tempfile
 
@@ -11,10 +12,20 @@ from .api import APIClient
 # only required by Instance class
 
 
-class Instance(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-    """Manager for a workspace instance
-    """
-    def __init__(self, workspace_types=None, wdeployment_id=None, instance_id=None, api_token=None, headers=None, apic=None):
+class Instance(
+    object
+):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+    """Manager for a workspace instance"""
+
+    def __init__(
+        self,
+        workspace_types=None,
+        wdeployment_id=None,
+        instance_id=None,
+        api_token=None,
+        headers=None,
+        apic=None,
+    ):
         """client for a workspace instance
 
         At least one of workspace_types or wdeployment_id must be
@@ -35,7 +46,9 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         """
         # pylint: disable=too-many-branches,too-many-arguments
         if workspace_types is None and wdeployment_id is None and instance_id is None:
-            raise ValueError('at least workspace_types, wdeployment_id, or instance_id must be given')
+            raise ValueError(
+                'at least workspace_types, wdeployment_id, or instance_id must be given'
+            )
 
         if apic is None:
             self.apic = APIClient(api_token=api_token, headers=headers)
@@ -45,12 +58,18 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         if wdeployment_id is not None and workspace_types is not None:
             x = self.apic.get_wdeployment_info(wdeployment_id)
             if x['type'] not in workspace_types:
-                raise ValueError('workspace deployment {} does not have type in {}'.format(wdeployment_id, workspace_types))
+                raise ValueError(
+                    'workspace deployment {} does not have type in {}'.format(
+                        wdeployment_id, workspace_types
+                    )
+                )
 
         if workspace_types is not None:
             candidates = self.apic.get_wdeployments(types=workspace_types)
             if not candidates:
-                raise ValueError('no deployments found with any type in {}'.format(workspace_types))
+                raise ValueError(
+                    'no deployments found with any type in {}'.format(workspace_types)
+                )
             self._wdeployment_id = candidates[0]['id']
 
         else:
@@ -83,24 +102,25 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         self.__sshclient = None
         self.__sftpclient = None
 
-
     def get_wdeployment_info(self):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_wdeployment_info(self._wdeployment_id)
 
-
     def get_access_rules(self, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_access_rules(to_user=to_user, wdeployment_id=self._wdeployment_id)
+        return self.apic.get_access_rules(
+            to_user=to_user, wdeployment_id=self._wdeployment_id
+        )
 
     def create_access_rule(self, capability, to_user=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.create_access_rule(wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user)
+        return self.apic.create_access_rule(
+            wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user
+        )
 
     def del_access_rule(self, rule_id):
         """This is a wrapper for APIClient method of same name."""
         self.apic.del_access_rule(wdeployment_id=self._wdeployment_id, rule_id=rule_id)
-
 
     def get_firewall_rules(self):
         """This is a wrapper for APIClient method of same name."""
@@ -108,17 +128,17 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
 
     def add_firewall_rule(self, action, source_address=None):
         """This is a wrapper for APIClient method of same name."""
-        self.apic.add_firewall_rule(self._id, action=action, source_address=source_address)
+        self.apic.add_firewall_rule(
+            self._id, action=action, source_address=source_address
+        )
 
     def flush_firewall_rules(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.flush_firewall_rules(self._id)
 
-
     def get_vpn_newclient(self):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_vpn_newclient(self._id)
-
 
     def activate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
@@ -130,12 +150,13 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
 
     def get_snapshot_cam(self, camera_id=0, coding=None, dformat=None):
         """This is a wrapper for APIClient method of same name."""
-        return self.apic.get_snapshot_cam(self._id, camera_id=camera_id, coding=coding, dformat=dformat)
+        return self.apic.get_snapshot_cam(
+            self._id, camera_id=camera_id, coding=coding, dformat=dformat
+        )
 
     def deactivate_addon_cam(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_cam(self._id)
-
 
     def activate_addon_drive(self):
         """This is a wrapper for APIClient method of same name."""
@@ -153,7 +174,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_drive(self._id)
 
-
     def activate_addon_mistyproxy(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.activate_addon_mistyproxy(self._id)
@@ -165,7 +185,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
     def deactivate_addon_mistyproxy(self):
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_mistyproxy(self._id)
-
 
     def get_status(self):
         """Get status of this workspace instance.
@@ -195,10 +214,8 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
                 self._conn['hostkeys'] = payload['hostkeys']
         return self._status
 
-
     def get_details(self):
-        """Get status and details about this workspace instance.
-        """
+        """Get status and details about this workspace instance."""
         status = self.get_status()
         res = self._details.copy()
         res['status'] = status
@@ -206,22 +223,17 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
             res['conn'] = self._conn
         return res
 
-
     def terminate(self):
-        """Terminate this instance.
-        """
+        """Terminate this instance."""
         self.stop_sshclient()
         self.apic.terminate_instance(self._id)
 
-
     def stop_sshclient(self):
-        """Stop, close SSH client connection to instance, if it exists.
-        """
+        """Stop, close SSH client connection to instance, if it exists."""
         if self.__sshclient is not None:
             self.__sshclient.close()
             self.__sshclient = None
             self.__sftpclient = None
-
 
     def start_sshclient(self):
         """Create SSH client to instance.
@@ -231,10 +243,15 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         """
         # pylint: disable=import-outside-toplevel
         import paramiko
+
         status = self.get_status()
         if status != 'READY':
             raise Exception('instance not ready')
-        if 'ipv4' not in self._conn or 'port' not in self._conn or 'hostkeys' not in self._conn:
+        if (
+            'ipv4' not in self._conn
+            or 'port' not in self._conn
+            or 'hostkeys' not in self._conn
+        ):
             self.get_details()
         host = self._conn['ipv4']
         port = self._conn['port']
@@ -259,7 +276,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         os.unlink(keypath)
         os.unlink(known_hosts)
 
-
     def exec_ssh(self, command, timeout=None, get_files=False):
         """Execute command via SSH.
 
@@ -274,7 +290,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
             return stdin, stdout, stderr
         return stdout.read()
 
-
     def put_file(self, localpath, remotepath):
         """Put local file onto remote host.
 
@@ -286,7 +301,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
             self.__sftpclient = self.__sshclient.open_sftp()
         return self.__sftpclient.put(localpath, remotepath)
 
-
     def get_file(self, remotepath, localpath):
         """Get file from remote host.
 
@@ -297,7 +311,6 @@ class Instance(object):  # pylint: disable=too-many-public-methods,too-many-inst
         if self.__sftpclient is None:
             self.__sftpclient = self.__sshclient.open_sftp()
         return self.__sftpclient.get(remotepath, localpath)
-
 
     def sftp_client(self):
         """Get Paramiko SFTP client.

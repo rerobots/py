@@ -4,6 +4,7 @@
 SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
+
 import base64
 from io import BytesIO
 import hashlib
@@ -24,6 +25,7 @@ class Error(Exception):
     in the exception message.
     """
 
+
 class BusyWorkspaceDeployment(Error):
     """Request failed because all matching workspace deployments are busy.
 
@@ -31,13 +33,14 @@ class BusyWorkspaceDeployment(Error):
     user specified to not make one during their launch request.
     """
 
+
 class BusyWorkspaceInstance(Error):
-    """Instance is busy, and the request cannot be queued.
-    """
+    """Instance is busy, and the request cannot be queued."""
+
 
 class InstanceNotFound(Error):
-    """No instance found with given identifier.
-    """
+    """No instance found with given identifier."""
+
 
 class WrongAuthToken(Error):
     """An action requires, but was not given, some valid API token.
@@ -53,9 +56,11 @@ class WrongAuthToken(Error):
 
 
 class APIClient(object):  # pylint: disable=too-many-public-methods
-    """API client object
-    """
-    def __init__(self, api_token=None, headers=None, ignore_env=False, base_uri=None, verify=True):
+    """API client object"""
+
+    def __init__(
+        self, api_token=None, headers=None, ignore_env=False, base_uri=None, verify=True
+    ):
         """Instantiate API client.
 
         `api_token` is some auth token obtained from https://rerobots.net/tokens
@@ -95,8 +100,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         self.__verify_certs = verify
 
     def has_api_token(self):
-        """Is there an API Token associated with this client object?
-        """
+        """Is there an API Token associated with this client object?"""
         return self.__api_token is not None
 
     def add_client_headers(self, headers=None):
@@ -148,16 +152,21 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         self.__headers['Authorization'] = 'Bearer ' + self.__api_token
 
     def get_wtypes(self):
-        """Get list of workspace types.
-        """
-        res = requests.get(self.__base_uri + '/workspaces', headers=self.__headers, verify=self.__verify_certs)
+        """Get list of workspace types."""
+        res = requests.get(
+            self.__base_uri + '/workspaces',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
             raise Error(res.text)
         return payload['workspace_types']
 
-    def get_wdeployments(self, query=None, maxlen=None, types=None, page=None, max_per_page=None):
+    def get_wdeployments(
+        self, query=None, maxlen=None, types=None, page=None, max_per_page=None
+    ):
         """Get list of workspace deployments.
 
         `types`, if given, should be a list of workspace types (str).
@@ -181,7 +190,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if types is not None:
             params['types'] = ','.join(types)
         params['info'] = 't'
-        res = requests.get(self.__base_uri + '/deployments', params=params, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/deployments',
+            params=params,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -189,20 +203,25 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         page_count = payload.get('page_count', None)
         wdeployments = []
         for wdeployment in payload['workspace_deployments']:
-            wdeployments.append({
-                'id': wdeployment,
-                'type': payload['info'][wdeployment]['type'],
-                'region': payload['info'][wdeployment]['region'],
-                'queuelen': payload['info'][wdeployment]['queuelen'],
-            })
+            wdeployments.append(
+                {
+                    'id': wdeployment,
+                    'type': payload['info'][wdeployment]['type'],
+                    'region': payload['info'][wdeployment]['region'],
+                    'queuelen': payload['info'][wdeployment]['queuelen'],
+                }
+            )
         if max_per_page is None:
             return wdeployments
         return wdeployments, page_count
 
     def get_wdeployment_info(self, wdeployment_id):
-        """Get details about a workspace deployment.
-        """
-        res = requests.get(self.__base_uri + '/deployment/' + wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
+        """Get details about a workspace deployment."""
+        res = requests.get(
+            self.__base_uri + '/deployment/' + wdeployment_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -210,8 +229,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         return payload
 
     def get_access_rules(self, wdeployment_id=None, to_user=None):
-        """Get list of access control rules of workspace deployments.
-        """
+        """Get list of access control rules of workspace deployments."""
         params = dict()
         if to_user is not None:
             params['to_user'] = to_user
@@ -219,8 +237,9 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             url = self.__base_uri + '/rules'
         if wdeployment_id is not None:
             url = self.__base_uri + '/deployment/{}/rules'.format(wdeployment_id)
-        res = requests.get(url, params=params,
-                           headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            url, params=params, headers=self.__headers, verify=self.__verify_certs
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -245,17 +264,23 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         }
         if to_user is not None:
             body['user'] = to_user
-        res = requests.post(self.__base_uri + '/deployment/{}/rule'.format(wdeployment_id), json=body,
-                            headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/deployment/{}/rule'.format(wdeployment_id),
+            json=body,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error('{} {}'.format(res.status_code, res.reason))
         return res.json()['rule_id']
 
     def del_access_rule(self, wdeployment_id, rule_id):
-        """Delete access control rule from workspace deployment.
-        """
-        res = requests.delete(self.__base_uri + '/deployment/{}/rule/{}'.format(wdeployment_id, rule_id),
-                              headers=self.__headers, verify=self.__verify_certs)
+        """Delete access control rule from workspace deployment."""
+        res = requests.delete(
+            self.__base_uri + '/deployment/{}/rule/{}'.format(wdeployment_id, rule_id),
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error('{} {}'.format(res.status_code, res.reason))
 
@@ -274,7 +299,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             params['max_per_page'] = max_per_page
             if page is not None:
                 params['page'] = page
-        res = requests.get(self.__base_uri + '/instances', params=params, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/instances',
+            params=params,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -297,7 +327,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         This operation requires sufficient permissions by the
         requesting user.
         """
-        res = requests.get(self.__base_uri + '/instance/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/instance/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -307,15 +341,20 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'instance not found':
-                    raise InstanceNotFound('no instance with identifier {}'.format(instance_id))
+                    raise InstanceNotFound(
+                        'no instance with identifier {}'.format(instance_id)
+                    )
                 raise Error(payload['error_message'])
             raise Error(payload)
         return payload
 
     def terminate_instance(self, instance_id):
-        """Terminate a workspace instance.
-        """
-        res = requests.post(self.__base_uri + '/terminate/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Terminate a workspace instance."""
+        res = requests.post(
+            self.__base_uri + '/terminate/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             try:
                 payload = res.json()
@@ -328,7 +367,15 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error(errmsg)
             raise Error(payload)
 
-    def request_instance(self, type_or_wdeployment_id, sshkey=None, vpn=False, reserve=False, event_url=None, duration=None):
+    def request_instance(
+        self,
+        type_or_wdeployment_id,
+        sshkey=None,
+        vpn=False,
+        reserve=False,
+        event_url=None,
+        duration=None,
+    ):
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
@@ -350,9 +397,18 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if event_url is not None:
             body['eurl'] = event_url
         if body:
-            res = requests.post(self.__base_uri + '/new/' + type_or_wdeployment_id, data=json.dumps(body), headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(
+                self.__base_uri + '/new/' + type_or_wdeployment_id,
+                data=json.dumps(body),
+                headers=self.__headers,
+                verify=self.__verify_certs,
+            )
         else:
-            res = requests.post(self.__base_uri + '/new/' + type_or_wdeployment_id, headers=self.__headers, verify=self.__verify_certs)
+            res = requests.post(
+                self.__base_uri + '/new/' + type_or_wdeployment_id,
+                headers=self.__headers,
+                verify=self.__verify_certs,
+            )
         if res.ok:
             payload = res.json()
         else:
@@ -372,9 +428,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         return payload
 
     def get_reservations(self):
-        """Get list of your reservations.
-        """
-        res = requests.get(self.__base_uri + '/reservations', headers=self.__headers, verify=self.__verify_certs)
+        """Get list of your reservations."""
+        res = requests.get(
+            self.__base_uri + '/reservations',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
         return res.json()['reservations']
@@ -384,7 +443,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         This operation cannot be undone.
         """
-        res = requests.delete(self.__base_uri + '/reservation/' + reservation_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/reservation/' + reservation_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -394,7 +457,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         These rules are also known as packet filter rules. They are
         similar to rule specifications of Linux iptables.
         """
-        res = requests.get(self.__base_uri + '/firewall/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/firewall/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
         return res.json()['rules']
@@ -410,7 +477,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = '{"action": "' + action + '"}'
         else:
             payload = '{"src": "' + source_address + '", "action": "' + action + '"}'
-        res = requests.post(self.__base_uri + '/firewall/' + instance_id, data=payload, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/firewall/' + instance_id,
+            data=payload,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -420,14 +492,21 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         N.B., after this operation, any source address can send
         packets to the public address of your workspace instance.
         """
-        res = requests.delete(self.__base_uri + '/firewall/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/firewall/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def get_vpn_newclient(self, instance_id):
-        """Create new OpenVPN client.
-        """
-        res = requests.post(self.__base_uri + '/vpn/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Create new OpenVPN client."""
+        res = requests.post(
+            self.__base_uri + '/vpn/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
         return res.json()
@@ -439,14 +518,21 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         the VNC connection should be reset, try first to stop and
         start it again, without deactivating the add-on.
         """
-        res = requests.post(self.__base_uri + '/addon/vnc/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/addon/vnc/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def status_addon_vnc(self, instance_id):
-        """Get status of the VNC add-on for this instance.
-        """
-        res = requests.get(self.__base_uri + '/addon/vnc/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Get status of the VNC add-on for this instance."""
+        res = requests.get(
+            self.__base_uri + '/addon/vnc/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         if res.status_code == 404:
@@ -460,7 +546,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         Read more in the documentation of the method activate_addon_vnc().
         """
-        res = requests.post(self.__base_uri + '/addon/vnc/' + instance_id + '/start', headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/addon/vnc/' + instance_id + '/start',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -469,7 +559,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         Read more in the documentation of the method activate_addon_vnc().
         """
-        res = requests.post(self.__base_uri + '/addon/vnc/' + instance_id + '/stop', headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/addon/vnc/' + instance_id + '/stop',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -479,7 +573,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        res = requests.delete(self.__base_uri + '/addon/vnc/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/addon/vnc/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -493,7 +591,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         When it is ready, proxy URLs can be obtained via
         status_addon_mistyproxy().
         """
-        res = requests.post(self.__base_uri + '/addon/mistyproxy/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/addon/mistyproxy/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -502,7 +604,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         The response includes proxy URLs if any are defined.
         """
-        res = requests.get(self.__base_uri + '/addon/mistyproxy/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/addon/mistyproxy/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         if res.status_code == 404:
@@ -520,21 +626,31 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        res = requests.delete(self.__base_uri + '/addon/mistyproxy/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/addon/mistyproxy/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def activate_addon_cam(self, instance_id):
-        """Activate cam (camera) add-on.
-        """
-        res = requests.post(self.__base_uri + '/addon/cam/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Activate cam (camera) add-on."""
+        res = requests.post(
+            self.__base_uri + '/addon/cam/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def status_addon_cam(self, instance_id):
-        """Get status of cam (camera) add-on for this instance.
-        """
-        res = requests.get(self.__base_uri + '/addon/cam/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Get status of cam (camera) add-on for this instance."""
+        res = requests.get(
+            self.__base_uri + '/addon/cam/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         if res.status_code == 404:
@@ -549,7 +665,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        res = requests.delete(self.__base_uri + '/addon/cam/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/addon/cam/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -572,10 +692,18 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if dformat is not None:
             dformat = dformat.lower()
             assert dformat in ['ndarray', 'jpeg']
-        res = requests.get(self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id), headers=self.__headers, verify=self.__verify_certs)
+        res = requests.get(
+            self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id),
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             if res.status_code == 404:
-                raise Error('instance {} not found, or cam add-on not active'.format(instance_id))
+                raise Error(
+                    'instance {} not found, or cam add-on not active'.format(
+                        instance_id
+                    )
+                )
             raise Error(res.text)
         payload = res.json()
         if not payload['success']:
@@ -589,6 +717,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 assert coding is None
                 from PIL import Image
                 import numpy as np
+
                 x = BytesIO()
                 x.write(payload['data'])
                 x.seek(0)
@@ -599,16 +728,22 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         return payload
 
     def activate_addon_drive(self, instance_id):
-        """Activate drive add-on.
-        """
-        res = requests.post(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Activate drive add-on."""
+        res = requests.post(
+            self.__base_uri + '/addon/drive/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def status_addon_drive(self, instance_id):
-        """Get status of drive add-on for this instance.
-        """
-        res = requests.get(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        """Get status of drive add-on for this instance."""
+        res = requests.get(
+            self.__base_uri + '/addon/drive/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         if res.status_code == 404:
@@ -618,13 +753,15 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         return payload
 
     def send_drive_command(self, instance_id, command):
-        """Send motion command via drive add-on.
-        """
+        """Send motion command via drive add-on."""
         if command is None:
             command = {'linearv': 0, 'angularv': 0}
-        res = requests.post(self.__base_uri + '/addon/drive/' + instance_id + '/tx',
-                            json=command,
-                            headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/addon/drive/' + instance_id + '/tx',
+            json=command,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -634,7 +771,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         Note that calling this is not required if the workspace
         instance will be terminated.
         """
-        res = requests.delete(self.__base_uri + '/addon/drive/' + instance_id, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.delete(
+            self.__base_uri + '/addon/drive/' + instance_id,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -650,10 +791,15 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 token = bytes(token, encoding='utf-8')
             token_hash = hashlib.sha256(token).hexdigest()
             if sha256 is not None and sha256 != token_hash:
-                raise ValueError('both token or sha256 given, '
-                                 'but SHA256(token) != sha256')
+                raise ValueError(
+                    'both token or sha256 given, ' 'but SHA256(token) != sha256'
+                )
             sha256 = token_hash
-        res = requests.post(self.__base_uri + '/revoke/' + sha256, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/revoke/' + sha256,
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
@@ -665,14 +811,21 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         This action cannot be undone.
         """
-        res = requests.post(self.__base_uri + '/purge', headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/purge',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if not res.ok:
             raise Error(res.text)
 
     def get_ci_projects(self):
-        """Get list of your CI projects.
-        """
-        res = requests.get(self.__base_uri + '/ci/projects', headers=self.__headers, verify=self.__verify_certs)
+        """Get list of your CI projects."""
+        res = requests.get(
+            self.__base_uri + '/ci/projects',
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -692,7 +845,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         requires a repository URL.
         """
-        res = requests.post(self.__base_uri + '/ci/new', json={'repo_url': repo_url}, headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/ci/new',
+            json={'repo_url': repo_url},
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:
@@ -712,9 +870,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
         requires a repository URL.
         """
-        res = requests.post(self.__base_uri + '/ci/project/{}/job'.format(pid),
-                            json={'branch': branch, 'commit': ref},
-                            headers=self.__headers, verify=self.__verify_certs)
+        res = requests.post(
+            self.__base_uri + '/ci/project/{}/job'.format(pid),
+            json={'branch': branch, 'commit': ref},
+            headers=self.__headers,
+            verify=self.__verify_certs,
+        )
         if res.ok:
             payload = res.json()
         else:

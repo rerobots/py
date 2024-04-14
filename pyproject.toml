@@ -44,3 +44,6 @@ extra = [
 
 [tool.setuptools]
 packages = ["rerobots"]
+
+[tool.black]
+skip-string-normalization = true
