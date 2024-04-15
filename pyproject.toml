@@ -29,6 +29,7 @@ source = "https://github.com/rerobots/py"
 
 [project.optional-dependencies]
 test = [
+    "black",
     "coverage",
     "pyflakes",
     "pylint",
