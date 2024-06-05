@@ -1,0 +1,26 @@
+---
+# configuration for GitHub Actions
+name: rerobots Python client library tests
+on:
+    push:
+    pull_request:
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                python-version: [3.8, 3.9, '3.10', 3.11, 3.12]
+        steps:
+            - uses: actions/checkout@v2
+            - name: Prepare Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install
+              run: |
+                pip install .[test]
+            - name: Run tests
+              run: |
+                cd tests
+                pytest -v --ignore=test_anonymous.py --ignore=test_instancecover.py
