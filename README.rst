@@ -45,8 +45,10 @@ installed, then you can ::
   make check
 
 to run static analysis and tests that do not require a rerobots API token.
-Recent results on `Travis CI <https://travis-ci.com/>`_ are available at
-https://travis-ci.com/github/rerobots/py
+Current `CI report <https://github.com/rerobots/py/actions/workflows/main.yml>`_:
+
+.. image:: https://github.com/rerobots/py/actions/workflows/main.yml/badge.svg
+   :alt: build status from GitHub Actions
 
 Several other commands are available to run subsets of tests or create coverage
 reports. For example, to run tests that do not touch production servers::
