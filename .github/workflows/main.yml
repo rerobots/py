@@ -20,6 +20,9 @@ jobs:
             - name: Install
               run: |
                 pip install .[test]
+            - name: Lint
+              run: |
+                black --check rerobots
             - name: Run tests
               run: |
                 cd tests
