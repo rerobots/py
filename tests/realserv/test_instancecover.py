@@ -16,7 +16,6 @@ import random
 import tempfile
 import time
 
-import pytest
 
 from rerobots.api import APIClient
 from rerobots import Instance
@@ -82,6 +81,6 @@ def test_instance_start_terminate():
             inst.terminate()
             terminated = True
             break
-        except BusyWorkspaceInstance as e:
+        except BusyWorkspaceInstance:
             time.sleep(4)
     assert terminated
