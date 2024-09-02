@@ -245,7 +245,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
@@ -310,7 +310,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
@@ -337,7 +337,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'instance not found':
@@ -358,7 +358,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'result_message' in payload:
                 errmsg = payload['result_message']
@@ -414,7 +414,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error('Response {}: {}'.format(res.status_code, res.content))
             errmsg = payload.get('result_message', None)
             if errmsg is None:
@@ -831,7 +831,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
@@ -856,7 +856,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         else:
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
@@ -883,7 +883,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 raise Error('not found')
             try:
                 payload = res.json()
-            except:
+            except requests.exceptions.JSONDecodeError:
                 raise Error(res.text)
             if 'error_message' in payload:
                 if payload['error_message'] == 'wrong authorization token':
