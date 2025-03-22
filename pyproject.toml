@@ -32,6 +32,7 @@ source = "https://github.com/rerobots/py"
 test = [
     "black",
     "coverage",
+    "mypy",
     "pyflakes",
     "pylint",
     "pytest",

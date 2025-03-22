@@ -24,6 +24,9 @@ jobs:
             - name: Lint
               run: |
                 black --check rerobots
+            - name: Type checking
+              run: |
+                mypy rerobots
             - name: Run tests
               run: |
                 cd tests

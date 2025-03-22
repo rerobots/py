@@ -99,7 +99,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             self.__base_uri = base_uri
         self.__verify_certs = verify
 
-    def has_api_token(self):
+    def has_api_token(self) -> bool:
         """Is there an API Token associated with this client object?"""
         return self.__api_token is not None
 
