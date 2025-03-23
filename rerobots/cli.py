@@ -26,11 +26,6 @@ import requests
 from . import api as rerobots_api
 from .__init__ import __version__
 
-try:  # compatibility with Python 2.7
-    input = raw_input  # pylint: disable=redefined-builtin,invalid-name
-except NameError:
-    pass
-
 
 def handle_cli_id(apiclient, given_instance_id=None):
     """Infer instance ID given command-line interface arguments
@@ -388,56 +383,6 @@ def add_cli_submit_ci_job(subparsers):
     )
 
 
-def py2_replace_help(argv):
-    """
-
-    Workaround for Python 2.7 argparse, which does not accept empty COMMAND
-
-    If `--help` or `-h` present and every argument before it begins with `-`,
-    then convert it to `help`.
-    """
-    try:
-        ind = argv.index('--help')
-    except ValueError:
-        try:
-            ind = argv.index('-h')
-        except ValueError:
-            ind = None
-    if ind is not None:
-        for k in range(ind):
-            if argv[k][0] != '-':
-                ind = None
-                break
-        if ind is not None:
-            argv[ind] = 'help'
-    return argv
-
-
-def py2_replace_version(argv):
-    """
-
-    Workaround for Python 2.7 argparse, which does not accept empty COMMAND
-
-    If `-V` or `--version` present and every argument before it begins with `-`,
-    then convert it to `version.
-    """
-    try:
-        ind = argv.index('--version')
-    except ValueError:
-        try:
-            ind = argv.index('-V')
-        except ValueError:
-            ind = None
-    if ind is not None:
-        for k in range(ind):
-            if argv[k][0] != '-':
-                ind = None
-                break
-        if ind is not None:
-            argv[ind] = 'version'
-    return argv
-
-
 def create_parser(argv=None):
     """Create CLI arguments and sub-arguments parsers."""
     if argv is None:
@@ -494,10 +439,6 @@ def create_parser(argv=None):
     help_parser.add_argument(
         'help_target_command', metavar='COMMAND', type=str, nargs='?'
     )
-
-    if sys.version_info.major < 3:
-        argv = py2_replace_help(argv)
-        argv = py2_replace_version(argv)
 
     return argparser.parse_args(argv), argparser, subparsers
 
