@@ -24,7 +24,7 @@ from time import monotonic
 import requests
 
 from . import api as rerobots_api
-from .__init__ import __version__
+from . import __version__
 
 
 def handle_cli_id(apiclient, given_instance_id=None):
