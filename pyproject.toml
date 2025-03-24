@@ -38,6 +38,9 @@ test = [
     "pytest",
     "responses",
     "tox",
+    "types-requests",
+    "types-Pillow",
+    "types-paramiko",
 ]
 extra = [
     "numpy",
