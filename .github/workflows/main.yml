@@ -22,9 +22,11 @@ jobs:
               run: |
                 pip install .[test]
             - name: Lint
+              if: ${{ matrix.python-version == 3.12 }}
               run: |
                 black --check rerobots
             - name: Type checking
+              if: ${{ matrix.python-version == 3.12 }}
               run: |
                 mypy rerobots
             - name: Run tests
