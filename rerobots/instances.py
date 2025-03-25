@@ -3,6 +3,7 @@ SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
 
+from collections.abc import Iterable
 import os
 import tempfile
 
@@ -19,8 +20,8 @@ class Instance(
 
     def __init__(
         self,
-        workspace_types=None,
-        wdeployment_id=None,
+        workspace_types: Iterable[str] | None = None,
+        wdeployment_id: str | None = None,
         instance_id=None,
         api_token=None,
         headers=None,

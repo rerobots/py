@@ -6,6 +6,7 @@ Copyright (c) 2017-2019 rerobots, Inc.
 """
 
 import base64
+from collections.abc import Iterable
 from io import BytesIO
 import hashlib
 import json
@@ -165,7 +166,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         return payload['workspace_types']
 
     def get_wdeployments(
-        self, query=None, maxlen=None, types=None, page=None, max_per_page=None
+        self,
+        query=None,
+        maxlen=None,
+        types: Iterable[str] | None = None,
+        page=None,
+        max_per_page=None,
     ):
         """Get list of workspace deployments.
 
@@ -215,7 +221,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             return wdeployments
         return wdeployments, page_count
 
-    def get_wdeployment_info(self, wdeployment_id):
+    def get_wdeployment_info(self, wdeployment_id: str):
         """Get details about a workspace deployment."""
         res = requests.get(
             self.__base_uri + '/deployment/' + wdeployment_id,
