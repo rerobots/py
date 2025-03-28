@@ -22,10 +22,10 @@ class Instance(
         self,
         workspace_types: Iterable[str] | None = None,
         wdeployment_id: str | None = None,
-        instance_id=None,
-        api_token=None,
-        headers=None,
-        apic=None,
+        instance_id: str | None = None,
+        api_token: str | None = None,
+        headers: dict[str, str] | None = None,
+        apic: APIClient | None = None,
     ):
         """client for a workspace instance
 

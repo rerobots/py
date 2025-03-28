@@ -60,7 +60,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
     """API client object"""
 
     def __init__(
-        self, api_token=None, headers=None, ignore_env=False, base_uri=None, verify=True
+        self,
+        api_token: str | None = None,
+        headers: dict[str, str] | None = None,
+        ignore_env: bool = False,
+        base_uri: str | None = None,
+        verify: bool = True,
     ):
         """Instantiate API client.
 
@@ -104,7 +109,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         """Is there an API Token associated with this client object?"""
         return self.__api_token is not None
 
-    def add_client_headers(self, headers=None):
+    def add_client_headers(self, headers: dict[str, str] | None = None):
         """Add request headers associated with this client.
 
         This method accumulates headers. E.g.,
