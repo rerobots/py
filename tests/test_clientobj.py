@@ -19,10 +19,12 @@ def test_acc_add_client_headers():
     apic1.add_client_headers({'X-Example-1': 'ex1'})
     apic1.add_client_headers({'X-Example-2': 'ex2'})
     apic2 = APIClient(ignore_env=True)
-    apic2.add_client_headers({
-        'X-Example-1': 'ex1',
-        'X-Example-2': 'ex2',
-    })
+    apic2.add_client_headers(
+        {
+            'X-Example-1': 'ex1',
+            'X-Example-2': 'ex2',
+        }
+    )
     assert apic1.get_client_headers() == apic2.get_client_headers()
 
 

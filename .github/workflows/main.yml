@@ -25,11 +25,11 @@ jobs:
             - name: Lint
               if: ${{ matrix.python-version == 3.12 }}
               run: |
-                black --check rerobots
+                black --check rerobots tests
             - name: Type checking
               if: ${{ matrix.python-version == 3.12 }}
               run: |
-                mypy rerobots
+                mypy rerobots tests
             - name: Run tests
               run: |
                 cd tests
