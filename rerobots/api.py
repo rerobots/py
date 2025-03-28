@@ -172,11 +172,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
     def get_wdeployments(
         self,
-        query=None,
-        maxlen=None,
+        query: str | None = None,
+        maxlen: int | None = None,
         types: Iterable[str] | None = None,
-        page=None,
-        max_per_page=None,
+        page: int | None = None,
+        max_per_page: int | None = None,
     ):
         """Get list of workspace deployments.
 
@@ -189,7 +189,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         list of instances returned in any one response.
         Cf. documentation of the HTTP API.
         """
-        params = dict()
+        params: dict[str, str | int] = {}
         if max_per_page is not None:
             params['max_per_page'] = max_per_page
             if page is not None:
@@ -295,7 +295,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error('{} {}'.format(res.status_code, res.reason))
 
-    def get_instances(self, include_terminated=False, page=None, max_per_page=None):
+    def get_instances(
+        self,
+        include_terminated: bool = False,
+        page: int | None = None,
+        max_per_page: int | None = None,
+    ):
         """Get list of your instances.
 
         The parameters `page` and `max_per_page` can be used for
@@ -303,7 +308,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         list of instances returned in any one response.
         Cf. documentation of the HTTP API.
         """
-        params = dict()
+        params: dict[str, str | int] = {}
         if include_terminated:
             params['include_terminated'] = ''
         if max_per_page is not None:
