@@ -157,7 +157,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         self.__api_token = token
         self.__headers['Authorization'] = 'Bearer ' + self.__api_token
 
-    def get_wtypes(self):
+    def get_wtypes(self) -> Iterable[str]:
         """Get list of workspace types."""
         res = requests.get(
             self.__base_uri + '/workspaces',
