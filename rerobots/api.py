@@ -743,7 +743,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 payload['format'] = 'ndarray'
         return payload
 
-    def activate_addon_drive(self, instance_id):
+    def activate_addon_drive(self, instance_id: str):
         """Activate drive add-on."""
         res = requests.post(
             self.__base_uri + '/addon/drive/' + instance_id,
@@ -753,7 +753,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def status_addon_drive(self, instance_id):
+    def status_addon_drive(self, instance_id: str):
         """Get status of drive add-on for this instance."""
         res = requests.get(
             self.__base_uri + '/addon/drive/' + instance_id,
@@ -768,7 +768,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         return payload
 
-    def send_drive_command(self, instance_id, command):
+    def send_drive_command(self, instance_id: str, command: dict):
         """Send motion command via drive add-on."""
         if command is None:
             command = {'linearv': 0, 'angularv': 0}
