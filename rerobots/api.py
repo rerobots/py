@@ -11,6 +11,7 @@ from io import BytesIO
 import hashlib
 import json
 import os
+from typing import Literal
 
 import requests
 
@@ -689,7 +690,13 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def get_snapshot_cam(self, instance_id, camera_id=0, coding=None, dformat=None):
+    def get_snapshot_cam(
+        self,
+        instance_id: str,
+        camera_id: int = 0,
+        coding: Literal['base64'] | None = None,
+        dformat: Literal['jpeg', 'ndarray'] | None = None,
+    ):
         """Get image from camera via cam add-on.
 
         If coding=None (default), then returned data are not
@@ -705,9 +712,6 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         must be None.
         """
         # pylint: disable=import-outside-toplevel
-        if dformat is not None:
-            dformat = dformat.lower()
-            assert dformat in ['ndarray', 'jpeg']
         res = requests.get(
             self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id),
             headers=self.__headers,
