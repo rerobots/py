@@ -110,7 +110,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         """Is there an API Token associated with this client object?"""
         return self.__api_token is not None
 
-    def add_client_headers(self, headers: dict[str, str] | None = None):
+    def add_client_headers(self, headers: dict[str, str] | None = None) -> None:
         """Add request headers associated with this client.
 
         This method accumulates headers. E.g.,
@@ -135,14 +135,14 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if self.__api_token and 'Authorization' in headers:
             headers['Authorization'] = 'Bearer ' + self.__api_token
 
-    def get_client_headers(self):
+    def get_client_headers(self) -> dict[str, str]:
         """Get copy of all supplemental request headers.
 
         E.g., added by add_client_headers()
         """
         return self.__headers.copy()
 
-    def clear_client_headers(self):
+    def clear_client_headers(self) -> None:
         """Clear (remove) all supplemental headers associated with this client.
 
         This method does not affect API tokens associated with
@@ -150,7 +150,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         """
         self.__headers = dict()
 
-    def apply_auth_token(self, token):
+    def apply_auth_token(self, token: str) -> None:
         """Associate given API (auth) token with this client.
 
         If there is already an associated API token, it will be overwritten.
@@ -266,7 +266,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload['rules']
 
-    def create_access_rule(self, wdeployment_id, capability, to_user=None):
+    def create_access_rule(self, wdeployment_id, capability, to_user=None) -> str:
         """Add access control rule for workspace deployment.
 
         Return rule ID if success.
@@ -286,7 +286,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error('{} {}'.format(res.status_code, res.reason))
         return res.json()['rule_id']
 
-    def del_access_rule(self, wdeployment_id, rule_id):
+    def del_access_rule(self, wdeployment_id, rule_id) -> None:
         """Delete access control rule from workspace deployment."""
         res = requests.delete(
             self.__base_uri + '/deployment/{}/rule/{}'.format(wdeployment_id, rule_id),
@@ -365,7 +365,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload
 
-    def terminate_instance(self, instance_id):
+    def terminate_instance(self, instance_id) -> None:
         """Terminate a workspace instance."""
         res = requests.post(
             self.__base_uri + '/terminate/' + instance_id,
