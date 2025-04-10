@@ -365,7 +365,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload
 
-    def terminate_instance(self, instance_id) -> None:
+    def terminate_instance(self, instance_id: str) -> None:
         """Terminate a workspace instance."""
         res = requests.post(
             self.__base_uri + '/terminate/' + instance_id,
@@ -386,12 +386,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
 
     def request_instance(
         self,
-        type_or_wdeployment_id,
-        sshkey=None,
-        vpn=False,
-        reserve=False,
-        event_url=None,
-        duration=None,
+        type_or_wdeployment_id: str,
+        sshkey: str | None = None,
+        vpn: bool = False,
+        reserve: bool = False,
+        event_url: str | None = None,
+        duration: int | None = None,
     ):
         """Request new workspace instance.
 
@@ -403,7 +403,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         deployment is not available at the time of this request.
         """
         payload = None
-        body = dict()
+        body: dict[str, str | int] = dict()
         if sshkey is not None:
             body['sshkey'] = sshkey
         if duration is not None:
@@ -432,7 +432,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             try:
                 payload = res.json()
             except requests.exceptions.JSONDecodeError:
-                raise Error('Response {}: {}'.format(res.status_code, res.content))
+                raise Error(f'Response {res.status_code}: {res.content!r}')
             errmsg = payload.get('result_message', None)
             if errmsg is None:
                 errmsg = payload.get('error', None)
