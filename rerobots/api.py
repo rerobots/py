@@ -455,7 +455,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
         return res.json()['reservations']
 
-    def cancel_reservation(self, reservation_id):
+    def cancel_reservation(self, reservation_id: str) -> None:
         """Cancel a reservation.
 
         This operation cannot be undone.
