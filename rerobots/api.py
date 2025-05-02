@@ -483,7 +483,12 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
         return res.json()['rules']
 
-    def add_firewall_rule(self, instance_id, action, source_address=None):
+    def add_firewall_rule(
+        self,
+        instance_id: str,
+        action: Literal['ACCEPT', 'DROP', 'REJECT'],
+        source_address: str | None = None,
+    ) -> None:
         """Add a firewall rule.
 
         Related methods: get_firewall_rules(), flush_firewall_rules().
@@ -503,7 +508,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def flush_firewall_rules(self, instance_id):
+    def flush_firewall_rules(self, instance_id: str) -> None:
         """Remove all firewall rules.
 
         N.B., after this operation, any source address can send
