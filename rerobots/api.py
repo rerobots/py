@@ -533,7 +533,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
         return res.json()
 
-    def activate_addon_vnc(self, instance_id):
+    def activate_addon_vnc(self, instance_id: str) -> None:
         """Activate the VNC add-on, if available.
 
         The VNC add-on must be activated before it can be started.  If
@@ -563,7 +563,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         return payload
 
-    def start_addon_vnc(self, instance_id):
+    def start_addon_vnc(self, instance_id: str) -> None:
         """Start user-visible connection of VNC add-on.
 
         Read more in the documentation of the method activate_addon_vnc().
@@ -576,7 +576,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def stop_addon_vnc(self, instance_id):
+    def stop_addon_vnc(self, instance_id: str) -> None:
         """Stop user-visible connection of VNC add-on.
 
         Read more in the documentation of the method activate_addon_vnc().
@@ -589,7 +589,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def deactivate_addon_vnc(self, instance_id):
+    def deactivate_addon_vnc(self, instance_id: str) -> None:
         """Deactivate VNC add-on for this instance.
 
         Note that calling this is not required if the workspace
@@ -603,7 +603,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def activate_addon_mistyproxy(self, instance_id):
+    def activate_addon_mistyproxy(self, instance_id: str) -> None:
         """Activate mistyproxy add-on.
 
         Note that this add-on is unique to workspaces that involve
@@ -639,7 +639,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         return payload
 
-    def deactivate_addon_mistyproxy(self, instance_id):
+    def deactivate_addon_mistyproxy(self, instance_id: str) -> None:
         """Deactivate mistyproxy add-on.
 
         Note that a cycle of deactivate-activate of the mistyproxy
@@ -656,7 +656,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def activate_addon_cam(self, instance_id):
+    def activate_addon_cam(self, instance_id: str) -> None:
         """Activate cam (camera) add-on."""
         res = requests.post(
             self.__base_uri + '/addon/cam/' + instance_id,
@@ -681,7 +681,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         return payload
 
-    def deactivate_addon_cam(self, instance_id):
+    def deactivate_addon_cam(self, instance_id: str) -> None:
         """Deactivate cam (camera) add-on.
 
         Note that calling this is not required if the workspace
@@ -752,7 +752,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
                 payload['format'] = 'ndarray'
         return payload
 
-    def activate_addon_drive(self, instance_id: str):
+    def activate_addon_drive(self, instance_id: str) -> None:
         """Activate drive add-on."""
         res = requests.post(
             self.__base_uri + '/addon/drive/' + instance_id,
@@ -777,7 +777,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             payload = res.json()
         return payload
 
-    def send_drive_command(self, instance_id: str, command: dict):
+    def send_drive_command(self, instance_id: str, command: dict) -> None:
         """Send motion command via drive add-on."""
         if command is None:
             command = {'linearv': 0, 'angularv': 0}
@@ -790,7 +790,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def deactivate_addon_drive(self, instance_id):
+    def deactivate_addon_drive(self, instance_id: str) -> None:
         """Deactivate drive add-on.
 
         Note that calling this is not required if the workspace
@@ -828,7 +828,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def purge(self):
+    def purge(self) -> None:
         """Purge all valid API tokens.
 
         After this call succeeds, no existing API tokens associated
