@@ -804,22 +804,24 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def revoke_token(self, token=None, sha256=None):
+    def revoke_token(
+        self,
+        token: str | None = None,
+        sha256: str | None = None,
+    ) -> None:
         """Revoke an API token.
 
         This action cannot be undone.
         """
-        if token is None and sha256 is None:
-            raise ValueError('token or sha256 must be non-None')
         if token is not None:
-            if isinstance(token, str):
-                token = bytes(token, encoding='utf-8')
-            token_hash = hashlib.sha256(token).hexdigest()
+            token_hash = hashlib.sha256(token.encode()).hexdigest()
             if sha256 is not None and sha256 != token_hash:
                 raise ValueError(
                     'both token or sha256 given, ' 'but SHA256(token) != sha256'
                 )
             sha256 = token_hash
+        elif sha256 is None:
+            raise ValueError('token or sha256 must be non-None')
         res = requests.post(
             self.__base_uri + '/revoke/' + sha256,
             headers=self.__headers,
