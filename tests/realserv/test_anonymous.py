@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """Basic requests that are meaningful for anonymous users
 
-SCL <scott@rerobots.net>
 Copyright (c) 2018 rerobots, Inc.
 """
 import pytest

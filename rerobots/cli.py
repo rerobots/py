@@ -10,7 +10,6 @@ Of course, parts of this package besides the CLI are intended to be
 used by your Python code.
 
 
-SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
 import argparse

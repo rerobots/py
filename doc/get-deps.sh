@@ -2,7 +2,6 @@
 # Script to fetch and prepare dependencies to build documentation
 #
 #
-# SCL <scott@rerobots.net>
 # Copyright (C) 2020 rerobots, Inc.
 
 

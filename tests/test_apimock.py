@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """Basic requests against a mock API HTTP server
 
-SCL <scott@rerobots.net>
 Copyright (c) 2018 rerobots, Inc.
 """
 import json

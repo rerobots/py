@@ -1,5 +1,4 @@
 """
-SCL <scott@rerobots.net>
 Copyright (c) 2017-2019 rerobots, Inc.
 """
 

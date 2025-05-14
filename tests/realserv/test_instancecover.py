@@ -8,7 +8,6 @@ To perform these tests, assign a rerobots API token to the environment
 variable `REROBOTS_API_TOKEN`.
 
 
-SCL <scott@rerobots.net>
 Copyright (c) 2019 rerobots, Inc.
 """
 import os
