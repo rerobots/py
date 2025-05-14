@@ -6,11 +6,17 @@ Copyright (c) 2017-2019 rerobots, Inc.
 from collections.abc import Collection
 import os
 import tempfile
+from typing import Literal, TYPE_CHECKING, cast
 
 from .api import APIClient
 
 # inline: paramiko
 # only required by Instance class
+
+
+if TYPE_CHECKING:
+    import paramiko
+InstanceStatus = Literal['INIT', 'INIT_FAIL', 'READY', 'TERMINATING', 'TERMINATED']
 
 
 class Instance(
@@ -97,10 +103,10 @@ class Instance(
             self._status = payload['status']
             self.__sshkey = None
 
-        self._details = None
+        self._details: dict | None = None
 
-        self._conn = None
-        self.__sshclient = None
+        self._conn: dict | None = None
+        self.__sshclient: paramiko.client.SSHClient | None = None
         self.__sftpclient = None
 
     def get_wdeployment_info(self):
@@ -187,7 +193,7 @@ class Instance(
         """This is a wrapper for APIClient method of same name."""
         self.apic.deactivate_addon_mistyproxy(self._id)
 
-    def get_status(self):
+    def get_status(self) -> InstanceStatus:
         """Get status of this workspace instance.
 
         For example, the status is `READY` when the instance is ready
@@ -202,7 +208,7 @@ class Instance(
                 'region': payload['region'],
                 'starttime': payload['starttime'],
             }
-        self._status = payload['status']
+        self._status = cast(InstanceStatus, payload['status'])
         if 'fwd' in payload:
             self._conn = {
                 'type': 'sshtun',
@@ -224,19 +230,19 @@ class Instance(
             res['conn'] = self._conn
         return res
 
-    def terminate(self):
+    def terminate(self) -> None:
         """Terminate this instance."""
         self.stop_sshclient()
         self.apic.terminate_instance(self._id)
 
-    def stop_sshclient(self):
+    def stop_sshclient(self) -> None:
         """Stop, close SSH client connection to instance, if it exists."""
         if self.__sshclient is not None:
             self.__sshclient.close()
             self.__sshclient = None
             self.__sftpclient = None
 
-    def start_sshclient(self):
+    def start_sshclient(self) -> None:
         """Create SSH client to instance.
 
         This method is a prerequisite to exec_ssh(), which executes
@@ -248,6 +254,7 @@ class Instance(
         status = self.get_status()
         if status != 'READY':
             raise Exception('instance not ready')
+        assert self._conn is not None
         if (
             'ipv4' not in self._conn
             or 'port' not in self._conn
