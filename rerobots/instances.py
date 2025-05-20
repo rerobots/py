@@ -286,7 +286,7 @@ class Instance(
     def exec_ssh(self, command, timeout=None, get_files=False):
         """Execute command via SSH.
 
-        https://docs.paramiko.org/en/2.4/api/client.html#paramiko.client.SSHClient.exec_command
+        https://docs.paramiko.org/en/stable/api/client.html#paramiko.client.SSHClient.exec_command
 
         If get_files=True, then return files of stdin, stdout, and
         stderr.
@@ -325,7 +325,7 @@ class Instance(
         Note that methods put_file() and get_file() are small wrappers
         to put() and get() of this Paramiko class.
 
-        Read about it at https://docs.paramiko.org/en/2.4/api/sftp.html
+        Read about it at https://docs.paramiko.org/en/stable/api/sftp.html
         """
         assert self.__sshclient is not None
         if self.__sftpclient is None:
