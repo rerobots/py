@@ -105,8 +105,8 @@ class Instance(
         self._details: dict | None = None
 
         self._conn: dict | None = None
-        self.__sshclient: paramiko.client.SSHClient | None = None
-        self.__sftpclient = None
+        self.__sshclient: paramiko.SSHClient | None = None
+        self.__sftpclient: paramiko.SFTPClient | None = None
 
     def get_wdeployment_info(self):
         """This is a wrapper for APIClient method of same name."""
@@ -283,7 +283,12 @@ class Instance(
         os.unlink(keypath)
         os.unlink(known_hosts)
 
-    def exec_ssh(self, command, timeout=None, get_files=False):
+    def exec_ssh(
+        self,
+        command: str,
+        timeout: float | None = None,
+        get_files: bool = False,
+    ):
         """Execute command via SSH.
 
         https://docs.paramiko.org/en/stable/api/client.html#paramiko.client.SSHClient.exec_command
@@ -297,7 +302,7 @@ class Instance(
             return stdin, stdout, stderr
         return stdout.read()
 
-    def put_file(self, localpath, remotepath):
+    def put_file(self, localpath: str, remotepath: str):
         """Put local file onto remote host.
 
         For the general case, the underlying Paramiko SFTP object is
