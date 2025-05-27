@@ -18,6 +18,8 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
+from .types import Capability
+
 
 class Error(Exception):
     """Error not otherwise specified
@@ -265,12 +267,17 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(payload)
         return payload['rules']
 
-    def create_access_rule(self, wdeployment_id, capability, to_user=None) -> str:
+    def create_access_rule(
+        self,
+        wdeployment_id: str,
+        capability: Capability,
+        to_user: str | None = None,
+    ) -> int:
         """Add access control rule for workspace deployment.
 
         Return rule ID if success.
         """
-        body = {
+        body: dict[str, str | Capability] = {
             'cap': capability,
         }
         if to_user is not None:
