@@ -8,6 +8,7 @@ import tempfile
 from typing import Literal, TYPE_CHECKING, cast
 
 from .api import APIClient
+from .types import InstanceStatus
 
 # inline: paramiko
 # only required by Instance class
@@ -15,7 +16,6 @@ from .api import APIClient
 
 if TYPE_CHECKING:
     import paramiko
-InstanceStatus = Literal['INIT', 'INIT_FAIL', 'READY', 'TERMINATING', 'TERMINATED']
 
 
 class Instance(
