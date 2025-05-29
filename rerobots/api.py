@@ -248,7 +248,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             params['to_user'] = to_user
         if wdeployment_id is None:
             url = self.__base_uri + '/rules'
-        if wdeployment_id is not None:
+        else:
             url = self.__base_uri + '/deployment/{}/rules'.format(wdeployment_id)
         res = requests.get(
             url, params=params, headers=self.__headers, verify=self.__verify_certs
