@@ -18,7 +18,7 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
-from .types import Capability
+from .types import AccessRules, Capability
 
 
 class Error(Exception):
@@ -241,7 +241,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error(res.text)
         return payload
 
-    def get_access_rules(self, wdeployment_id=None, to_user=None):
+    def get_access_rules(
+        self,
+        wdeployment_id: str | None = None,
+        to_user: str | None = None,
+    ) -> AccessRules:
         """Get list of access control rules of workspace deployments."""
         params = dict()
         if to_user is not None:
@@ -292,7 +296,11 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             raise Error('{} {}'.format(res.status_code, res.reason))
         return res.json()['rule_id']
 
-    def del_access_rule(self, wdeployment_id, rule_id) -> None:
+    def del_access_rule(
+        self,
+        wdeployment_id: str,
+        rule_id: int,
+    ) -> None:
         """Delete access control rule from workspace deployment."""
         res = requests.delete(
             self.__base_uri + '/deployment/{}/rule/{}'.format(wdeployment_id, rule_id),
