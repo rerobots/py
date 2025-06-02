@@ -1,4 +1,4 @@
-from typing import Literal, NotRequired, TypedDict
+from typing import Literal, TypedDict
 
 
 Capability = Literal['CAP_NO_INSTANTIATE', 'CAP_INSTANTIATE']
@@ -18,9 +18,9 @@ class AccessRules(TypedDict):
     rules: list[AccessRule]
 
 
-class CamImage(TypedDict):
+class CamImage(TypedDict, total=False):
     success: bool
-    message: NotRequired[str]
-    format: NotRequired[Literal['JPEG', 'ndarray']]
-    coding: NotRequired[Literal[None, 'base64']]
-    data: NotRequired[str]
+    message: str
+    format: Literal['JPEG', 'ndarray']
+    coding: Literal[None, 'base64']
+    data: str
