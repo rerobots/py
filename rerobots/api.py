@@ -18,7 +18,7 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
-from .types import AccessRules, Capability
+from .types import AccessRules, CamImage, Capability
 
 
 class Error(Exception):
@@ -715,7 +715,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         camera_id: int = 0,
         coding: Literal['base64'] | None = None,
         dformat: Literal['jpeg', 'ndarray'] | None = None,
-    ):
+    ) -> CamImage:
         """Get image from camera via cam add-on.
 
         If coding=None (default), then returned data are not
