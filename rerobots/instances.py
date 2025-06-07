@@ -5,7 +5,7 @@ Copyright (c) 2017-2019 rerobots, Inc.
 from collections.abc import Collection
 import os
 import tempfile
-from typing import Literal, TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, cast
 
 from .api import APIClient
 from .types import InstanceStatus
