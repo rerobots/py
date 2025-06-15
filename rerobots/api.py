@@ -18,7 +18,7 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
-from .types import AccessRules, CamImage, Capability
+from .types import AccessRules, CamImage, Capability, InstanceInfo
 
 
 class Error(Exception):
@@ -352,7 +352,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             return payload['workspace_instances']
         return payload['workspace_instances'], payload['page_count']
 
-    def get_instance_info(self, instance_id):
+    def get_instance_info(self, instance_id: str) -> InstanceInfo:
         """Get details about a workspace instance.
 
         This operation requires sufficient permissions by the

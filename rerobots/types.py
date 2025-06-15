@@ -24,3 +24,14 @@ class CamImage(TypedDict, total=False):
     format: Literal['JPEG', 'ndarray']
     coding: Literal[None, 'base64']
     data: str
+
+
+class InstanceInfo(TypedDict, total=False):
+    id: str
+    deployment: str
+    type: str
+    status: InstanceStatus
+    region: str
+    starttime: str
+    fwd: dict
+    hostkeys: list
