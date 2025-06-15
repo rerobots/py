@@ -34,4 +34,4 @@ class InstanceInfo(TypedDict, total=False):
     region: str
     starttime: str
     fwd: dict
-    hostkeys: list
+    hostkeys: list[str]
