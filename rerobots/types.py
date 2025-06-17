@@ -26,6 +26,11 @@ class CamImage(TypedDict, total=False):
     data: str
 
 
+class PortForward(TypedDict, total=False):
+    ipv4: str
+    port: int
+
+
 class InstanceInfo(TypedDict, total=False):
     id: str
     deployment: str
@@ -33,5 +38,5 @@ class InstanceInfo(TypedDict, total=False):
     status: InstanceStatus
     region: str
     starttime: str
-    fwd: dict
+    fwd: PortForward
     hostkeys: list[str]
