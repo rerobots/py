@@ -1,6 +1,7 @@
 from typing import Literal, TypedDict
 
 
+AddonStatus = Literal['active', 'notfound', 'starting']
 Capability = Literal['CAP_NO_INSTANTIATE', 'CAP_INSTANTIATE']
 InstanceStatus = Literal['INIT', 'INIT_FAIL', 'READY', 'TERMINATING', 'TERMINATED']
 
@@ -40,3 +41,7 @@ class InstanceInfo(TypedDict, total=False):
     starttime: str
     fwd: PortForward
     hostkeys: list[str]
+
+
+class CameraAddon(TypedDict, total=False):
+    status: AddonStatus

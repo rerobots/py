@@ -18,7 +18,7 @@ import requests
 # only required for certain code paths that go beyond core routines.
 # e.g., get_snapshot_cam(dformat='array')
 
-from .types import AccessRules, CamImage, Capability, InstanceInfo
+from .types import AccessRules, CameraAddon, CamImage, Capability, InstanceInfo
 
 
 class Error(Exception):
@@ -680,7 +680,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok:
             raise Error(res.text)
 
-    def status_addon_cam(self, instance_id):
+    def status_addon_cam(self, instance_id: str) -> CameraAddon:
         """Get status of cam (camera) add-on for this instance."""
         res = requests.get(
             self.__base_uri + '/addon/cam/' + instance_id,
@@ -690,7 +690,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         if not res.ok and res.status_code != 404:
             raise Error(res.text)
         if res.status_code == 404:
-            payload = {'status': 'notfound'}
+            payload: CameraAddon = {'status': 'notfound'}
         else:
             payload = res.json()
         return payload
