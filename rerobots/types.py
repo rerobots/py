@@ -45,3 +45,8 @@ class InstanceInfo(TypedDict, total=False):
 
 class CameraAddon(TypedDict, total=False):
     status: AddonStatus
+
+
+class MistyProxyAddon(TypedDict, total=False):
+    status: AddonStatus
+    url: list[str]
