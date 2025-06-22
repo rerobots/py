@@ -32,6 +32,20 @@ class PortForward(TypedDict, total=False):
     port: int
 
 
+class DeploymentInfo(TypedDict, total=False):
+    id: str
+    type: str
+    type_version: int
+    supported_addons: list[str]
+    desc: str
+    region: str
+    icounter: int
+    created: str
+    queuelen: int
+    lockout: bool
+    online: bool
+
+
 class InstanceInfo(TypedDict, total=False):
     id: str
     deployment: str

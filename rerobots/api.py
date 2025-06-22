@@ -23,6 +23,7 @@ from .types import (
     CameraAddon,
     CamImage,
     Capability,
+    DeploymentInfo,
     InstanceInfo,
     MistyProxyAddon,
 )
@@ -235,7 +236,7 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
             return wdeployments
         return wdeployments, page_count
 
-    def get_wdeployment_info(self, wdeployment_id: str):
+    def get_wdeployment_info(self, wdeployment_id: str) -> DeploymentInfo:
         """Get details about a workspace deployment."""
         res = requests.get(
             self.__base_uri + '/deployment/' + wdeployment_id,
