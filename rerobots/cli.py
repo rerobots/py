@@ -259,7 +259,7 @@ def add_cli_launch(subparsers):
         metavar='FILE',
         dest='secretkeypath',
         default=None,
-        help=('name of file in which to write new secret key ' '(default key.pem)'),
+        help='name of file in which to write new secret key (default key.pem)',
     )
     launch_parser.add_argument(
         '-y',

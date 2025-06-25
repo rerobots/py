@@ -838,7 +838,7 @@ class APIClient(object):
             token_hash = hashlib.sha256(token.encode()).hexdigest()
             if sha256 is not None and sha256 != token_hash:
                 raise ValueError(
-                    'both token or sha256 given, ' 'but SHA256(token) != sha256'
+                    'both token or sha256 given, but SHA256(token) != sha256'
                 )
             sha256 = token_hash
         elif sha256 is None:
