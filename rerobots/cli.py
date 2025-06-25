@@ -12,6 +12,7 @@ used by your Python code.
 
 Copyright (c) 2017-2019 rerobots, Inc.
 """
+
 import argparse
 import json
 import os.path
@@ -651,7 +652,6 @@ def cli_wdinfo(apic, args):
 
 def cli_list(apic, args):
     """Implement CLI command `list`."""
-    # pylint: disable=unused-argument
     instances = apic.get_instances()
     if instances:
         print('\n'.join(apic.get_instances()))
@@ -678,7 +678,6 @@ def cli_terminate(apic, args):
 
 def cli_list_ci_projects(apic, args):
     """Implement CLI command `list-ci-projects`."""
-    # pylint: disable=unused-argument
     ci_projs = apic.get_ci_projects()
     if ci_projs:
         for pid, attr in ci_projs.items():
@@ -690,7 +689,6 @@ def cli_list_ci_projects(apic, args):
 
 def cli_create_ci_project(apic, args):
     """Implement CLI command `create-ci-project`."""
-    # pylint: disable=unused-argument
     if args.repo_url is None:
         print('error: missing required argument: --repo-url')
         return 1
@@ -701,7 +699,6 @@ def cli_create_ci_project(apic, args):
 
 def cli_submit_ci_job(apic, args):
     """Implement CLI command `submit-ci-project`."""
-    # pylint: disable=unused-argument
     if args.repo_branch is None or args.repo_ref is None:
         print('error: missing required arguments: --repo-branch or --repo-ref')
         return 1

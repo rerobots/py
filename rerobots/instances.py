@@ -18,9 +18,7 @@ if TYPE_CHECKING:
     import paramiko
 
 
-class Instance(
-    object
-):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class Instance(object):
     """Manager for a workspace instance"""
 
     def __init__(
@@ -50,7 +48,6 @@ class Instance(
         internally from the parameters `api_token` etc., corresponding
         to parameters APIClient of the same name.
         """
-        # pylint: disable=too-many-branches,too-many-arguments
         if workspace_types is None and wdeployment_id is None and instance_id is None:
             raise ValueError(
                 'at least workspace_types, wdeployment_id, or instance_id must be given'
@@ -247,7 +244,6 @@ class Instance(
         This method is a prerequisite to exec_ssh(), which executes
         remote terminal commands.
         """
-        # pylint: disable=import-outside-toplevel
         import paramiko
 
         status = self.get_status()

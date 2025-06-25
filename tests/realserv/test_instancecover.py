@@ -10,6 +10,7 @@ variable `REROBOTS_API_TOKEN`.
 
 Copyright (c) 2019 rerobots, Inc.
 """
+
 import os
 import random
 import tempfile

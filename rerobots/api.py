@@ -66,7 +66,7 @@ class WrongAuthToken(Error):
     """
 
 
-class APIClient(object):  # pylint: disable=too-many-public-methods
+class APIClient(object):
     """API client object"""
 
     def __init__(
@@ -738,7 +738,6 @@ class APIClient(object):  # pylint: disable=too-many-public-methods
         compatible. In particular, if dformat='ndarray', then coding
         must be None.
         """
-        # pylint: disable=import-outside-toplevel
         res = requests.get(
             self.__base_uri + '/addon/cam/{}/{}/img'.format(instance_id, camera_id),
             headers=self.__headers,

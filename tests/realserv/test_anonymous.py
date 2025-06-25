@@ -3,6 +3,7 @@
 
 Copyright (c) 2018 rerobots, Inc.
 """
+
 import pytest
 
 from rerobots.api import APIClient
