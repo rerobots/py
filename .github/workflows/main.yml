@@ -25,7 +25,7 @@ jobs:
             - name: Lint
               if: ${{ matrix.python-version == 3.12 }}
               run: |
-                black --check rerobots tests
+                ruff format --check rerobots tests
             - name: Type checking
               if: ${{ matrix.python-version == 3.12 }}
               run: |
