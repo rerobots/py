@@ -13,6 +13,10 @@ from .types import InstanceStatus
 # inline: paramiko
 # only required by Instance class
 
+from .types import (
+    AccessRules,
+    Capability,
+)
 
 if TYPE_CHECKING:
     import paramiko
@@ -109,19 +113,21 @@ class Instance(object):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_wdeployment_info(self._wdeployment_id)
 
-    def get_access_rules(self, to_user=None):
+    def get_access_rules(self, to_user: str | None = None) -> AccessRules:
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_access_rules(
             to_user=to_user, wdeployment_id=self._wdeployment_id
         )
 
-    def create_access_rule(self, capability, to_user=None):
+    def create_access_rule(
+        self, capability: Capability, to_user: str | None = None
+    ) -> int:
         """This is a wrapper for APIClient method of same name."""
         return self.apic.create_access_rule(
             wdeployment_id=self._wdeployment_id, capability=capability, to_user=to_user
         )
 
-    def del_access_rule(self, rule_id):
+    def del_access_rule(self, rule_id: int) -> None:
         """This is a wrapper for APIClient method of same name."""
         self.apic.del_access_rule(wdeployment_id=self._wdeployment_id, rule_id=rule_id)
 
