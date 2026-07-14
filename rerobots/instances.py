@@ -16,6 +16,7 @@ from .types import InstanceStatus
 from .types import (
     AccessRules,
     Capability,
+    DeploymentInfo,
 )
 
 if TYPE_CHECKING:
@@ -109,7 +110,7 @@ class Instance(object):
         self.__sshclient: paramiko.SSHClient | None = None
         self.__sftpclient: paramiko.SFTPClient | None = None
 
-    def get_wdeployment_info(self):
+    def get_wdeployment_info(self) -> DeploymentInfo:
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_wdeployment_info(self._wdeployment_id)
 
