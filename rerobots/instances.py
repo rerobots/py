@@ -13,11 +13,7 @@ from .types import InstanceStatus
 # inline: paramiko
 # only required by Instance class
 
-from .types import (
-    AccessRules,
-    Capability,
-    DeploymentInfo,
-)
+from .types import AccessRules, Capability, ConnectionInfo, DeploymentInfo, InstanceInfo
 
 if TYPE_CHECKING:
     import paramiko
@@ -104,9 +100,9 @@ class Instance(object):
             self._status = payload['status']
             self.__sshkey = None
 
-        self._details: dict | None = None
+        self._details: InstanceInfo | None = None
 
-        self._conn: dict | None = None
+        self._conn: ConnectionInfo | None = None
         self.__sshclient: paramiko.SSHClient | None = None
         self.__sftpclient: paramiko.SFTPClient | None = None
 

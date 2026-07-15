@@ -46,6 +46,13 @@ class DeploymentInfo(TypedDict, total=False):
     online: bool
 
 
+class ConnectionInfo(TypedDict, total=False):
+    type: Literal['sshtun']
+    ipv4: str
+    port: int
+    hostkeys: list[str]
+
+
 class InstanceInfo(TypedDict, total=False):
     id: str
     deployment: str
@@ -53,6 +60,7 @@ class InstanceInfo(TypedDict, total=False):
     status: InstanceStatus
     region: str
     starttime: str
+    conn: ConnectionInfo
     fwd: PortForward
     hostkeys: list[str]
 
