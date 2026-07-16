@@ -65,6 +65,11 @@ class InstanceInfo(TypedDict, total=False):
     hostkeys: list[str]
 
 
+class InstanceRequestResult(TypedDict, total=False):
+    id: str
+    sshkey: str
+
+
 class CameraAddon(TypedDict, total=False):
     status: AddonStatus
 

@@ -13,7 +13,14 @@ from .types import InstanceStatus
 # inline: paramiko
 # only required by Instance class
 
-from .types import AccessRules, Capability, ConnectionInfo, DeploymentInfo, InstanceInfo
+from .types import (
+    AccessRules,
+    Capability,
+    ConnectionInfo,
+    DeploymentInfo,
+    InstanceInfo,
+    InstanceRequestResult,
+)
 
 if TYPE_CHECKING:
     import paramiko
@@ -82,22 +89,22 @@ class Instance(object):
         self._type = None
 
         if instance_id is None:
-            payload = self.apic.request_instance(self._wdeployment_id, reserve=False)
-            self._id = payload['id']
+            res = self.apic.request_instance(self._wdeployment_id, reserve=False)
+            self._id = res['id']
             self._status = 'INIT'  # Instance always begins at INIT
-            if 'sshkey' in payload:
-                self.__sshkey = payload['sshkey']
+            if 'sshkey' in res:
+                self.__sshkey: str | None = res['sshkey']
             else:
                 self.__sshkey = None
 
         else:
             self._id = instance_id
-            payload = self.apic.get_instance_info(self._id)
+            info = self.apic.get_instance_info(self._id)
             if self._wdeployment_id is not None:
-                assert payload['deployment'] == self._wdeployment_id
+                assert info['deployment'] == self._wdeployment_id
             else:
-                self._wdeployment_id = payload['deployment']
-            self._status = payload['status']
+                self._wdeployment_id = info['deployment']
+            self._status = info['status']
             self.__sshkey = None
 
         self._details: InstanceInfo | None = None
@@ -132,13 +139,13 @@ class Instance(object):
         """This is a wrapper for APIClient method of same name."""
         return self.apic.get_firewall_rules(self._id)
 
-    def add_firewall_rule(self, action, source_address=None):
+    def add_firewall_rule(self, action, source_address=None) -> None:
         """This is a wrapper for APIClient method of same name."""
         self.apic.add_firewall_rule(
             self._id, action=action, source_address=source_address
         )
 
-    def flush_firewall_rules(self):
+    def flush_firewall_rules(self) -> None:
         """This is a wrapper for APIClient method of same name."""
         self.apic.flush_firewall_rules(self._id)
 
@@ -253,6 +260,7 @@ class Instance(object):
         if status != 'READY':
             raise Exception('instance not ready')
         assert self._conn is not None
+        assert self.__sshkey
         if (
             'ipv4' not in self._conn
             or 'port' not in self._conn

@@ -25,6 +25,7 @@ from .types import (
     Capability,
     DeploymentInfo,
     InstanceInfo,
+    InstanceRequestResult,
     MistyProxyAddon,
 )
 
@@ -414,7 +415,7 @@ class APIClient(object):
         reserve: bool = False,
         event_url: str | None = None,
         duration: int | None = None,
-    ):
+    ) -> InstanceRequestResult:
         """Request new workspace instance.
 
         If given, sshkey is the public key of the key pair with which
