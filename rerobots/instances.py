@@ -309,7 +309,7 @@ class Instance(object):
             return stdin, stdout, stderr
         return stdout.read()
 
-    def put_file(self, localpath: str, remotepath: str):
+    def put_file(self, localpath: str, remotepath: str) -> paramiko.SFTPAttributes:
         """Put local file onto remote host.
 
         For the general case, the underlying Paramiko SFTP object is
@@ -320,7 +320,7 @@ class Instance(object):
             self.__sftpclient = self.__sshclient.open_sftp()
         return self.__sftpclient.put(localpath, remotepath)
 
-    def get_file(self, remotepath, localpath):
+    def get_file(self, remotepath, localpath) -> None:
         """Get file from remote host.
 
         For the general case, the underlying Paramiko SFTP object is
@@ -329,7 +329,7 @@ class Instance(object):
         assert self.__sshclient is not None
         if self.__sftpclient is None:
             self.__sftpclient = self.__sshclient.open_sftp()
-        return self.__sftpclient.get(remotepath, localpath)
+        self.__sftpclient.get(remotepath, localpath)
 
     def sftp_client(self):
         """Get Paramiko SFTP client.
