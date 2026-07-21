@@ -309,7 +309,7 @@ class Instance(object):
             return stdin, stdout, stderr
         return stdout.read()
 
-    def put_file(self, localpath: str, remotepath: str) -> paramiko.SFTPAttributes:
+    def put_file(self, localpath: str, remotepath: str) -> 'paramiko.SFTPAttributes':
         """Put local file onto remote host.
 
         For the general case, the underlying Paramiko SFTP object is
